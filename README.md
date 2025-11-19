@@ -17,4 +17,10 @@ The default macOS environment is powerful, but it can feel fragmented. Rakuen is
 This project is a personal vision, but ideas and constructive feedback are welcome. The goal is to inspire others to build their own digital paradise. If you have a suggestion that aligns with the core philosophy, please open an Issue or a Pull Request.
 
 ### 📜 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [License](https://github.com/aagamezl/rakuen/blob/master/LICENSE) file for details.
+
+---
+
+**Begin your journey to a more elegant macOS. Welcome to Rakuen.**
+
+---
