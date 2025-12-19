@@ -65,7 +65,7 @@ local function attachEvents(keybindings)
       return false
     end
 
-    -- print("key: " .. key)
+    print("key: " .. key)
 
     for _, map in ipairs(keybindings) do
       -- print("map.from.key: " .. map.from.key)
@@ -87,7 +87,8 @@ local function attachEvents(keybindings)
           return true
         end
 
-        if map.excepkt then
+        -- If an except list is provided, check if the current app is in the list
+        if map.except then
           local app = hs.application.frontmostApplication()
           local bundleId = app and app:bundleID() or ""
 
@@ -101,6 +102,7 @@ local function attachEvents(keybindings)
           end
         end
 
+        -- If an only list is provided, check if the current app is in the list
         if map.only then
           local app = hs.application.frontmostApplication()
           local bundleId = app and app:bundleID() or ""
