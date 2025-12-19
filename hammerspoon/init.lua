@@ -10,30 +10,35 @@ local usage = require('keybindings/utils/usage')
 
 -- Keybindings
 local applicationManagement = require('keybindings/application-management')
+local browserNavigation = require('keybindings/browser-navigation')
 local editingText = require('keybindings/editing-text')
 local generalSystem = require('keybindings/general-system')
+local spaces = require('spaces/spaces')
 local textCursorMovement = require('keybindings/text-cursor-movement')
 local textSelection = require('keybindings/text-selection')
 
 -- Initialize Window module
-windows.init()
+-- windows.init()
 
 -- Initialize Keybindings
 local keybindings = mergeObjects(
   applicationManagement,
+  browserNavigation,
   editingText,
   generalSystem,
+  spaces,
   textCursorMovement,
-  textSelection
+  textSelection,
+  windows
 )
-
-usage.init(keybindings)
 
 -- Initialize Keybindings
 attachEvents(keybindings)
+
+-- Initialize Usage
+usage.init(keybindings)
 
 -- Reload config on change
 myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
 
 hs.alert.show("Config loaded")
-

@@ -13,6 +13,15 @@ local keybindings = {
       "com.exafunction.windsurf",
       "com.microsoft.VSCode",
     },
+    condition = function()
+      if modal then
+        print("ctrl + k ctrl+c pressed")
+
+        return false
+      end
+
+      return true
+    end,
   },
   {
     action = "Copy in terminal",

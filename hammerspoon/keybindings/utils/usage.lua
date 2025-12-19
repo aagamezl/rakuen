@@ -41,9 +41,15 @@ local function buildChoices(remaps)
         toStr = "?"
       end
 
+      local formatTemplate = string.format("%s  →  %s", fromStr, toStr)
+      if toStr == "?" then
+        formatTemplate = string.format("%s", fromStr)
+      end
+
       table.insert(choices, {
         text = remap.action or "(no action)",
-        subText = string.format("%s  →  %s", fromStr, toStr),
+        -- subText = string.format("%s  →  %s", fromStr, toStr),
+        subText = formatTemplate,
       })
     end
 
