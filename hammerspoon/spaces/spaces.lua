@@ -110,7 +110,7 @@ local function moveWindowToRightSpace()
     moveWindowOneSpace('right')
 end
 
-function moveToScreen(direction)
+local function moveToScreen(direction)
     local cwin = hs.window.focusedWindow()
     if cwin then
         local cscreen = cwin:screen()
@@ -133,46 +133,45 @@ function moveToScreen(direction)
 end
 
 local keybindings = {
-  -- {
-  --   action = "Move to Space 1",
-  --   from = { mods = { "ctrl", "alt" }, key = "1" },
-  --   to = {
-  --     handler = function()
-  --       moveOneSpace('left')
-  --     end
-  --   },
-  -- },
-  -- {
-  --   action = "Move to Space 2",
-  --   from = { mods = { "ctrl", "alt" }, key = "2" },
-  --   to = {
-  --     handler = function()
-  --       moveOneSpace('right')
-  --     end
-  --   },
-  -- },
-  -- {
-  --   action = "Move to Space 3",
-  --   from = { mods = { "ctrl", "alt" }, key = "3" },
-  --   to = {
-  --     handler = function()
-  --       moveOneSpace('left')
-  --     end
-  --   },
-  -- },
   {
-    action = "Move to Space Left",
-    from = { mods = { "ctrl", "alt" }, key = "left" },
+    action = "Move to Space 1",
+    from = { mods = { "ctrl", "alt"}, key = "1" },
     to = {
       handler = function()
-        -- moveWindowOneSpace('left')
+        moveOneSpace('left')
+      end
+    },
+  },
+  {
+    action = "Move to Space 2",
+    from = { mods = { "ctrl", "alt" }, key = "2" },
+    to = {
+      handler = function()
+        moveOneSpace('right')
+      end
+    },
+  },
+  {
+    action = "Move to Space 3",
+    from = { mods = { "ctrl", "alt" }, key = "3" },
+    to = {
+      handler = function()
+        moveOneSpace('left')
+      end
+    },
+  },
+  {
+    action = "Move to Space Left",
+    from = { mods = { "cmd", "ctrl" }, key = "left" },
+    to = {
+      handler = function()
         moveOneSpace('left')
       end
     },
   },
   {
     action = "Move to Space Right",
-    from = { mods = { "ctrl", "alt" }, key = "right" },
+    from = { mods = { "cmd", "ctrl" }, key = "right" },
     to = {
       handler = function ()
         -- moveWindowOneSpace('right')
