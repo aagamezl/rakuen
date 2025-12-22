@@ -17,9 +17,6 @@ local spaces = require('spaces/spaces')
 local textCursorMovement = require('keybindings/text-cursor-movement')
 local textSelection = require('keybindings/text-selection')
 
--- Initialize Window module
--- windows.init()
-
 -- Initialize Keybindings
 local keybindings = mergeObjects(
   applicationManagement,

@@ -90,26 +90,17 @@ local keybindings = {
     from = { mods = { "ctrl" }, key = "u" },
     to = { mods = { "cmd" }, key = "u" },
     condition = function()
-      if modal then
+      if modal == true then
         print("ctrl + k ctrl+u pressed")
 
         return false
       end
 
+      print("normal mode - allowing ctrl+u to pass through")
+
       return true
     end,
   },
-  {
-    action = "Save",
-    from = { mods = { "ctrl" }, key = "s" },
-    to = { mods = { "cmd" }, key = "s" },
-  },
-  {
-    action = "Print",
-    from = { mods = { "ctrl" }, key = "p" },
-    to = { mods = { "cmd" }, key = "p" },
-  },
-
   {
     -- This modal is used to allow the `ctrl + k ctrl + u` and similar to work
     -- in VS Code based Editors
@@ -130,6 +121,16 @@ local keybindings = {
       return false
     end,
   },
+  {
+    action = "Save",
+    from = { mods = { "ctrl" }, key = "s" },
+    to = { mods = { "cmd" }, key = "s" },
+  },
+  {
+    action = "Print",
+    from = { mods = { "ctrl" }, key = "p" },
+    to = { mods = { "cmd" }, key = "p" },
+  }
 }
 
 return keybindings

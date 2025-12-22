@@ -15,18 +15,24 @@ local function modsMatch(eventFlags, mods)
   -- print("Mods: " .. hs.inspect(mods))
   -- print("eventFlags containing: " .. hs.inspect(eventFlags:contain(mods)))
 
+  print("modsMatch checking if eventFlags contain mods")
+  print("eventFlags: " .. hs.inspect(eventFlags))
+  print("mods: " .. hs.inspect(mods))
+
   if not eventFlags:contain(mods) then
-    -- print("Event Flags do not match")
+    print("Event Flags do not match")
     return false
   end
 
-  local allMods = { "cmd", "alt", "shift", "ctrl" }
+  local allMods = { "cmd", "alt", "shift", "ctrl"--[[ , "fn" ]] }
   for _, m in ipairs(allMods) do
     local required = false
 
     for _, req in ipairs(mods) do
       if req == m then
         required = true
+
+        print("Found required mod: " .. m)
         break
       end
     end
@@ -56,10 +62,10 @@ local function attachEvents(keybindings)
       key = hs.keycodes.map[event:getKeyCode()]
     end
 
-    -- local flags = event:getFlags()
-    -- print("flags: " .. hs.inspect(flags))
-    -- print("keyCode: " .. keyCode)
-    -- print("key: " .. key)
+    local flags = event:getFlags()
+    print("flags: " .. hs.inspect(flags))
+    print("keyCode: " .. keyCode)
+    print("key: " .. key)
 
     if not key then
       return false

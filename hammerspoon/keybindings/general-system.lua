@@ -31,13 +31,24 @@ local keybindings = {
   },
   {
     action = "Rename Object",
-    from = { mods = { }, key = "f2" },
-    to = { mods = { }, key = "return" },
+    from = { mods = {}, key = "f2" },
+    to = { mods = {}, key = "return" },
   },
   {
     action = "Show Hidden Files",
     from = { mods = { "cmd" }, key = "h" },
     to = { mods = { "cmd", "shift" }, key = "." },
+  },
+  {
+    action = "Reload Hammerspoon Config",
+    from = { mods = { "cmd", "ctrl" }, key = "r" },
+    to = {
+      handler = function()
+        hs.alert.show("Config loaded")
+
+        hs.reload()
+      end
+    },
   },
 }
 
