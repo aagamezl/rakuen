@@ -125,6 +125,13 @@ local keybindings = {
     action = "Save",
     from = { mods = { "ctrl" }, key = "s" },
     to = { mods = { "cmd" }, key = "s" },
+    except = {
+      "com.apple.Terminal",
+      "com.googlecode.iterm2",
+      "co.realize.kitty",
+      "com.exafunction.windsurf",
+      "com.microsoft.VSCode",
+    },
   },
   {
     action = "Print",
