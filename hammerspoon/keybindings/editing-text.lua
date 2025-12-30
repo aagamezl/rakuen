@@ -41,6 +41,18 @@ local keybindings = {
     to = { mods = { "cmd" }, key = "v" },
   },
   {
+    action = "Paste in Terminal",
+    from = { mods = { "ctrl", "shift" }, key = "v" },
+    to = { mods = { "cmd" }, key = "v" },
+    only = {
+      "com.apple.Terminal",
+      "com.googlecode.iterm2",
+      "com.github.wez.wezterm",
+      "org.alacritty",
+      "net.kovidgoyal.kitty",
+    },
+  },
+  {
     action = "Cut",
     from = { mods = { "ctrl" }, key = "x" },
     to = { mods = { "cmd" }, key = "x" },
@@ -131,6 +143,7 @@ local keybindings = {
       "co.realize.kitty",
       "com.exafunction.windsurf",
       "com.microsoft.VSCode",
+      "com.todesktop.230313mzl4w4u92"
     },
   },
   {

@@ -26,6 +26,8 @@ local DEFAULT_M_CWAIT_TIME = 0.3
 
 spaceIndicator.init()
 
+--- Draw a debug point on screen
+--- @param point hs.geometry.point
 local function drawDebugPoint(point)
   local canvas = hs.canvas.new({
     x = point.x - 5,
@@ -45,6 +47,11 @@ local function drawDebugPoint(point)
   hs.timer.doAfter(1, function() canvas:delete() end)
 end
 
+
+--- Find an AX child element by role
+--- @param element hs.axuielement
+--- @param role string
+--- @return hs.axuielement|nil
 local function findAXChildByRole(element, role)
   local children = element.AXChildren
   if not children then return nil end
@@ -58,6 +65,10 @@ local function findAXChildByRole(element, role)
   return nil
 end
 
+
+--- Get the title bar point for a window
+--- @param win hs.window
+--- @return hs.geometry.point|nil
 local function getTitleBarPoint(win)
   local app = win:application()
   if not app then return nil end
@@ -131,6 +142,7 @@ end
 
 --- Move focused window to another space using real mouse events
 --- @param direction string  -- "left", "right"
+--- @param debug boolean  -- whether to show debug information
 local function moveWindowToSpace(direction, debug)
   local win = window.focusedWindow()
   if not win then return end
