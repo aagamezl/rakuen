@@ -1,3 +1,5 @@
+local logger = require('utils/logger')
+
 local nonStandardKeyCodes = {
   [160] = "f3",
   [129] = "f4",
@@ -6,25 +8,22 @@ local nonStandardKeyCodes = {
 }
 
 local function modsMatch(eventFlags, mods)
-  -- if not mods or empty return true (no modifiers, match only key)
-  if not mods or #mods == 0 then
-    return true
-  end
-
   -- print("Event Flags: " .. hs.inspect(eventFlags))
   -- print("Mods: " .. hs.inspect(mods))
   -- print("eventFlags containing: " .. hs.inspect(eventFlags:contain(mods)))
 
-  -- print("modsMatch checking if eventFlags contain mods")
-  -- print("eventFlags: " .. hs.inspect(eventFlags))
-  -- print("mods: " .. hs.inspect(mods))
+  -- if not mods or empty return true (no modifiers, match only key)
+  if not mods or #mods == 0 then
+    print("No modifiers, matching only key")
+    return true
+  end
 
   if not eventFlags:contain(mods) then
-    -- print("Event Flags do not match")
+    print("Event Flags do not match")
     return false
   end
 
-  local allMods = { "cmd", "alt", "shift", "ctrl"--[[ , "fn" ]] }
+  local allMods = { "cmd", "alt", "shift", "ctrl" --[[ , "fn" ]] }
   for _, m in ipairs(allMods) do
     local required = false
 
@@ -49,12 +48,16 @@ end
 
 local function attachEvents(keybindings)
   -- local tap = hs.eventtap.new({ hs.eventtap.event.types.keyDown }, function(event)
-  _G.tap = hs.eventtap.new({ hs.eventtap.event.types.keyDown }, function(event)
+  _G.tap = hs.eventtap.new({
+    hs.eventtap.event.types.keyDown,
+    hs.eventtap.event.types.flagsChanged,
+  }, function(event)
     -- print("event: " .. hs.inspect(hs.eventtap.event.types))
     -- print("event type: " .. event:getType())
 
     local key = ""
     local keyCode = event:getKeyCode()
+
     if nonStandardKeyCodes[keyCode] then
       print("Found non-standard key code: " .. keyCode)
       key = nonStandardKeyCodes[keyCode]
@@ -63,23 +66,33 @@ local function attachEvents(keybindings)
     end
 
     local flags = event:getFlags()
-    -- print("flags: " .. hs.inspect(flags))
-    -- print("keyCode: " .. keyCode)
-    -- print("key: " .. key)
 
-    if not key then
-      return false
-    end
+    -- print("key: " .. key)
+    -- print("keyCode: " .. keyCode)
+    -- print("flags: " .. hs.inspect(flags))
+
+    -- logger.info("event: " .. hs.inspect(flags))
+
+    -- if not key then
+    --   return false
+    -- end
 
     -- print("key: " .. key)
 
     for _, map in ipairs(keybindings) do
-      -- print("map.from.key: " .. map.from.key)
+      -- print("key: " .. key)
+      -- print("keyCode: " .. keyCode)
+      -- if key == "cmd" then
+      --   print("key, map.from.key: " .. hs.inspect(key) .. ", " .. hs.inspect(map.from.key))
+      -- end
+
       if key == map.from.key and modsMatch(event:getFlags(), map.from.mods) then
         -- If a condition function is provided, check it, if condition function
         -- returns false, do not remap
         if map.condition then
           local metCondition, result = pcall(map.condition)
+
+          logger.info("Condition met: " .. hs.inspect(result), "attachEvents")
 
           if not metCondition or not result then
             return false
@@ -87,7 +100,7 @@ local function attachEvents(keybindings)
         end
 
         if map.to.handler then
-          print("Handler: " .. map.action)
+          -- print("Handler: " .. map.action)
           map.to.handler()
 
           return true
@@ -134,9 +147,9 @@ local function attachEvents(keybindings)
         if map.to.app then
           print(
             string.format(
-              "Remap: %s + %s to open app '%s'",
+              "Remap app: %s + %s to open app '%s'",
               table.concat(map.from.mods, ", "),
-              map.from.key, map.to.appk
+              map.from.key, map.to.app
             )
           )
 
@@ -148,7 +161,7 @@ local function attachEvents(keybindings)
 
           print(
             string.format(
-              "Remap: %s => [%s + %s] to [%s + %s]",
+              "Remap key: %s => [%s + %s] to [%s + %s]",
               map.action,
               table.concat(map.from.mods, ", "), map.from.key,
               table.concat(map.to.mods, ", "), map.to.key

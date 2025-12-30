@@ -185,4 +185,4 @@ find "$SOURCE_DIR" -type f | while read -r src_file; do
 done
 
 echo "---"
-echo "✅ Hammerspoon files installed successfully (copy mode)!"
+echo "✅ ${CUSTOM_SOURCE#./} files installed successfully (copy mode)!"

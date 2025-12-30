@@ -4,11 +4,11 @@ local keybindings = {
     from = { mods = { "ctrl" }, key = "l" },
     to = { mods = { "cmd" }, key = "l" },
   },
-  {
-    action = "Open Task Manager",
-    from = { mods = { "ctrl", "shift" }, key = "l" },
-    to = { mods = { "cmd", "shift" }, key = "l" },
-  },
+  -- {
+  --   action = "Open Task Manager",
+  --   from = { mods = { "ctrl", "shift" }, key = "forwarddelete" },
+  --   to = { mods = { "cmd", "alt" }, key = "escape" },
+  -- },
   {
     action = "Open Activity Monitor",
     from = { mods = { "ctrl", "shift" }, key = "escape" },
@@ -16,7 +16,7 @@ local keybindings = {
   },
   {
     action = "Show Desktop",
-    from = { mods = { "cmd" }, key = "d" },
+    from = { mods = { "cmd", "ctrl" }, key = "d" },
     to = { mods = { "fn" }, key = "f11" },
   },
   {
@@ -48,8 +48,8 @@ local keybindings = {
 
         hs.reload()
       end
-    },
-  },
+    }
+  }
 }
 
 return keybindings
