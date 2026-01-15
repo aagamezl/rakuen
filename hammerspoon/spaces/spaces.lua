@@ -3,28 +3,18 @@ local mouse = hs.mouse
 local window = hs.window
 local timer = hs.timer
 local geometry = hs.geometry
-local spaces = hs.spaces
+-- local spaces = hs.spaces
 local ax = hs.axuielement
 
 local logger = require('utils/logger')
 local spaceIndicator = require('spaces/space-indicator')
 local utils = require('utils/general')
 
--- local log = hs.logger.new('spaces', 'debug')
 local HORIZONTAL_OFFSET = 30
 local VERTICAL_OFFSET = 6
-local DEFAULT_M_CWAIT_TIME = 0.3
+-- local DEFAULT_M_CWAIT_TIME = 0.3
 
--- hs.spaces.setDefaultMCwaitTime(DEFAULT_M_CWAIT_TIME)
-
--- local watcher = hs.spaces.watcher.new(function()
---   logger.info("Space changed", "spaces")
---   spaces.insertRemoveSpaceCallback()
--- end)
-
--- watcher:start()
-
-spaceIndicator.init()
+-- spaceIndicator.init()
 
 --- Draw a debug point on screen
 --- @param point hs.geometry.point
@@ -100,10 +90,7 @@ local function getTitleBarPoint(win)
       end
 
       local f = titleBar.AXFrame
-      -- return geometry.point(
-      --   f.x + f.w / 2,
-      --   f.y + f.h / 2
-      -- )
+
       return geometry.point(
         f.x + HORIZONTAL_OFFSET,
         f.y + VERTICAL_OFFSET
@@ -131,11 +118,13 @@ local function moveOneSpace(direction)
   local screenSpaces = hs.spaces.spacesForScreen(hs.mouse.getCurrentScreen())
 
   if #screenSpaces > 1 then
+    hs.eventtap.event.newKeyEvent(hs.keycodes.map.cmd, true):post()
     hs.eventtap.event.newKeyEvent(hs.keycodes.map.ctrl, true):post()
 
     hs.eventtap.event.newKeyEvent(direction, true):post()
     hs.eventtap.event.newKeyEvent(direction, false):post()
 
+    hs.eventtap.event.newKeyEvent(hs.keycodes.map.cmd, false):post()
     hs.eventtap.event.newKeyEvent(hs.keycodes.map.ctrl, false):post()
   end
 end
@@ -180,12 +169,13 @@ local function moveWindowToSpace(direction, debug)
   timer.usleep(150000)
 
   -- Switch Space (must be enabled in System Settings)
-  -- local direction = spaceID < spaces.space() and 'left' or 'right'
+  hs.eventtap.event.newKeyEvent(hs.keycodes.map.cmd, true):post()
   hs.eventtap.event.newKeyEvent(hs.keycodes.map.ctrl, true):post()
 
   hs.eventtap.event.newKeyEvent(direction, true):post()
   hs.eventtap.event.newKeyEvent(direction, false):post()
 
+  hs.eventtap.event.newKeyEvent(hs.keycodes.map.cmd, false):post()
   hs.eventtap.event.newKeyEvent(hs.keycodes.map.ctrl, false):post()
 
   hs.timer.doAfter(0.2, function()
@@ -239,129 +229,132 @@ local function removeSpace()
 end
 
 local keybindings = {
-  {
-    action = "Move to Space 1",
-    from = { mods = { "ctrl", "cmd" }, key = "1" },
-    to = {
-      handler = function()
-        moveToSpace(1)
-      end
+  name = "Spaces Management",
+  rules = {
+    {
+      action = "Move to Space 1",
+      from = { mods = { "ctrl", "cmd" }, key = "1" },
+      to = {
+        handler = function()
+          moveToSpace(1)
+        end
+      },
     },
-  },
-  {
-    action = "Move to Space 2",
-    from = { mods = { "ctrl", "cmd" }, key = "2" },
-    to = {
-      handler = function()
-        moveToSpace(2)
-      end
+    {
+      action = "Move to Space 2",
+      from = { mods = { "ctrl", "cmd" }, key = "2" },
+      to = {
+        handler = function()
+          moveToSpace(2)
+        end
+      },
     },
-  },
-  {
-    action = "Move to Space 3",
-    from = { mods = { "ctrl", "cmd" }, key = "3" },
-    to = {
-      handler = function()
-        moveToSpace(3)
-      end
+    {
+      action = "Move to Space 3",
+      from = { mods = { "ctrl", "cmd" }, key = "3" },
+      to = {
+        handler = function()
+          moveToSpace(3)
+        end
+      },
     },
-  },
-  {
-    action = "Move to Space 4",
-    from = { mods = { "ctrl", "cmd" }, key = "4" },
-    to = {
-      handler = function()
-        moveToSpace(4)
-      end
+    {
+      action = "Move to Space 4",
+      from = { mods = { "ctrl", "cmd" }, key = "4" },
+      to = {
+        handler = function()
+          moveToSpace(4)
+        end
+      },
     },
-  },
-  {
-    action = "Move to Space 5",
-    from = { mods = { "ctrl", "cmd" }, key = "5" },
-    to = {
-      handler = function()
-        moveToSpace(5)
-      end
+    {
+      action = "Move to Space 5",
+      from = { mods = { "ctrl", "cmd" }, key = "5" },
+      to = {
+        handler = function()
+          moveToSpace(5)
+        end
+      },
     },
-  },
-  {
-    action = "Move to Space 6",
-    from = { mods = { "ctrl", "cmd" }, key = "6" },
-    to = {
-      handler = function()
-        moveToSpace(6)
-      end
+    {
+      action = "Move to Space 6",
+      from = { mods = { "ctrl", "cmd" }, key = "6" },
+      to = {
+        handler = function()
+          moveToSpace(6)
+        end
+      },
     },
-  },
-  {
-    action = "Move to Space 7",
-    from = { mods = { "ctrl", "cmd" }, key = "7" },
-    to = {
-      handler = function()
-        moveToSpace(7)
-      end
+    {
+      action = "Move to Space 7",
+      from = { mods = { "ctrl", "cmd" }, key = "7" },
+      to = {
+        handler = function()
+          moveToSpace(7)
+        end
+      },
     },
-  },
-  {
-    action = "Move to Space 8",
-    from = { mods = { "ctrl", "cmd" }, key = "8" },
-    to = {
-      handler = function()
-        moveToSpace(8)
-      end
+    {
+      action = "Move to Space 8",
+      from = { mods = { "ctrl", "cmd" }, key = "8" },
+      to = {
+        handler = function()
+          moveToSpace(8)
+        end
+      },
     },
-  },
-  {
-    action = "Move to Space 9",
-    from = { mods = { "ctrl", "cmd" }, key = "9" },
-    to = {
-      handler = function()
-        moveToSpace(9)
-      end
+    {
+      action = "Move to Space 9",
+      from = { mods = { "ctrl", "cmd" }, key = "9" },
+      to = {
+        handler = function()
+          moveToSpace(9)
+        end
+      },
     },
-  },
-  {
-    action = "Insert Space",
-    from = { mods = { "cmd", "ctrl" }, key = "up" },
-    to = {
-      handler = function()
-        logger.info("Inserting space", "spaces")
+    {
+      action = "Insert Space",
+      from = { mods = { "ctrl", "cmd" }, key = "up" },
+      to = {
+        handler = function()
+          logger.info("Inserting space", "spaces")
 
-        insertSpace()
-      end
+          insertSpace()
+        end
+      },
     },
-  },
-  {
-    action = "Delete Space",
-    from = { mods = { "cmd", "ctrl" }, key = "down" },
-    to = {
-      handler = function()
-        logger.info("Deleting space", "spaces")
+    {
+      action = "Delete Space",
+      from = { mods = { "ctrl", "cmd" }, key = "down" },
+      to = {
+        handler = function()
+          logger.info("Deleting space", "spaces")
 
-        removeSpace()
-      end
+          removeSpace()
+        end
+      },
     },
-  },
-  {
-    action = "Move window to Space Left",
-    from = { mods = { "cmd", "ctrl", "alt" }, key = "left" },
-    to = {
-      handler = function()
-        logger.log("Move window to Space Left", "spaces")
+    {
+      action = "Move window to Space Left",
+      from = { mods = { "ctrl", "cmd" }, key = "pageup" },
+      to = {
+        handler = function()
+          logger.log("Move window to Space Left", "spaces")
 
-        moveWindowToSpace('left', true)
-      end
+          moveWindowToSpace('left', true)
+        end
+      },
     },
-  },
-  {
-    action = "Move window to Space Right",
-    from = { mods = { "cmd", "ctrl", "alt" }, key = "right" },
-    to = {
-      handler = function()
-        logger.log("Move window to Space Right", "spaces")
+    {
+      action = "Move window to Space Right",
+      from = { mods = { "ctrl", "cmd" }, key = "pagedown" },
+      to = {
+        handler = function()
+          logger.log("Move window to Space Right", "spaces")
 
-        moveWindowToSpace('right', true)
-      end
+          moveWindowToSpace('right', true)
+        end
+      },
     },
   },
 }

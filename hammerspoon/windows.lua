@@ -1,3 +1,5 @@
+local logger = require("utils/logger")
+
 local activeWindowsStore = {}
 
 local eventsToMonitor = {
@@ -26,7 +28,7 @@ local function storeWindowFrame(focusedWin, windows, movingAction)
   local windowId = focusedWin and focusedWin:id()
 
   if not windowId then
-    print("No window ID found in storeWindowFrame")
+    logger.error("No window ID found in storeWindowFrame", "windows")
 
     return windows
   end
@@ -65,7 +67,7 @@ local function moveWindowToPreviousScreen()
   window:moveToScreen(prevScreen)
 end
 
-local function snappingWindows(window, direction)
+local function snappingWindow(window, direction)
   local windowId = window:id()
   local windowStore = activeWindowsStore[windowId]
 
@@ -86,7 +88,7 @@ local function snapLeft()
     return
   end
 
-  snappingWindows(window, "left")
+  snappingWindow(window, "left")
 
   local screen = window:screen():frame()
 
@@ -111,7 +113,7 @@ local function snapRight()
     return
   end
 
-  snappingWindows(window, "right")
+  snappingWindow(window, "right")
 
   local screen = window:screen():frame()
 
@@ -133,7 +135,7 @@ local function snapTop()
     return
   end
 
-  snappingWindows(window, "top")
+  snappingWindow(window, "top")
 
   local screen = window:screen():frame()
 
@@ -155,7 +157,7 @@ local function snapBottom()
     return
   end
 
-  snappingWindows(window, "bottom")
+  snappingWindow(window, "bottom")
 
   local screen = window:screen():frame()
 
@@ -176,9 +178,10 @@ local function centerWindow()
     return
   end
 
-  storeWindowFrame(window, activeWindowsStore, "centering")
+  snappingWindow(window, "centering")
 
-  print("Centering window")
+  logger.info("Centering window", "windows")
+
   window:centerOnScreen(window:screen(), true)
 end
 
@@ -186,11 +189,9 @@ local function maximizeWindow()
   local window = getFocusedWindow()
 
   if not window then
-    print("No window found in maximizeWindow")
+    logger.error("No window found in maximizeWindow", "windows")
     return
   end
-
-  storeWindowFrame(window, activeWindowsStore, "maximizing")
 
   window:maximize(0)
 end
@@ -203,29 +204,30 @@ local function restoreSnapped()
   end
 
   local windowId = window:id()
-  local storedFrame = activeWindowsStore[windowId] and activeWindowsStore[windowId].frame
 
   if not windowId then
-    print("No window ID found")
+    logger.error("No window ID found", "windows")
     return
   end
+
+  local storedFrame = activeWindowsStore[windowId] and activeWindowsStore[windowId].frame
 
   if storedFrame then
     window:setFrame(storedFrame)
 
-    print("Restored window to original size")
+    logger.info("Restored window to original size", "windows")
   else
     window:setFrame(frame)
 
-    print("No stored frame found, keeping current frame")
+    logger.info("No stored frame found, keeping current frame", "windows")
   end
 end
 
 hs.window.filter.default:subscribe(eventsToMonitor, function(window, appName, event)
-  print("Window event: " .. hs.inspect(event))
+  logger.info("Window event: " .. hs.inspect(event), "windows")
 
   if event == hs.window.filter.windowDestroyed then
-    print("Window destroyed: " .. hs.inspect(window:id()))
+    logger.info("Window destroyed: " .. hs.inspect(window:id()), "windows")
 
     activeWindowsStore[window:id()] = nil
 
@@ -233,7 +235,7 @@ hs.window.filter.default:subscribe(eventsToMonitor, function(window, appName, ev
   end
 
   if event == hs.window.filter.windowCreated then
-    print("Window created: " .. hs.inspect(window:id()))
+    logger.info("Window created: " .. hs.inspect(window:id()), "windows")
 
     storeWindowFrame(window, activeWindowsStore)
 
@@ -245,7 +247,7 @@ hs.window.filter.default:subscribe(eventsToMonitor, function(window, appName, ev
     local windowStore = activeWindowsStore[windowId]
 
     if (windowStore and windowStore.movingAction) then
-      print("Window Store: " .. hs.inspect(windowStore))
+      logger.info("Window Store: " .. hs.inspect(windowStore), "windows")
 
       windowStore.movingAction = nil
       activeWindowsStore[windowId] = windowStore
@@ -258,68 +260,71 @@ hs.window.filter.default:subscribe(eventsToMonitor, function(window, appName, ev
 end)
 
 local keybindings = {
-  {
-    action = "Snap window to top",
-    from = { mods = { "cmd", "shift", "fn" }, key = "up" },
-    to = {
-      handler = snapTop
+  name = "Windows Management",
+  rules = {
+    {
+      action = "Snap window to top",
+      from = { mods = { "cmd" }, key = "up" },
+      to = {
+        handler = snapTop
+      },
     },
-  },
-  {
-    action = "Snap window to bottom",
-    from = { mods = { "cmd", "shift", "fn" }, key = "down" },
-    to = {
-      handler = snapBottom
+    {
+      action = "Snap window to bottom",
+      from = { mods = { "cmd" }, key = "down" },
+      to = {
+        handler = snapBottom
+      },
     },
-  },
-  {
-    action = "Snap window to left",
-    from = { mods = { "cmd", "shift", "fn" }, key = "left" },
-    to = {
-      handler = snapLeft
+    {
+      action = "Snap window to left",
+      from = { mods = { "cmd" }, key = "left" },
+      to = {
+        handler = snapLeft
+      },
     },
-  },
-  {
-    action = "Snap window to right",
-    from = { mods = { "cmd", "shift", "fn" }, key = "right" },
-    to = {
-      handler = snapRight
+    {
+      action = "Snap window to right",
+      from = { mods = { "cmd" }, key = "right" },
+      to = {
+        handler = snapRight
+      },
     },
-  },
-  {
-    action = "Center window",
-    from = { mods = { "cmd", "shift" }, key = "c" },
-    to = {
-      handler = centerWindow
+    {
+      action = "Center window",
+      from = { mods = { "cmd", "alt" }, key = "c" },
+      to = {
+        handler = centerWindow
+      },
     },
-  },
-  {
-    action = "Restore snapped window",
-    from = { mods = { "cmd", "alt" }, key = "down" },
-    to = {
-      handler = restoreSnapped
+    {
+      action = "Move window to previous screen",
+      from = { mods = { "cmd", "alt" }, key = "left" },
+      to = {
+        handler = moveWindowToPreviousScreen
+      }
     },
-  },
-  {
-    action = "Maximize window",
-    from = { mods = { "cmd", "alt" }, key = "up" },
-    to = {
-      handler = maximizeWindow
+    {
+      action = "Move window to next screen",
+      from = { mods = { "cmd", "alt" }, key = "right" },
+      to = {
+        handler = moveWindowToNextScreen
+      },
     },
-  },
-  {
-    action = "Move window to next screen",
-    from = { mods = { "cmd", "alt" }, key = "right" },
-    to = {
-      handler = moveWindowToNextScreen
+    {
+      action = "Restore snapped window",
+      from = { mods = { "cmd", "alt" }, key = "down" },
+      to = {
+        handler = restoreSnapped
+      },
     },
-  },
-  {
-    action = "Move window to previous screen",
-    from = { mods = { "cmd", "alt" }, key = "left" },
-    to = {
-      handler = moveWindowToPreviousScreen
-    }
+    {
+      action = "Maximize window",
+      from = { mods = { "cmd", "alt" }, key = "up" },
+      to = {
+        handler = maximizeWindow
+      },
+    },
   }
 }
 
