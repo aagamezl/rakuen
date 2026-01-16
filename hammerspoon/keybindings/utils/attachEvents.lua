@@ -8,6 +8,10 @@ local nonStandardKeyCodes = {
   [161] = "f6"
 }
 
+--- Check if the given event flags match the given modifiers
+--- @param eventFlags table The event flags to check
+--- @param mods table The modifiers to check
+--- @return boolean True if the event flags match the modifiers, false otherwise
 local function modsMatch(eventFlags, mods)
   -- print("Event Flags: " .. hs.inspect(eventFlags))
   -- print("Mods: " .. hs.inspect(mods))
@@ -63,16 +67,25 @@ local function fireSyntheticKey(key, mods, tag)
   evUp:post()
 end
 
+--- Check if the given event is a synthetic event
+--- @param event hs.eventtap.event The event to check
+--- @param tag number The tag to use to define synthetic events
 local function isSyntheticEvent(event, tag)
   local property = event:getProperty(hs.eventtap.event.properties.keyboardEventAutorepeat)
 
   return property == tag
 end
 
+--- Reset the synthetic event tag for the given event
+--- @param event hs.eventtap.event The event to reset
 local function resetSyntheticEvent(event)
   event:setProperty(hs.eventtap.event.properties.keyboardEventAutorepeat, 0)
 end
 
+--- Check if the given shortcut is forbidden for the given app
+--- @param shortcut table The shortcut to check
+--- @param bundleId string The bundle ID of the application
+--- @return boolean True if the shortcut is forbidden for the app, false otherwise
 local function isAppForbidden(shortcut, bundleId)
   if not shortcut.except then
     return nil
@@ -87,6 +100,10 @@ local function isAppForbidden(shortcut, bundleId)
   return false
 end
 
+--- Check if the given shortcut is allowed for the given app
+--- @param shortcut table The shortcut to check
+--- @param bundleId string The bundle ID of the application
+--- @return boolean True if the shortcut is allowed for the app, false otherwise
 local function isAppAllowed(shortcut, bundleId)
   if not shortcut.only then
     return nil
@@ -101,22 +118,38 @@ local function isAppAllowed(shortcut, bundleId)
   return false
 end
 
-local function isShortcutMatching(key, keybinding, eventFlags)
-  return key == keybinding.from.key and modsMatch(eventFlags, keybinding.from.mods)
+--- Check if the given key and event flags match the given shortcut
+--- @param key string The key to check
+--- @param shortcut table The shortcut to check
+--- @param eventFlags table The event flags to check
+--- @param bundleId string The bundle ID of the application
+--- @return boolean True if the key and event flags match the shortcut, false otherwise
+local function isShortcutMatching(key, shortcut, eventFlags, bundleId)
+  return key == shortcut.from.key
+    and modsMatch(eventFlags, shortcut.from.mods)
+    and (not shortcut.only or hs.fnutils.contains(shortcut.only, bundleId))
+    and (not shortcut.except or not hs.fnutils.contains(shortcut.except, bundleId))
 end
 
-local function findShortcut(keybindings, key, eventFlags)
-  for _, keybinding in ipairs(keybindings) do
-    if isShortcutMatching(key, keybinding, eventFlags) then
-      return keybinding
-    end
-  end
+--- Find the given keybinding in the given keybindings
+--- @param keybindings table The keybindings to search in
+--- @param key string The key to search for
+--- @param eventFlags table The event flags to search for
+--- @return table|nil The keybinding if found, nil otherwise
+-- local function findShortcut(keybindings, key, eventFlags)
+--   for _, keybinding in ipairs(keybindings) do
+--     if isShortcutMatching(key, keybinding, eventFlags) then
+--       return keybinding
+--     end
+--   end
 
-  return nil
-end
+--   return nil
+-- end
 
+--- Attach the given keybindings to the event tap
+--- @param keybindings table The keybindings to attach
+--- @return hs.eventtap The event tap
 local function attachEvents(keybindings)
-  -- local tap = hs.eventtap.new({ hs.eventtap.event.types.keyDown }, function(event)
   _G.tap = hs.eventtap.new({
     hs.eventtap.event.types.keyDown,
     hs.eventtap.event.types.flagsChanged,
@@ -127,116 +160,134 @@ local function attachEvents(keybindings)
     local keyCode = event:getKeyCode()
     local eventFlags = event:getFlags()
 
-    -- logger.log("key: " .. hs.inspect(key), "attachEvents")
-    -- logger.log("keyCode: " .. keyCode, "attachEvents")
-    -- logger.log("eventFlags: " .. hs.inspect(eventFlags), "attachEvents")
+    logger.log("key: " .. hs.inspect(key), "attachEvents")
+    logger.log("keyCode: " .. keyCode, "attachEvents")
+    logger.log("eventFlags: " .. hs.inspect(eventFlags), "attachEvents")
 
     if isSyntheticEvent(event, SYNTHETIC_EVENT_TAG) then
       logger.info("Event is synthetic, allowing original action", "attachEvents")
+
       resetSyntheticEvent(event)
-      return false
-    end
-
-    local shortcut = findShortcut(keybindings, key, eventFlags)
-
-    if not shortcut then
-      logger.info("Shortcut not found", "attachEvents")
 
       return false
     end
 
-    if shortcut.condition then
-      local metCondition = shortcut.condition()
+    -- local shortcut = findShortcut(keybindings, key, eventFlags)
 
-      if not metCondition then
-        return false
-      end
-    end
+    -- if not shortcut then
+    --   -- logger.info("Shortcut not found", "attachEvents")
 
-    if shortcut.to.handler then
-      shortcut.to.handler()
-
-      return true
-    end
-
-    -- If an except list is provided, check if the current app is in the list
-    -- if shortcut.except then
-    --   local app = hs.application.frontmostApplication()
-    --   local bundleId = app and app:bundleID() or ""
-
-    --   -- logger.log("Current app bundle ID: " .. bundleId, "attachEvents")
-
-    --   for _, exceptApp in ipairs(shortcut.except) do
-    --     if bundleId == exceptApp then
-    --       logger.warning("App in except list, skipping remap. App: " .. bundleId, "attachEvents")
-
-    --       return false
-    --     end
-    --   end
+    --   return false
     -- end
 
-    local bundleId = hs.application.frontmostApplication():bundleID() or ""
-    local isForbidden = isAppForbidden(shortcut, bundleId)
-    if isForbidden == true then
-      logger.warning("App forbidden, skipping remap", "attachEvents")
+    for _, shortcut in ipairs(keybindings) do
+      local bundleId = hs.application.frontmostApplication():bundleID() or ""
 
-      return false
-    end
+      local isMatched = isShortcutMatching(key, shortcut, eventFlags, bundleId)
 
-    -- If an only list is provided, check if the current app is in the list
-    -- if shortcut.only then
-    --   local app = hs.application.frontmostApplication()
-    --   local bundleId = app and app:bundleID() or ""
 
-    --   -- logger.log("Current app bundle ID: " .. bundleId, "attachEvents")
-
-    --   local allowed = false
-    --   for _, allowedApp in ipairs(shortcut.only) do
-    --     if bundleId == allowedApp then
-    --       allowed = true
-    --       break
-    --     end
-    --   end
-
-    --   if not allowed then
-    --     logger.warning("App not in allowed list, skipping remap", "attachEvents")
-
-    --     return false
-    --   end
-    -- end
-
-    local isAllowed = isAppAllowed(shortcut, bundleId)
-    if isAllowed == false then
-      logger.warning("App not in allowed list, skipping remap", "attachEvents")
-
-      return false
-    end
-
-    -- Block original
-    event:setFlags({})
-
-    if shortcut.to.app then
-      hs.application.launchOrFocus(shortcut.to.app)
-    else
-      if not shortcut.to.key then
-        return false
+      if not isMatched then
+        goto continue
       end
 
-      logger.info(
-        string.format(
-          "Remap key: %s => [%s + %s] to [%s + %s]",
-          shortcut.action,
-          table.concat(shortcut.from.mods, ", "), shortcut.from.key,
-          table.concat(shortcut.to.mods, ", "), shortcut.to.key
-        ), "attachEvents"
-      )
+      logger.log("isMatched: " .. tostring(isMatched), "attachEvents")
+      if shortcut.condition then
+        local metCondition = shortcut.condition()
 
-      -- hs.eventtap.keyStroke(map.to.mods, map.to.key, 0)
+        if not metCondition then
+          return false
+        end
+      end
 
-      fireSyntheticKey(shortcut.to.key, shortcut.to.mods, SYNTHETIC_EVENT_TAG)
-      -- hs.eventtap.keyStroke(shortcut.to.mods, shortcut.to.key, 0)
+      if shortcut.to.handler then
+        shortcut.to.handler()
 
-      return true
+        return true
+      end
+
+      -- If an except list is provided, check if the current app is in the list
+      -- if shortcut.except then
+      --   local app = hs.application.frontmostApplication()
+      --   local bundleId = app and app:bundleID() or ""
+
+      --   -- logger.log("Current app bundle ID: " .. bundleId, "attachEvents")
+
+      --   for _, exceptApp in ipairs(shortcut.except) do
+      --     if bundleId == exceptApp then
+      --       logger.warning("App in except list, skipping remap. App: " .. bundleId, "attachEvents")
+
+      --       return false
+      --     end
+      --   end
+      -- end
+
+
+      -- local isForbidden = isAppForbidden(shortcut, bundleId)
+      -- if isForbidden == true then
+      --   logger.warning("App forbidden, skipping remap", "attachEvents")
+
+      --   return false
+      -- end
+
+      -- If an only list is provided, check if the current app is in the list
+      -- if shortcut.only then
+      --   local app = hs.application.frontmostApplication()
+      --   local bundleId = app and app:bundleID() or ""
+
+      --   -- logger.log("Current app bundle ID: " .. bundleId, "attachEvents")
+
+      --   local allowed = false
+      --   for _, allowedApp in ipairs(shortcut.only) do
+      --     if bundleId == allowedApp then
+      --       allowed = true
+      --       break
+      --     end
+      --   end
+
+      --   if not allowed then
+      --     logger.warning("App not in allowed list, skipping remap", "attachEvents")
+
+      --     return false
+      --   end
+      -- end
+
+      -- local isAllowed = isAppAllowed(shortcut, bundleId)
+
+      -- logger.log(
+      -- "shortcut, bundleId: " .. hs.inspect(shortcut.only) .. ", " .. bundleId .. ", allowed: " .. tostring(isAllowed),
+      --   "attachEvents")
+
+      -- if isAllowed == false then
+      --   logger.warning("App " .. bundleId .. " not in allowed list, skipping remap", "attachEvents")
+
+      --   return false
+      -- end
+
+      -- Block original
+      event:setFlags({})
+
+      if shortcut.to.app then
+        hs.application.launchOrFocus(shortcut.to.app)
+      else
+        if not shortcut.to.key then
+          return false
+        end
+
+        logger.info(
+          string.format(
+            "Remap key: %s => [%s + %s] to [%s + %s]",
+            shortcut.action,
+            table.concat(shortcut.from.mods, ", "), shortcut.from.key,
+            table.concat(shortcut.to.mods, ", "), shortcut.to.key
+          ), "attachEvents"
+        )
+
+        fireSyntheticKey(shortcut.to.key, shortcut.to.mods, SYNTHETIC_EVENT_TAG)
+
+        return true
+      end
+
+      ::continue::
     end
   end)
 

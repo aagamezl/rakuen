@@ -1,2 +1,8 @@
-backup
+### macOS ###
+# General
 .DS_Store
+.AppleDouble
+.LSOverride
+
+### Generic ###
+backup

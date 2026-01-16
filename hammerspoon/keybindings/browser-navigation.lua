@@ -70,7 +70,7 @@ local keybindings = {
     },
     {
       action = "Go Back",
-      from = { mods = { "alt", "fn" }, key = "left" },
+      from = { mods = { "alt" }, key = "left" },
       to = { mods = { "cmd" }, key = "left" },
       only = {
         "com.google.Chrome",
@@ -80,17 +80,17 @@ local keybindings = {
       },
     },
     -- TODO: Add forward navigation
-    -- {
-    --   action = "Go Forward",
-    --   from = { mods = { "alt" }, key = "right" },
-    --   to = { mods = { "cmd" }, key = "right" },
-    --   only = {
-    --     "com.google.Chrome",
-    --     "com.apple.Safari",
-    --     "com.brave.Browser",
-    --     "org.mozilla.firefox"
-    --   },
-    -- },
+    {
+      action = "Go Forward",
+      from = { mods = { "alt" }, key = "right" },
+      to = { mods = { "cmd" }, key = "right" },
+      only = {
+        "com.google.Chrome",
+        "com.apple.Safari",
+        "com.brave.Browser",
+        "org.mozilla.firefox"
+      },
+    },
     {
       action = "Open Address Bar",
       from = { mods = { "ctrl" }, key = "l" },
@@ -128,6 +128,105 @@ local keybindings = {
       action = "Reopen Closed Tab",
       from = { mods = { "ctrl", "shift" }, key = "t" },
       to = { mods = { "cmd", "shift" }, key = "t" },
+      only = {
+        "com.google.Chrome",
+        "com.apple.Safari",
+        "com.brave.Browser",
+        "org.mozilla.firefox"
+      },
+    },
+    {
+      action = "Select Tab 1",
+      from = { mods = { "ctrl" }, key = "1" },
+      to = { mods = { "cmd" }, key = "1" },
+      only = {
+        "com.google.Chrome",
+        "com.apple.Safari",
+        "com.brave.Browser",
+        "org.mozilla.firefox"
+      },
+    },
+    {
+      action = "Select Tab 2",
+      from = { mods = { "ctrl" }, key = "2" },
+      to = { mods = { "cmd" }, key = "2" },
+      only = {
+        "com.google.Chrome",
+        "com.apple.Safari",
+        "com.brave.Browser",
+        "org.mozilla.firefox"
+      },
+    },
+    {
+      action = "Select Tab 3",
+      from = { mods = { "ctrl" }, key = "3" },
+      to = { mods = { "cmd" }, key = "3" },
+      only = {
+        "com.google.Chrome",
+        "com.apple.Safari",
+        "com.brave.Browser",
+        "org.mozilla.firefox"
+      },
+    },
+    {
+      action = "Select Tab 4",
+      from = { mods = { "ctrl" }, key = "4" },
+      to = { mods = { "cmd" }, key = "4" },
+      only = {
+        "com.google.Chrome",
+        "com.apple.Safari",
+        "com.brave.Browser",
+        "org.mozilla.firefox"
+      },
+    },
+    {
+      action = "Select Tab 5",
+      from = { mods = { "ctrl" }, key = "5" },
+      to = { mods = { "cmd" }, key = "5" },
+      only = {
+        "com.google.Chrome",
+        "com.apple.Safari",
+        "com.brave.Browser",
+        "org.mozilla.firefox"
+      },
+    },
+    {
+      action = "Select Tab 6",
+      from = { mods = { "ctrl" }, key = "6" },
+      to = { mods = { "cmd" }, key = "6" },
+      only = {
+        "com.google.Chrome",
+        "com.apple.Safari",
+        "com.brave.Browser",
+        "org.mozilla.firefox"
+      },
+    },
+    {
+      action = "Select Tab 7",
+      from = { mods = { "ctrl" }, key = "7" },
+      to = { mods = { "cmd" }, key = "7" },
+      only = {
+        "com.google.Chrome",
+        "com.apple.Safari",
+        "com.brave.Browser",
+        "org.mozilla.firefox"
+      },
+    },
+    {
+      action = "Select Tab 8",
+      from = { mods = { "ctrl" }, key = "8" },
+      to = { mods = { "cmd" }, key = "8" },
+      only = {
+        "com.google.Chrome",
+        "com.apple.Safari",
+        "com.brave.Browser",
+        "org.mozilla.firefox"
+      },
+    },
+    {
+      action = "Select Last Tab",
+      from = { mods = { "ctrl" }, key = "9" },
+      to = { mods = { "cmd" }, key = "9" },
       only = {
         "com.google.Chrome",
         "com.apple.Safari",
