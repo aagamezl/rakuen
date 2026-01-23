@@ -1,3 +1,8 @@
+local keyEventListener = require("keybindings/utils/key-event-listener")
+local logger = require("utils/logger")
+
+local SHUTDOWN_DELAY = 10
+
 local keybindings = {
   name = "General System",
   rules = {
@@ -46,22 +51,65 @@ local keybindings = {
       from = { mods = { "ctrl", "alt" }, key = "forwarddelete" },
       to = { mods = { "cmd", "shift" }, key = "q" },
     },
-    -- {
-    --   action = "Shutdown System",
-    --   from = { mods = { "ctrl", "alt" }, key = "s" },
-    --   to = { mods = { "ctrl", "alt" }, key = "q" },
-    -- },
     {
-      action = "Reload Hammerspoon Config",
+      action = "Shutdown System",
+      from = { mods = { "ctrl", "alt" }, key = "s" },
+      to = {
+        handler = function()
+          local result = hs.dialog.blockAlert(
+            "Shutting down...",
+            "The system will be shut down in " .. SHUTDOWN_DELAY .. " seconds",
+            "OK",
+            "Cancel",
+            "NSCriticalAlertStyle"
+          )
+
+          local timer = hs.timer.doAfter(SHUTDOWN_DELAY, function()
+            hs.caffeinate.shutdownSystem()
+          end)
+
+          if result == "OK" then
+            hs.caffeinate.shutdownSystem()
+          else
+            timer:stop()
+          end
+        end
+      }
+    },
+    {
+      action = "Reload Rakuen Config",
       from = { mods = { "ctrl", "cmd" }, key = "r" },
       to = {
         handler = function()
-          hs.alert.show("Config loaded")
+          hs.alert.show("Rakuen Config Reloaded")
 
           hs.reload()
         end
       }
     },
+    -- TODO: Disable just for 10 seconds, if the eventtap is disabled then no
+    -- Rakuen shortcuts will be processed
+    -- {
+    --   action = "Enable/Disable Rakuen",
+    --   from = { mods = { "ctrl", "cmd" }, key = "e" },
+    --   to = {
+    --     handler = function()
+    --       if keyEventListener.isEnabled then
+    --         keyEventListener.disable()
+
+    --         hs.alert("Rakuen Disabled")
+
+    --         logger.info("Rakuen Disabled", "General System")
+    --       else
+    --         keyEventListener.enable()
+
+    --         hs.alert("Rakuen Enabled")
+
+    --         logger.info("Rakuen Enabled", "General System")
+    --       end
+    --     end
+    --   }
+    -- }
   }
 }
 

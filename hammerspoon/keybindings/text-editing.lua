@@ -11,7 +11,8 @@ local keybindings = {
         "co.realize.kitty",
         "com.exafunction.windsurf",
         "com.microsoft.VSCode",
-      },
+        "com.todesktop.230313mzl4w4u92"
+      }
     },
     {
       action = "Copy in terminal",
@@ -91,6 +92,11 @@ local keybindings = {
       action = "Underline",
       from = { mods = { "ctrl" }, key = "u" },
       to = { mods = { "cmd" }, key = "u" },
+      -- except = {
+      --   "com.exafunction.windsurf",
+      --   "com.microsoft.VSCode",
+      --   "com.todesktop.230313mzl4w4u92"
+      -- },
     },
     {
       action = "Save",
@@ -112,7 +118,7 @@ local keybindings = {
     },
     {
       action = "Go to Next Search Result",
-      from = { mods = {  }, key = "f3" },
+      from = { mods = {}, key = "f3" },
       to = { mods = { "cmd" }, key = "g" },
     },
     {

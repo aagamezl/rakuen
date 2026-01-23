@@ -1,8 +1,8 @@
 local config = {
-  activeIcon = '□',
-  alertIcon = '⬜',
-  alertActiveIcon = '🔳',
-  icon = '▧',
+  activeIcon = "□",
+  alertIcon = "⬜",
+  alertActiveIcon = "🔳",
+  icon = "▧",
   menuBar = hs.menubar.new(false),
   previousScreen = hs.screen.mainScreen()
 }
@@ -12,8 +12,8 @@ local function render()
   local currentScreen = hs.mouse.getCurrentScreen()
   local screenSpaces = hs.spaces.spacesForScreen(currentScreen)
   local activeSpace = hs.spaces.activeSpaceOnScreen(currentScreen)
-  local menuBarContent = ''
-  local alertContent = ''
+  local menuBarContent = ""
+  local alertContent = ""
 
   for i = 1, #screenSpaces do
     if screenSpaces[i] == activeSpace then
@@ -60,7 +60,7 @@ local function stop()
 end
 
 return {
-  name = 'space-indicator',
+  name = "space-indicator",
   init = init,
   render = render,
   stop = stop
