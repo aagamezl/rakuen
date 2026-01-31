@@ -20,7 +20,7 @@ local keybindings = {
       action = "Cycle Next Open Apps",
       from = { mods = { "alt" }, key = "tab" },
       to = { mods = { "cmd" }, key = "tab" },
-      stateful = true,
+      -- stateful = true,
       -- to = {
       --   handler = function()
       --     print("Cycle Next Open Apps")
@@ -46,11 +46,12 @@ local keybindings = {
       action = "Cycle Previous Open Apps",
       from = { mods = { "alt", "shift" }, key = "tab" },
       to = { mods = { "cmd", "shift" }, key = "tab" },
-      stateful = true,
+      -- stateful = true,
       -- to = {
       --   handler = function()
       --     print("Cycle Previous Open Apps")
       --     hs.window.switcher.previousWindow()
+
       --   end
       -- }
     },
@@ -77,17 +78,17 @@ local keybindings = {
 -- hs.window.switcher.ui.showSelectedTitle = true
 
 -- Modern, sleek window switcher UI design
-hs.window.switcher.ui.textColor = { 0.92, 0.92, 0.92, 1 }
-hs.window.switcher.ui.fontName = 'Helvetica Neue Light'
-hs.window.switcher.ui.fontSize = 20
-hs.window.switcher.ui.highlightColor = { 0.9, 0.4, 0.1, 0.3 } -- Warm amber accent
-hs.window.switcher.ui.backgroundColor = { 0.05, 0.05, 0.08, 0.7 }
-hs.window.switcher.ui.titleBackgroundColor = { 0, 0, 0, 0.8 }
-hs.window.switcher.ui.showThumbnails = false
-hs.window.switcher.ui.thumbnailSize = 128
-hs.window.switcher.ui.showSelectedThumbnail = false
-hs.window.switcher.ui.selectedThumbnailSize = 320
+-- hs.window.switcher.ui.textColor = { 0.92, 0.92, 0.92, 1 }
+-- hs.window.switcher.ui.fontName = 'Helvetica Neue Light'
+-- hs.window.switcher.ui.fontSize = 20
+-- hs.window.switcher.ui.highlightColor = { 0.9, 0.4, 0.1, 0.3 } -- Warm amber accent
+-- hs.window.switcher.ui.backgroundColor = { 0.05, 0.05, 0.08, 0.7 }
+-- hs.window.switcher.ui.titleBackgroundColor = { 0, 0, 0, 0.8 }
+-- hs.window.switcher.ui.showThumbnails = false
+-- hs.window.switcher.ui.thumbnailSize = 128
+-- hs.window.switcher.ui.showSelectedThumbnail = false
+-- hs.window.switcher.ui.selectedThumbnailSize = 320
 
-print(hs.inspect(hs.window.switcher.ui))
+-- print(hs.inspect(hs.window.switcher.ui))
 
 return keybindings

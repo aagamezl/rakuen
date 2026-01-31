@@ -82,6 +82,11 @@ local keybindings = {
       action = "Bold",
       from = { mods = { "ctrl" }, key = "b" },
       to = { mods = { "cmd" }, key = "b" },
+      except = {
+        "com.apple.Terminal",
+        "com.googlecode.iterm2",
+        "co.realize.kitty",
+      },
     },
     {
       action = "Italic",
@@ -110,6 +115,19 @@ local keybindings = {
         "com.microsoft.VSCode",
         "com.todesktop.230313mzl4w4u92"
       },
+    },
+    {
+      action = "Save As",
+      from = { mods = { "ctrl", "shift" }, key = "s" },
+      to = { mods = { "cmd", "shift" }, key = "s" },
+      -- except = {
+      --   "com.apple.Terminal",
+      --   "com.googlecode.iterm2",
+      --   "co.realize.kitty",
+      --   "com.exafunction.windsurf",
+      --   "com.microsoft.VSCode",
+      --   "com.todesktop.230313mzl4w4u92"
+      -- },
     },
     {
       action = "Print",

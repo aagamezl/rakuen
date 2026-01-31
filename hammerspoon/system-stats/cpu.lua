@@ -3,7 +3,7 @@ local logger = require('utils/logger')
 local menubar = hs.menubar.new()
 -- local USAGE_PREFIX = "💻 "
 local USAGE_PREFIX = "CPU: "
-local refreshInterval = 3
+local refreshInterval = 5
 local cpuTimer = nil
 local isEnabled = true
 

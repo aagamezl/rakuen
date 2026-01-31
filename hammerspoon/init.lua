@@ -13,7 +13,7 @@ local browserNavigation = require("keybindings/browser-navigation")
 local caffeine = require("caffeine/caffeine")
 local cpu = require("system-stats/cpu")
 local generalSystem = require("keybindings/general-system")
-local mouse = require("mouse/mouse")
+-- local mouse = require("mouse/mouse")
 local spaces = require("spaces/spaces")
 local textCursorMovement = require("keybindings/text-cursor-movement")
 local textEditing = require("keybindings/text-editing")
@@ -38,7 +38,7 @@ local shortcutsRules = mergeObjects(
   caffeine.keybindings.rules,
   cpu.keybindings.rules,
   generalSystem.rules,
-  mouse.rules,
+  -- mouse.rules,
   spaces.rules,
   textCursorMovement.rules,
   textEditing.rules,
