@@ -1,0 +1,213 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+INSTALL_DIR="$HOME/.local/share/rakuen"
+HS_SOURCE="$REPO_DIR/hammerspoon"
+HS_TARGET="$HOME/.hammerspoon"
+VSCODE_SOURCE="$REPO_DIR/settings/vscode"
+
+log() {
+  printf '%s\n' "$*"
+}
+
+err() {
+  printf '%s\n' "$*" >&2
+}
+
+ensure_dir() {
+  mkdir -p "$1"
+}
+
+link_file() {
+  local source="$1"
+  local target="$2"
+
+  ensure_dir "$(dirname "$target")"
+
+  if [[ -e "$target" && ! -L "$target" ]]; then
+    err "Skipping $target (exists and is not a symlink)"
+    return 0
+  fi
+
+  ln -sfn "$source" "$target"
+  log "Linked: ${target#$HOME/}"
+}
+
+install_hammerspoon() {
+  if [[ ! -d "$HS_SOURCE" ]]; then
+    err "Hammerspoon source not found: $HS_SOURCE"
+    exit 1
+  fi
+
+  ensure_dir "$HS_TARGET"
+
+  while IFS= read -r -d '' file; do
+    rel="${file#$HS_SOURCE/}"
+    link_file "$file" "$HS_TARGET/$rel"
+  done < <(find "$HS_SOURCE" -type f -print0)
+}
+
+link_editor_settings() {
+  local editor_name="$1"
+  local app_support_dir="$2"
+  local base="$HOME/Library/Application Support/$app_support_dir"
+
+  if [[ ! -d "$base" ]]; then
+    return 0
+  fi
+
+  local user_dir="$base/User"
+  ensure_dir "$user_dir"
+
+  if [[ -f "$VSCODE_SOURCE/settings.json" ]]; then
+    link_file "$VSCODE_SOURCE/settings.json" "$user_dir/settings.json"
+  fi
+
+  if [[ -f "$VSCODE_SOURCE/keybindings.json" ]]; then
+    link_file "$VSCODE_SOURCE/keybindings.json" "$user_dir/keybindings.json"
+  fi
+
+  log "Configured editor settings: $editor_name"
+}
+
+install_editors() {
+  if [[ ! -d "$VSCODE_SOURCE" ]]; then
+    err "VSCode settings not found: $VSCODE_SOURCE"
+    exit 1
+  fi
+
+  link_editor_settings "VSCode" "Code"
+  link_editor_settings "VSCode Insiders" "Code - Insiders"
+  link_editor_settings "VSCodium" "VSCodium"
+  link_editor_settings "Cursor" "Cursor"
+  link_editor_settings "Windsurf" "Windsurf"
+}
+
+status_report() {
+  log "Install dir: $INSTALL_DIR"
+  if [[ -d "$INSTALL_DIR/.git" ]]; then
+    log "Repo: present"
+  else
+    log "Repo: missing"
+  fi
+
+  if command -v brew >/dev/null 2>&1; then
+    if brew list --formula jq >/dev/null 2>&1; then
+      log "Dependency jq: installed"
+    else
+      log "Dependency jq: missing"
+    fi
+
+    if brew list --cask hammerspoon >/dev/null 2>&1; then
+      log "Dependency hammerspoon: installed"
+    else
+      log "Dependency hammerspoon: missing"
+    fi
+  else
+    log "Homebrew: not installed"
+  fi
+
+  if [[ -d "$HS_TARGET" ]]; then
+    local hs_links
+    hs_links=$(find "$HS_TARGET" -type l 2>/dev/null | wc -l | tr -d ' ')
+    log "Hammerspoon links: $hs_links"
+  else
+    log "Hammerspoon links: 0"
+  fi
+}
+
+uninstall_links() {
+  if [[ -d "$HS_TARGET" ]]; then
+    while IFS= read -r -d '' link; do
+      target=$(readlink "$link" || true)
+      if [[ "$target" == "$HS_SOURCE"* ]]; then
+        rm -f "$link"
+        log "Removed: ${link#$HOME/}"
+      fi
+    done < <(find "$HS_TARGET" -type l -print0)
+  fi
+
+  local editors=(
+    "Code"
+    "Code - Insiders"
+    "VSCodium"
+    "Cursor"
+    "Windsurf"
+  )
+
+  for editor in "${editors[@]}"; do
+    user_dir="$HOME/Library/Application Support/$editor/User"
+    for file in settings.json keybindings.json; do
+      path="$user_dir/$file"
+      if [[ -L "$path" ]]; then
+        target=$(readlink "$path" || true)
+        if [[ "$target" == "$VSCODE_SOURCE/"* || "$target" == "$VSCODE_SOURCE"* ]]; then
+          rm -f "$path"
+          log "Removed: ${path#$HOME/}"
+        fi
+      fi
+    done
+  done
+
+  if [[ -L "$HOME/.local/bin/rakuen" ]]; then
+    target=$(readlink "$HOME/.local/bin/rakuen" || true)
+    if [[ "$target" == "$REPO_DIR/rakuen" ]]; then
+      rm -f "$HOME/.local/bin/rakuen"
+      log "Removed: .local/bin/rakuen"
+    fi
+  fi
+
+  if [[ "$REPO_DIR" == "$INSTALL_DIR" ]]; then
+    rm -rf "$REPO_DIR"
+    log "Removed install dir: $INSTALL_DIR"
+  else
+    log "Skipping repo removal (not installed in $INSTALL_DIR)"
+  fi
+}
+
+usage() {
+  cat << EOF
+Rakuen CLI
+
+Usage: rakuen <command>
+
+Commands:
+  install   Install/refresh Hammerspoon and editor settings
+  update    Update repo and re-install settings
+  uninstall Remove Rakuen symlinks and installed repo
+  status    Show install status
+EOF
+}
+
+command="${1:-install}"
+
+case "$command" in
+  install)
+    log "Installing Rakuen configuration..."
+    install_hammerspoon
+    install_editors
+    ;;
+  update)
+    log "Updating Rakuen..."
+    git -C "$REPO_DIR" pull --ff-only
+    install_hammerspoon
+    install_editors
+    ;;
+  uninstall)
+    log "Uninstalling Rakuen..."
+    uninstall_links
+    ;;
+  status)
+    status_report
+    ;;
+  -h|--help)
+    usage
+    ;;
+  *)
+    err "Unknown command: $command"
+    usage
+    exit 1
+    ;;
+esac
