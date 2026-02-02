@@ -97,11 +97,11 @@ local keybindings = {
       action = "Underline",
       from = { mods = { "ctrl" }, key = "u" },
       to = { mods = { "cmd" }, key = "u" },
-      -- except = {
-      --   "com.exafunction.windsurf",
-      --   "com.microsoft.VSCode",
-      --   "com.todesktop.230313mzl4w4u92"
-      -- },
+      except = {
+        "com.exafunction.windsurf",
+        "com.microsoft.VSCode",
+        "com.todesktop.230313mzl4w4u92"
+      },
     },
     {
       action = "Save",

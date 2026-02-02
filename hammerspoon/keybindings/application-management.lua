@@ -50,7 +50,7 @@ local keybindings = {
       -- to = {
       --   handler = function()
       --     print("Cycle Previous Open Apps")
-      --     hs.window.switcher.previousWindow()
+      --     hs.window.switcher.previousWindow()https://app.localstack.cloud/sign-in
 
       --   end
       -- }
