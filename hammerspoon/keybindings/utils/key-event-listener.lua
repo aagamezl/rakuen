@@ -117,9 +117,9 @@ local function keyEventListener(shortcuts)
       return false
     end
 
-    logger.log("Keyboard Modifiers: " .. hs.inspect(hs.eventtap:checkKeyboardModifiers()), "keyEventListener")
-    logger.log("key: " .. hs.inspect(key), "keyEventListener")
-    logger.log("eventFlags: " .. hs.inspect(eventFlags), "keyEventListener")
+    -- logger.log("Keyboard Modifiers: " .. hs.inspect(hs.eventtap:checkKeyboardModifiers()), "keyEventListener")
+    -- logger.log("key: " .. hs.inspect(key), "keyEventListener")
+    -- logger.log("eventFlags: " .. hs.inspect(eventFlags), "keyEventListener")
     -- logger.log("keyCode: " .. keyCode, "keyEventListener")
 
     for _, shortcut in ipairs(shortcuts) do
@@ -151,7 +151,7 @@ local function keyEventListener(shortcuts)
         -- Block original
         event:setFlags({})
 
-        logger.log("Firing synthetic key: " .. hs.inspect(shortcut.to), "keyEventListener")
+        -- logger.log("Firing synthetic key: " .. hs.inspect(shortcut.to), "keyEventListener")
         fireSyntheticKey(shortcut.to.key, shortcut.to.mods, SYNTHETIC_EVENT_TAG)
 
         return true

@@ -13,7 +13,7 @@ local utils = require('utils/general')
 -- local VERTICAL_OFFSET = 6
 -- local DEFAULT_M_CWAIT_TIME = 0.3
 
--- spaceIndicator.init()
+spaceIndicator.init()
 
 -- --- Draw a debug point on screen
 -- --- @param point hs.geometry.point

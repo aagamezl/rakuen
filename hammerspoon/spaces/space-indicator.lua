@@ -26,9 +26,9 @@ local function render()
   end
 
   if config.previousScreen == activeScreen then
-    hs.alert.closeAll(0)
-
-    hs.alert(alertContent, { radius = 10, textSize = 50 }, currentScreen)
+    -- Show the alert on the current screen
+    -- hs.alert.closeAll(0)
+    -- hs.alert(alertContent, { radius = 10, textSize = 50 }, currentScreen)
   end
 
   config.menuBar:setTitle(menuBarContent)
@@ -60,7 +60,13 @@ local function stop()
 end
 
 return {
+  version = "1.0.0",
   name = "space-indicator",
+  description = "Displays a menubar item indicating the current space",
+  author = {
+    name = "Álvaro José Agámez Licha",
+    email = "alvaroagamez@outlook.com"
+  },
   init = init,
   render = render,
   stop = stop

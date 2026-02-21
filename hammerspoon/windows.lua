@@ -9,7 +9,7 @@ local ax = hs.axuielement
 
 local activeWindowsStore = {}
 local HORIZONTAL_OFFSET = 30
-local VERTICAL_OFFSET = 6
+local VERTICAL_OFFSET = 10
 
 local eventsToMonitor = {
   hs.window.filter.windowFullscreened,
@@ -232,66 +232,32 @@ local function restoreSnapped()
   end
 end
 
---- Find an AX child element by role
---- @param element hs.axuielement
---- @param role string
---- @return hs.axuielement|nil
-local function findAXChildByRole(element, role)
-  local children = element.AXChildren
-  if not children then return nil end
+-- --- Find an AX child element by role
+-- --- @param element hs.axuielement
+-- --- @param role string
+-- --- @return hs.axuielement|nil
+-- local function findAXChildByRole(element, role)
+--   local children = element.AXChildren
+--   if not children then return nil end
 
-  for _, child in ipairs(children) do
-    if child.AXRole == role then
-      return child
-    end
-  end
+--   for _, child in ipairs(children) do
+--     if child.AXRole == role then
+--       return child
+--     end
+--   end
 
-  return nil
-end
+--   return nil
+-- end
 
 --- Get the title bar point for a window
 --- @param win hs.window
---- @return hs.geometry.point|nil
-local function getTitleBarPoint(win)
-  local app = win:application()
-  if not app then return nil end
+--- @param horizontalOffset number
+--- @param verticalOffset number
+--- @return hs.geometry.point
+local function getTitleBarPoint(win, horizontalOffset, verticalOffset)
+  local frame = win:frame()
 
-  local axApp = ax.applicationElement(app)
-
-  if not axApp then
-    logger.warning("DEBUG: axApp is nil for app: " .. tostring(app:name()), "spaces")
-
-    return nil
-  end
-
-  local axWindows = axApp.AXWindows
-  if not axWindows then
-    logger.warning("DEBUG: axWindows is nil for app: " .. tostring(app:name()), "spaces")
-
-    return nil
-  end
-
-  local targetWindowNumber = win:id()
-
-  for _, axWin in ipairs(axWindows) do
-    -- Match by window number if available
-    if axWin.AXWindowNumber == targetWindowNumber then
-      local titleBar = findAXChildByRole(axWin, "AXTitleBar")
-
-      if not titleBar or not titleBar.AXFrame then
-        return nil
-      end
-
-      local f = titleBar.AXFrame
-
-      return geometry.point(
-        f.x + HORIZONTAL_OFFSET,
-        f.y + VERTICAL_OFFSET
-      )
-    end
-  end
-
-  return nil
+  return geometry.point(frame.x + horizontalOffset, frame.y + verticalOffset)
 end
 
 --- Draw a debug point on screen
@@ -322,22 +288,16 @@ local function moveWindowToSpace(direction, debug)
   local win = window.focusedWindow()
   if not win then return end
 
-  local titleBarPoint = getTitleBarPoint(win)
-
-  if not titleBarPoint then
-    -- Fallback guess (last resort)
-    logger.warning("Using fallback point", "spaces")
-
-    local frame = win:frame()
-
-    titleBarPoint = geometry.point(frame.x + HORIZONTAL_OFFSET, frame.y + VERTICAL_OFFSET)
-  end
+  local titleBarPoint = getTitleBarPoint(win, HORIZONTAL_OFFSET, VERTICAL_OFFSET)
 
   if debug then
-    logger.info("titleBarPoint: " .. titleBarPoint.x .. ", " .. titleBarPoint.y, "spaces")
+    -- logger.info("titleBarPoint: " .. titleBarPoint.x .. ", " .. titleBarPoint.y, "windows")
 
     drawDebugPoint(titleBarPoint)
   end
+
+
+  -- logger.info("win.width: " .. win:frame().w .. ", win.height: " .. win:frame().h, "windows")
 
   -- Save current mouse position
   local originalMousePos = mouse.absolutePosition()
@@ -487,23 +447,23 @@ local keybindings = {
     },
         {
       action = "Move window to Space Left",
-      from = { mods = { "ctrl", "cmd" }, key = "pageup" },
+      from = { mods = { "cmd", "alt" }, key = "pageup" },
       to = {
         handler = function()
           logger.log("Move window to Space Left", "spaces")
 
-          moveWindowToSpace('left', true)
+          moveWindowToSpace('left', false)
         end
       },
     },
     {
       action = "Move window to Space Right",
-      from = { mods = { "ctrl", "cmd" }, key = "pagedown" },
+      from = { mods = { "cmd", "alt" }, key = "pagedown" },
       to = {
         handler = function()
           logger.log("Move window to Space Right", "spaces")
 
-          moveWindowToSpace('right', true)
+          moveWindowToSpace('right', false)
         end
       },
     }
