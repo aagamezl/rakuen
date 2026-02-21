@@ -17,10 +17,10 @@
     "indent_style": "space",
     "indent_size": "2"
   },
-  "terminal.integrated.sendKeybindingsToShell": true,
-  "terminal.integrated.commandsToSkipShell": [
-    "workbench.action.terminal.copySelection"
-  ],
+  // "terminal.integrated.sendKeybindingsToShell": true,
+  // "terminal.integrated.commandsToSkipShell": [
+  //   "workbench.action.terminal.copySelection"
+  // ],
   "terminal.integrated.copyOnSelection": true,
   "terminal.integrated.rightClickBehavior": "copyPaste",
   "[json]": {

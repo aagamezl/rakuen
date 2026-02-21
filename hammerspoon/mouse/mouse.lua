@@ -109,33 +109,38 @@ local function show()
   return circle
 end
 
+
+
 local keybindings = {
-  {
-    action = "Show Mouse Location",
-    from = { mods = {}, key = "ctrl" },
-    to = {
-      handler = function()
-        if not isShowing then
-          modal = 0
-          isShowing = true
-          show()
+  name = "Mouse Management",
+  rules = {
+    {
+      action = "Show Mouse Location",
+      from = { mods = {}, key = "ctrl" },
+      to = {
+        handler = function()
+          if not isShowing then
+            modal = 0
+            isShowing = true
+            show()
+          end
         end
-      end
-    },
-    condition = function()
-      if (modal == 2) then
-        return true
-      end
+      },
+      condition = function()
+        hs.timer.doAfter(1, function()
+          isShowing = false
+          modal = 0
+        end)
 
-      modal = modal + 1
+        if (modal == 2) then
+          return true
+        end
 
-      hs.timer.doAfter(1, function()
-        isShowing = false
-        modal = 0
-      end)
+        modal = modal + 1
 
-      return false
-    end,
+        return false
+      end,
+    }
   }
 }
 

@@ -1,8 +1,8 @@
 local config = {
-  activeIcon = '□',
-  alertIcon = '⬜',
-  alertActiveIcon = '🔳',
-  icon = '▧',
+  activeIcon = "□",
+  alertIcon = "⬜",
+  alertActiveIcon = "🔳",
+  icon = "▧",
   menuBar = hs.menubar.new(false),
   previousScreen = hs.screen.mainScreen()
 }
@@ -12,8 +12,8 @@ local function render()
   local currentScreen = hs.mouse.getCurrentScreen()
   local screenSpaces = hs.spaces.spacesForScreen(currentScreen)
   local activeSpace = hs.spaces.activeSpaceOnScreen(currentScreen)
-  local menuBarContent = ''
-  local alertContent = ''
+  local menuBarContent = ""
+  local alertContent = ""
 
   for i = 1, #screenSpaces do
     if screenSpaces[i] == activeSpace then
@@ -26,9 +26,9 @@ local function render()
   end
 
   if config.previousScreen == activeScreen then
-    hs.alert.closeAll(0)
-
-    hs.alert(alertContent, { radius = 10, textSize = 50 }, currentScreen)
+    -- Show the alert on the current screen
+    -- hs.alert.closeAll(0)
+    -- hs.alert(alertContent, { radius = 10, textSize = 50 }, currentScreen)
   end
 
   config.menuBar:setTitle(menuBarContent)
@@ -60,7 +60,13 @@ local function stop()
 end
 
 return {
-  name = 'space-indicator',
+  version = "1.0.0",
+  name = "space-indicator",
+  description = "Displays a menubar item indicating the current space",
+  author = {
+    name = "Álvaro José Agámez Licha",
+    email = "alvaroagamez@outlook.com"
+  },
   init = init,
   render = render,
   stop = stop
