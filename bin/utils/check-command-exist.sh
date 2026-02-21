@@ -1,4 +1,4 @@
 # Function to check if command exists
-command_exists() {
+check_command_exists() {
   command -v "$1" >/dev/null 2>&1
 }
