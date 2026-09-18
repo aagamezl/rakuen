@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -euo pipefail
 
@@ -37,18 +37,22 @@ BIN_DIR="$HOME/.local/bin"
 # }
 
 # Parse --install-dir arguments
-for arg in "$@"; do
-  case $arg in
-    # --repo-url)
-    #   REPO_URL="$2"
-    #   shift 2
-    #   ;;
-    --source-dir)
-      SOURCE_DIR="$2"
-      shift 2
-      ;;
-  esac
-done
+# for arg in "$@"; do
+#   case $arg in
+#     # --repo-url)
+#     #   REPO_URL="$2"
+#     #   shift 2
+#     #   ;;
+#     --source-dir)
+#       SOURCE_DIR="$2"
+#       shift 2
+#       ;;
+#   esac
+# done
+
+if [ -n "$TESTING_LOCAL" ]; then
+  RAKUEN_DIR="/tmp/rakuen.$(date +%s)}"
+fi
 
 usage() {
   cat << EOF

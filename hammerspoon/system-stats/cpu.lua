@@ -110,8 +110,12 @@ local function toggle()
     cpuTimer:stop()
 
     menubar:setTitle("")
-  else
+  elseif cpuTimer then
     cpuTimer:start()
+
+    updateCPU()
+  else
+    cpuTimer = hs.timer.doEvery(refreshInterval, updateCPU)
 
     updateCPU()
   end

@@ -107,7 +107,7 @@ local function insertSpace()
   if result then
     spaceIndicator.render()
   else
-    logger.error("Failed to insert space: " .. err, "spaces")
+    logger.error("Failed to insert space: " .. tostring(err), "spaces")
   end
 end
 
@@ -197,9 +197,25 @@ end
 ---                         Indexing starts from 1.
 local function moveToSpace(spaceIndex)
   local currentScreen = hs.mouse.getCurrentScreen()
+  local screenSpaces = hs.spaces.spacesForScreen(currentScreen)
+
+  if not screenSpaces or #screenSpaces == 0 then
+    logger.error("No spaces found for current screen", "spaces")
+
+    return
+  end
+
+  -- Clamp to the number of existing spaces.
+  spaceIndex = math.max(1, math.min(spaceIndex, #screenSpaces))
 
   local currentSpaceId = hs.spaces.activeSpaceOnScreen(currentScreen)
-  local currentSpaceIndex = utils.findIndex(hs.spaces.spacesForScreen(currentScreen), currentSpaceId)
+  local currentSpaceIndex = utils.findIndex(screenSpaces, currentSpaceId)
+
+  if not currentSpaceIndex then
+    logger.error("Could not resolve current space index", "spaces")
+
+    return
+  end
 
   for i = 1, math.abs(spaceIndex - currentSpaceIndex) do
     moveOneSpace(utils.ternary(spaceIndex > currentSpaceIndex, "right", "left"))
@@ -221,7 +237,7 @@ local function removeSpace()
       if result then
         spaceIndicator.render()
       else
-        logger.error("Failed to remove space: " .. message, "spaces")
+        logger.error("Failed to remove space: " .. tostring(message), "spaces")
       end
     end)
   end

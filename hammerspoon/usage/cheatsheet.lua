@@ -90,7 +90,6 @@ end
 
 local function buildText(shortcuts)
   local text = ""
-  local table = require("table")
 
   -- Group shortcuts by their section (name)
   local sections = {}
@@ -207,22 +206,6 @@ local function toggle(shortcuts)
   end
 end
 
--- Optional: Auto-hide on click outside
-if cheatsheetCanvas then
-  cheatsheetCanvas:mouseCallback(function(_, msg)
-    if msg == "mouseDown" then
-      local frame = cheatsheetCanvas:frame()
-      local mousePos = hs.mouse.getAbsolutePosition()
-
-      if mousePos.x < frame.x or mousePos.x > frame.x + frame.w or
-          mousePos.y < frame.y or mousePos.y > frame.y + frame.h then
-        hide()
-      end
-    end
-  end)
-end
-
--- return cheatsheet
 return {
   name = "usage-cheatsheet",
   show = show,

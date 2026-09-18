@@ -18,7 +18,7 @@ local eventsToMonitor = {
   hs.window.filter.windowDestroyed
 }
 
--- Get focused window and screen
+-- Get focused window and its current frame
 local function getFocusedWindow()
   local window = hs.window.focusedWindow()
 
@@ -26,10 +26,7 @@ local function getFocusedWindow()
     return nil
   end
 
-  local screen = window:screen()
-  local frame = screen:frame()
-
-  return window, frame
+  return window, window:frame()
 end
 
 -- Can parameters to have default values?
@@ -381,7 +378,6 @@ local keybindings = {
     {
       action = "Snap window to top",
       from = { mods = { "cmd" }, key = "up" },
-      synthetic = true,
       to = {
         handler = snapTop
       },
@@ -389,7 +385,6 @@ local keybindings = {
     {
       action = "Snap window to bottom",
       from = { mods = { "cmd" }, key = "down" },
-      synthetic = true,
       to = {
         handler = snapBottom
       },
@@ -397,7 +392,6 @@ local keybindings = {
     {
       action = "Snap window to left",
       from = { mods = { "cmd" }, key = "left" },
-      synthetic = true,
       to = {
         handler = snapLeft
       },
@@ -405,7 +399,6 @@ local keybindings = {
     {
       action = "Snap window to right",
       from = { mods = { "cmd" }, key = "right" },
-      synthetic = true,
       to = {
         handler = snapRight
       },

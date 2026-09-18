@@ -1,9 +1,14 @@
 local function mergeObjects(...)
   local result = {}
+  local lists = table.pack(...)
 
-  for _, list in ipairs({ ... }) do
-    for _, remap in ipairs(list) do
-      table.insert(result, remap)
+  for i = 1, lists.n do
+    local list = lists[i]
+
+    if list then
+      for _, remap in ipairs(list) do
+        table.insert(result, remap)
+      end
     end
   end
 

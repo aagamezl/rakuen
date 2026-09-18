@@ -1,3 +1,7 @@
+local appGroups = require("utils/app-groups")
+
+local terminals = appGroups.terminals
+
 local keybindings = {
   name = "Application Management",
   rules = {
@@ -5,16 +9,30 @@ local keybindings = {
       action = "New Window",
       from = { mods = { "ctrl" }, key = "n" },
       to = { mods = { "cmd" }, key = "n" },
+      except = terminals,
     },
     {
       action = "New Tab",
       from = { mods = { "ctrl" }, key = "t" },
       to = { mods = { "cmd" }, key = "t" },
+      except = terminals,
     },
     {
       action = "Close Window",
       from = { mods = { "alt" }, key = "f4" },
       to = { mods = { "cmd" }, key = "w" },
+    },
+    {
+      action = "Close Tab",
+      from = { mods = { "ctrl" }, key = "w" },
+      to = { mods = { "cmd" }, key = "w" },
+      except = terminals,
+    },
+    {
+      action = "Quit Application",
+      from = { mods = { "ctrl" }, key = "q" },
+      to = { mods = { "cmd" }, key = "q" },
+      except = terminals,
     },
     {
       action = "Cycle Next Open Apps",

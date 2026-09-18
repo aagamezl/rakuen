@@ -25,8 +25,9 @@ local function init()
     menubar:setTooltip("Click to toggle system sleep/wake state, Ctrl+Cmd+K to toggle Caffeine")
     menubar:setClickCallback(toggle)
 
-    -- Set initial state to awake
-    toggle()
+    -- Force a known initial state (awake) instead of toggling whatever the
+    -- current assertion happens to be.
+    hs.caffeinate.set("displayIdle", true)
 
     setCaffeineDisplay(hs.caffeinate.get("displayIdle"))
   end

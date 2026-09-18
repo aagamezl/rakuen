@@ -3,15 +3,13 @@ local keybindings = {
   rules = {
     {
       action = "Go to Beginning of Line",
-      from = { mods = { "fn" }, key = "home" },  -- weird behavior, the real shortcut is fn + home, but it works
+      from = { mods = {}, key = "home" },
       to = { mods = { "cmd" }, key = "left" },
-      -- synthetic = true,
     },
     {
       action = "Go to End of Line",
-      from = { mods = { "fn" }, key = "end" },  -- weird behavior, the real shortcut is fn + end, but it works
+      from = { mods = {}, key = "end" },
       to = { mods = { "cmd" }, key = "right" },
-      -- synthetic = true,
     },
     {
       action = "Go to Beginning of Document",

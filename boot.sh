@@ -1,16 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-set -e
-
-# REPO_URL="${REPO_URL:-https://github.com/aagamezl/rakuen}"
-REPO_URL="https://github.com/aagamezl/rakuen"
-LOCAL_PATH="${LOCAL_PATH:-}"
-# INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/share/rakuen}"
-INSTALL_DIR="${INSTALL_DIR:-/tmp/rakuen.$(date +%s)}"
-WAIT_TIME=0
-
-# Create install directory
-mkdir -p "$INSTALL_DIR"
+set -euo pipefail
 
 # Checks if a given command exists on the system.
 # Usage: check_command_exists <command>
@@ -31,6 +21,16 @@ check_git() {
   fi
 }
 
+# REPO_URL="${REPO_URL:-https://github.com/aagamezl/rakuen}"
+REPO_URL="https://github.com/aagamezl/rakuen"
+LOCAL_PATH="${LOCAL_PATH:-}"
+# INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/share/rakuen}"
+# INSTALL_DIR="${INSTALL_DIR:-/tmp/rakuen.$(date +%s)}"
+WAIT_TIME=0
+
+# Create install directory
+mkdir -p "$INSTALL_DIR"
+
 echo "Begin installation (or abort with ctrl+c)...\n"
 sleep "$WAIT_TIME"
 
@@ -46,17 +46,18 @@ sleep "$WAIT_TIME"
 rm -rf "$INSTALL_DIR"
 
 if [ -n "$LOCAL_PATH" ]; then
-  echo "Copying Rakuen from local path...\n"
+  printf "Copying Rakuen from local path...\n"
 
   if [ ! -d "$LOCAL_PATH" ]; then
     echo "Local path not found: $LOCAL_PATH"
     exit 1
   fi
 
+  # Use rsync if available, otherwise fall back to cp.
   if check_command_exists rsync; then
     rsync -a --delete --exclude ".git" "$LOCAL_PATH/" "$INSTALL_DIR/"
   else
-    cp -R "$LOCAL_PATH" "$INSTALL_DIR"
+    cp -R "$LOCAL_PATH/" "$INSTALL_DIR/"
     rm -rf "$INSTALL_DIR/.git"
   fi
 else
@@ -70,4 +71,5 @@ fi
 echo "Installation starting..."
 
 # source $INSTALL_DIR/install.sh --repo-url "$REPO_URL" --install-dir "$INSTALL_DIR"
-source $INSTALL_DIR/install.sh --source-dir "$INSTALL_DIR"
+# source "$INSTALL_DIR"/install.sh --source-dir "$INSTALL_DIR"
+source "$INSTALL_DIR/install.sh"
