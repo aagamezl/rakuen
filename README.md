@@ -13,6 +13,26 @@ The default macOS environment is powerful, but it can feel fragmented. Rakuen is
 * **Tamed Windows & Spaces:** Experience window management that just makes sense. Move, tile, and manage your workspace with the fluidity found in other modern desktop environments.
 * **Curated Workflow:** A hand-picked selection of applications and utilities that complement this setup, creating a cohesive and powerful toolset.
 
+## Install
+
+Hammerspoon is installed with Homebrew, then the config in `hammerspoon/` is copied to `~/.hammerspoon`.
+
+From a checkout of this repository:
+
+```bash
+bin/install.sh
+```
+
+From GitHub, without cloning first:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/aagamezl/rakuen/master/bin/install.sh | zsh
+```
+
+After it runs, enable Hammerspoon under Accessibility, and under Screen Recording if you want window screenshots. Press `Ctrl+Opt+/` to open the window that lists each new binding, the original macOS binding, and a description.
+
+The same catalog is in [docs/keybindings.md](docs/keybindings.md). Favorite apps for `Cmd+1` through `Cmd+9` are set in [hammerspoon/config/favorites.lua](hammerspoon/config/favorites.lua).
+
 ## 🤝 Contributing & Philosophy
 This project is a personal vision, but ideas and constructive feedback are welcome. The goal is to inspire others to build their own digital paradise. If you have a suggestion that aligns with the core philosophy, please open an Issue or a Pull Request.
 
