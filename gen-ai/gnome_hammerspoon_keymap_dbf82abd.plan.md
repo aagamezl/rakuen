@@ -247,3 +247,11 @@ The window lists only rules the binder registers, grouped by module. Each row sh
 ## Install and check
 
 After implementation, run `bin/install.sh` against a local checkout, confirm `~/.hammerspoon` is populated, reload Hammerspoon, and verify: `Ctrl+C` copies in TextEdit, `Ctrl+C` still interrupts in Terminal, `Cmd+Left` tiles, `Opt+F4` closes, `Ctrl+Left` moves by word in TextEdit and still switches Spaces when no text field is focused, `Ctrl+Alt+/` opens the cheatsheet with all three columns.
+
+## TODOs
+
+1. Add Hammerspoon init, eventtap binder, and per-binding enable/disable application lists
+2. Implement editing, text navigation, windows, focus, workspaces, shell, session, and accessibility modules from the binding list
+3. Add a scrollable cheatsheet window with new binding, original binding, and description
+4. Add bin/install.sh (Homebrew Hammerspoon + config copy, works from clone or curl) and README usage
+5. Add docs/keybindings.md with the same sectioned markdown tables as this plan
