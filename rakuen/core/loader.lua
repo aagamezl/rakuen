@@ -1,6 +1,8 @@
 -- Module loader: registers the rules of every enabled module.
 --
 -- A module file under rakuen/modules/ returns { rules = { ... } }.
+-- A module may also return `block_rules`: rules that swallow the native chords
+-- its own rules replace. They are registered only when `block_native_cmd` is on.
 -- Setting `only` in the config loads one module alone, so it can be tested
 -- without the others (task 3.2).
 
@@ -33,6 +35,10 @@ function loader.load(options)
       end
 
       registry:add_all(module_name, config.apply_overrides(module.rules, bindings))
+
+      if settings.block_native_cmd and type(module.block_rules) == "table" then
+        registry:add_all(module_name, module.block_rules)
+      end
       table.insert(loaded, module_name)
     end
   end

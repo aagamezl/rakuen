@@ -7,6 +7,7 @@
 --     mode = "match",                 -- "log" (default) or "match"
 --     log_level = "info",             -- debug | info | warn | error
 --     only = "editing",               -- enable just this module, ignore the rest
+--     block_native_cmd = false,       -- swallow the native Cmd chords Rakuen replaces
 --     modules = {
 --       editing = {
 --         enabled = true,
@@ -33,7 +34,13 @@ config.MODULE_NAMES = {
 
 local VALID_MODES = { log = true, match = true }
 local VALID_LOG_LEVELS = { debug = true, info = true, warn = true, error = true }
-local TOP_LEVEL_KEYS = { mode = true, log_level = true, only = true, modules = true }
+local TOP_LEVEL_KEYS = {
+  mode = true,
+  log_level = true,
+  only = true,
+  block_native_cmd = true,
+  modules = true,
+}
 local MODULE_KEYS = { enabled = true, bindings = true }
 local BINDING_KEYS = { enabled = true, applications = true }
 
@@ -89,14 +96,21 @@ local function validate_modules(modules)
   end
 end
 
---- Return the default configuration: log mode, every module disabled.
+--- Return the default configuration: log mode, native Cmd chords untouched (D3),
+--- every module disabled.
 function config.defaults()
   local modules = {}
   for _, name in ipairs(config.MODULE_NAMES) do
     modules[name] = { enabled = false, bindings = {} }
   end
 
-  return { mode = "log", log_level = "info", only = nil, modules = modules }
+  return {
+    mode = "log",
+    log_level = "info",
+    only = nil,
+    block_native_cmd = false,
+    modules = modules,
+  }
 end
 
 --- Validate a user config table and merge it over the defaults.
@@ -120,6 +134,11 @@ function config.merge(user)
   if user.only ~= nil then
     assert(is_module_name(user.only), "only must name a known module")
     merged.only = user.only
+  end
+
+  if user.block_native_cmd ~= nil then
+    assert(type(user.block_native_cmd) == "boolean", "block_native_cmd must be a boolean")
+    merged.block_native_cmd = user.block_native_cmd
   end
 
   if user.modules ~= nil then
