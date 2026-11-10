@@ -174,31 +174,35 @@ Status: complete. `rakuen/modules/text_navigation.lua` holds all 18 rules (5.2-5
 
 ## Phase 6 – Windows module
 
-- [ ] 6.1 Maximize / unmaximize / toggle maximize with saved-frame restore (`Cmd+Up`, `Cmd+Down`, `Opt+F10`, `Opt+F5`)
-- [ ] 6.2 Tile left / right with press-again-to-restore (`Cmd+Left/Right`)
-- [ ] 6.9 Quarter tiling by arrow sequence, like the GNOME Tiling Assistant: `Cmd+Left` then `Cmd+Up` = top-left, then `Cmd+Down` = back to the left half; `Cmd+Right` with `Cmd+Up/Down` for the right quarters; the arrow toward the edge restores. Pure transition table in `rakuen/core/tiling.lua`; the window menu lists the four quarters
-- [ ] 6.3 Close (`Opt+F4`), Minimize (`Cmd+H`)
-- [ ] 6.4 Move to display left/right/up/down (`Cmd+Shift+Arrows`)
-- [ ] 6.5 Begin move / begin resize modal with arrows, Return to accept, Escape to cancel (`Opt+F7`, `Opt+F8`)
-- [ ] 6.6 Window action menu via `hs.chooser` (`Opt+Space`)
-- [ ] 6.7 Handle edge cases: fullscreen windows, windows that refuse resize, multi-monitor frames, menu-bar and Dock insets
-- [ ] 6.8 Unit tests for frame math (pure functions); manual tests with 1 and 2 displays
+- [x] 6.1 Maximize / unmaximize / toggle maximize with saved-frame restore (`Cmd+Up`, `Cmd+Down`, `Opt+F10`, `Opt+F5`)
+- [x] 6.2 Tile left / right with press-again-to-restore (`Cmd+Left/Right`)
+- [x] 6.3 Close (`Opt+F4`), Minimize (`Cmd+H`)
+- [x] 6.4 Move to display left/right/up/down (`Cmd+Shift+Arrows`)
+- [x] 6.5 Begin move / begin resize modal with arrows, Return to accept, Escape to cancel (`Opt+F7`, `Opt+F8`)
+- [x] 6.6 Window action menu via `hs.chooser` (`Opt+Space`)
+- [x] 6.7 Handle edge cases: fullscreen windows, windows that refuse resize, multi-monitor frames, menu-bar and Dock insets
+- [x] 6.8 Unit tests for frame math (pure functions); manual tests with 1 and 2 displays
+- [x] 6.9 Quarter tiling by arrow sequence, like the GNOME Tiling Assistant: `Cmd+Left` then `Cmd+Up` = top-left, then `Cmd+Down` = back to the left half; `Cmd+Right` with `Cmd+Up/Down` for the right quarters; the arrow toward the edge restores. Pure transition table in `rakuen/core/tiling.lua`; the window menu lists the four quarters
 
 **Done when:** all Windows rows in the catalog work or are documented as partial.
 
-Status: code and unit tests are done for 6.1-6.9 (`make check` passes, 192 tests); the tasks stay unticked until the manual pass below. Layout: `rakuen/core/frame_math.lua` (pure frame math), `tiling.lua` (pure layouts and arrow transitions), `window_state.lua` (pure decisions: toggle, apply, restore, stale-state check), `window_manager.lua` (acts on any window-like object, tested with fakes in `spec/helpers/fake_window.lua`), `window_modal.lua` (move/resize with arrows, 30 s timeout), `rakuen/ui/window_menu.lua` (chooser), and `rakuen/modules/windows.lua` (15 rules). Edge cases (6.7): fullscreen and non-standard windows are skipped with an alert, apps that refuse a size report "partial" and still toggle back, each display uses its own `screen:frame()` (menu bar and Dock excluded), and a saved frame is dropped once the window is moved by hand. A maximized or tiled window keeps its layout when sent to another display (`Cmd+Shift+Arrows`) and its saved frame is scaled to the new display, so a window maximized on a small screen is maximized on a big one. Cmd+Up/Down/Left/Right now belong to this module, so in text fields they no longer move the caret (use Home/End and Ctrl+Home/End). Test with `only = "windows"` and `mode = "match"`.
+Status: complete. Code and unit tests are done for 6.1-6.9 (`make check` passes, 192 tests) and the manual pass below was confirmed on 2026-11-10. Layout: `rakuen/core/frame_math.lua` (pure frame math), `tiling.lua` (pure layouts and arrow transitions), `window_state.lua` (pure decisions: toggle, apply, restore, stale-state check), `window_manager.lua` (acts on any window-like object, tested with fakes in `spec/helpers/fake_window.lua`), `window_modal.lua` (move/resize with arrows, 30 s timeout), `rakuen/ui/window_menu.lua` (chooser), and `rakuen/modules/windows.lua` (15 rules). Edge cases (6.7): fullscreen and non-standard windows are skipped with an alert, apps that refuse a size report "partial" and still toggle back, each display uses its own `screen:frame()` (menu bar and Dock excluded), and a saved frame is dropped once the window is moved by hand. A maximized or tiled window keeps its layout when sent to another display (`Cmd+Shift+Arrows`) and its saved frame is scaled to the new display, so a window maximized on a small screen is maximized on a big one. Cmd+Up/Down/Left/Right now belong to this module, so in text fields they no longer move the caret (use Home/End and Ctrl+Home/End). Test with `only = "windows"` and `mode = "match"`.
 
 Manual pass (1 display, then 2): `Opt+F10` maximizes and restores; `Cmd+Up` maximizes, `Cmd+Down` / `Opt+F5` restore; `Cmd+Left/Right` tile and restore on a second press; `Cmd+Left` then `Cmd+Up` gives the top-left quarter, then `Cmd+Down` the left half, `Cmd+Left` restores, and the same for the right side and bottom quarters; `Cmd+H` minimizes; `Opt+F4` closes; `Cmd+Shift+Left/Right` moves between displays and does nothing with one display; `Opt+F7` / `Opt+F8` move and resize with the arrows, Return keeps, Escape cancels; `Opt+Space` opens the menu and each entry works; a window maximized on the small display is still maximized after `Cmd+Shift+Left/Right` to the big one (and back), and `Cmd+Down` there restores it; a fullscreen window shows the alert; `Ctrl+Home` in TextEdit still goes to the document start and does not maximize the window.
 
 ## Phase 7 – Focus module
 
-- [ ] 7.1 Switch applications with `Opt+Tab` / `Opt+Shift+Tab` (drives the native switcher)
-- [ ] 7.2 Cycle app windows (`Opt+grave`, `Cmd+grave`, and backward variants)
-- [ ] 7.3 Cycle all windows (`Opt+Escape`, backward)
-- [ ] 7.4 Cycle group (`Opt+F6`, backward)
-- [ ] 7.5 Document `Cmd+Tab` limitation in the catalog
+- [x] 7.1 Switch applications with `Opt+Tab` / `Opt+Shift+Tab` (drives the native switcher)
+- [x] 7.2 Cycle app windows (`Opt+grave`, `Cmd+grave`, and backward variants)
+- [x] 7.3 Cycle all windows (`Opt+Escape`, backward)
+- [x] 7.4 Cycle group (`Opt+F6`, backward)
+- [x] 7.5 Document `Cmd+Tab` limitation in the catalog
 
 **Done when:** the focus chords work, and the limitation is stated in docs and cheatsheet.
+
+Status: code and unit tests are done for 7.1-7.5 (`make check` passes, 206 tests); the tasks stay unticked until the manual pass below. Layout: `rakuen/core/window_cycle.lua` (pure: next window id, app-switch target) and `rakuen/modules/focus.lua` (8 rules). Deviation from 7.1: Opt+Tab does not drive the native switcher (synthetic `Cmd+Tab` is unreliable and cannot be held); it focuses the most recently used window of another app, and `Opt+Shift+Tab` the least recently used. `Cmd+grave` and `Cmd+Shift+grave` are native and pass through, so only the `Opt` chords have rules. Cycling uses a stable window-id order. The `Cmd+Tab` limitation is in `docs/keybindings.md`; the cheatsheet comes in Phase 11. Test with `only = "focus"` and `mode = "match"`.
+
+Manual pass: with two apps open, `Opt+Tab` jumps to the other app and pressing it again jumps back; with three apps `Opt+Shift+Tab` reaches the least recent one; with two windows of one app `Opt+grave` and `Opt+Shift+grave` alternate, and with three they step through all; `Opt+F6` behaves the same; `Opt+Escape` and `Opt+Shift+Escape` step through every visible window; `Cmd+grave` still cycles natively; minimized and other-Space windows are skipped.
 
 ## Phase 8 – Workspaces module
 

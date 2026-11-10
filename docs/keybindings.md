@@ -93,10 +93,10 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
 
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
-| Switch applications | Super+Tab, Alt+Tab | Opt+Tab | Cmd+Tab | Partial | Opt+Tab drives the app switcher. Super+Tab is Cmd+Tab, which the system consumes and which stays the native switcher |
-| Switch applications backward | Shift+Super+Tab, Shift+Alt+Tab | Opt+Shift+Tab | Cmd+Shift+Tab | Partial | Same restriction as Switch applications |
-| Cycle app windows | Super+grave, Alt+grave | Opt+grave, Cmd+grave | Cmd+grave | Yes | |
-| Cycle app windows backward | Shift+Super+grave, Shift+Alt+grave | Opt+Shift+grave, Cmd+Shift+grave | Cmd+Shift+grave | Yes | |
+| Switch applications | Super+Tab, Alt+Tab | Opt+Tab | Cmd+Tab | Partial | Opt+Tab focuses the most recently used window of another app; there is no switcher panel. Cmd+Tab stays the native switcher |
+| Switch applications backward | Shift+Super+Tab, Shift+Alt+Tab | Opt+Shift+Tab | Cmd+Shift+Tab | Partial | Focuses the least recently used app |
+| Cycle app windows | Super+grave, Alt+grave | Opt+grave, Cmd+grave | Cmd+grave | Yes | Cmd+grave is native and passes through. Windows cycle in window-id order |
+| Cycle app windows backward | Shift+Super+grave, Shift+Alt+grave | Opt+Shift+grave, Cmd+Shift+grave | Cmd+Shift+grave | Yes | Cmd+Shift+grave is native and passes through |
 | Cycle all windows | Alt+Escape | Opt+Escape | none | Yes | Ordered windows on this Space. Cmd+grave stays per-app |
 | Cycle all windows backward | Shift+Alt+Escape | Opt+Shift+Escape | none | Yes | |
 | Cycle group | Alt+F6 | Opt+F6 | Cmd+grave | Yes | Same per-app cycle |
