@@ -1,8 +1,6 @@
-### macOS ###
-# General
 .DS_Store
-.AppleDouble
-.LSOverride
-
-### Generic ###
-backup
+*.log
+luacov.stats.out
+luacov.report.out
+.luarocks/
+lua_modules/
