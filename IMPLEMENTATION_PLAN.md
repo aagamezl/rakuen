@@ -132,10 +132,12 @@ Status: unit tests cover config validation, overrides and the loader, including 
 - [ ] 4.6 Rename: `F2` → `Return`, enabled only in Finder (`com.apple.finder`). In Finder, `Return` is the macOS rename key; `F2` is the GNOME file-manager rename key. Catalog row: GNOME `F2`, configured `F2`, macOS original `Return`, possible Yes
 - [ ] 4.7 Terminal behavior: disable conflicting bindings for Terminal, iTerm2, WezTerm, kitty, Alacritty, Ghostty; add `Ctrl+Shift+C/V` terminal-only copy/paste
 - [ ] 4.8 Browser behavior: leave `Ctrl+Tab` native where apps already handle it
-- [ ] 4.9 Implement `block_native_cmd` option (default off, per D3)
+- [x] 4.9 Implement `block_native_cmd` option (default off, per D3)
 - [ ] 4.10 Unit tests for the rule table (every rule valid, no duplicate chords); manual test pass in TextEdit, Safari, Terminal
 
 **Done when:** `Ctrl+C/V/X/Z/A/S` work in TextEdit; `Ctrl+C` still interrupts in Terminal; `Ctrl+Shift+C/V` copy/paste in Terminal.
+
+Status: `rakuen/modules/editing.lua` holds the full rule table (4.1-4.8) and the `block_native_cmd` option (4.9, ticked), covered by unit tests. 4.1-4.8 and 4.10 stay unticked until the manual pass in TextEdit, Safari and Terminal confirms the posted Cmd chords work live. Test with `only = "editing"` and `mode = "match"` (see `docs/testing.md`).
 
 ## Phase 5 – Text navigation module (Linux caret keys)
 

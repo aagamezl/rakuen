@@ -1,4 +1,4 @@
--- Rakuen entry point. The installer copies this file to ~/.hammerspoon/init.lua.
+-- Rakuen entry point. ~/.hammerspoon/init.lua sets package.path to this folder and runs it.
 
 local binder = require("rakuen.core.binder")
 local config = require("rakuen.core.config")

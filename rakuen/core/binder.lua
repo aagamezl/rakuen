@@ -124,6 +124,7 @@ function binder:start()
   self.tap = hs.eventtap.new({ hs.eventtap.event.types.keyDown }, function(event)
     return self:handle_event(event)
   end)
+
   self.tap:start()
 
   self.watchdog = hs.timer.doEvery(WATCHDOG_SECONDS, function()

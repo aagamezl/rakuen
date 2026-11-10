@@ -30,11 +30,17 @@ describe("config", function()
       assert.is_false(settings.modules.windows.enabled)
     end)
 
+    it("keeps native Cmd chords untouched by default and accepts the opt-in", function()
+      assert.is_false(config.merge({}).block_native_cmd)
+      assert.is_true(config.merge({ block_native_cmd = true }).block_native_cmd)
+    end)
+
     it("rejects bad values", function()
       local bad_configs = {
         { mode = "fast" },
         { log_level = "loud" },
         { only = "nonsense" },
+        { block_native_cmd = "yes" },
         { modules = { nonsense = {} } },
         { modules = { editing = { enabled = "yes" } } },
         { modules = { editing = { bindings = { Copy = { enabled = "no" } } } } },
