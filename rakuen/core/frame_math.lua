@@ -36,6 +36,7 @@ function frame_math.right_half(area)
   return { x = area.x + left_width, y = area.y, w = area.w - left_width, h = area.h }
 end
 
+<<<<<<< HEAD
 --- A quarter of the area. `row` is "top" or "bottom"; `column` is "left" or "right".
 function frame_math.quarter(area, row, column)
   assert(row == "top" or row == "bottom", "row must be 'top' or 'bottom'")
@@ -61,6 +62,8 @@ function frame_math.quarter(area, row, column)
   return { x = x, y = y, w = width, h = height }
 end
 
+=======
+>>>>>>> 669e447 (feat: text navigation module complete)
 function frame_math.shift(frame, delta_x, delta_y)
   return { x = frame.x + delta_x, y = frame.y + delta_y, w = frame.w, h = frame.h }
 end
@@ -75,6 +78,7 @@ function frame_math.resize(frame, delta_w, delta_h, min_size)
   }
 end
 
+<<<<<<< HEAD
 --- Map `frame` from one area to another, keeping its relative position and size.
 function frame_math.rescale(frame, from_area, to_area)
   local scale_x = to_area.w / from_area.w
@@ -88,6 +92,8 @@ function frame_math.rescale(frame, from_area, to_area)
   }
 end
 
+=======
+>>>>>>> 669e447 (feat: text navigation module complete)
 --- Keep `margin` pixels of the frame inside `area` and the title bar reachable.
 function frame_math.keep_visible(frame, area, margin)
   local min_x = area.x - frame.w + margin
