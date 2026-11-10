@@ -12,7 +12,10 @@
 --   "unsupported"  fullscreen or non-standard window (dialogs, panels)
 
 local frame_math = require("rakuen.core.frame_math")
+<<<<<<< HEAD
 local tiling = require("rakuen.core.tiling")
+=======
+>>>>>>> 669e447 (feat: text navigation module complete)
 local window_state = require("rakuen.core.window_state")
 
 local window_manager = {}
@@ -42,9 +45,14 @@ local function usable_area(win)
 end
 
 --- Move the window to `frame` and remember what is needed to restore it.
+<<<<<<< HEAD
 --- `original` is the frame to restore to; nil when restoring. `layout` is the
 --- tiling layout name, kept so the next arrow press knows where the window is.
 function window_manager:set_frame(win, frame, original, layout)
+=======
+--- `original` is the frame to restore to; nil when restoring.
+function window_manager:set_frame(win, frame, original)
+>>>>>>> 669e447 (feat: text navigation module complete)
   win:setFrame(frame, NO_ANIMATION)
   local applied = win:frame()
   local window_id = win:id()
@@ -54,8 +62,12 @@ function window_manager:set_frame(win, frame, original, layout)
     return "done"
   end
 
+<<<<<<< HEAD
   self.states[window_id] =
     { original = original, requested = frame, applied = applied, layout = layout }
+=======
+  self.states[window_id] = { original = original, requested = frame, applied = applied }
+>>>>>>> 669e447 (feat: text navigation module complete)
 
   if frame_math.same_frame(applied, frame, frame_math.DEFAULT_TOLERANCE) then
     return "done"
@@ -72,12 +84,41 @@ local function run_decision(self, win, decision)
     return self:set_frame(win, decision.frame, nil)
   end
 
+<<<<<<< HEAD
   return self:set_frame(win, decision.frame, decision.original, decision.layout)
+=======
+  return self:set_frame(win, decision.frame, decision.original)
+end
+
+local function toggle_to(self, win, target)
+  local decision = window_state.decide_toggle(win:frame(), target, self.states[win:id()])
+  return run_decision(self, win, decision)
+end
+
+local function apply_to(self, win, target)
+  local decision = window_state.decide_apply(win:frame(), target, self.states[win:id()])
+  return run_decision(self, win, decision)
+>>>>>>> 669e447 (feat: text navigation module complete)
 end
 
 --- Maximize, or restore when the window is already maximized by Rakuen.
 function window_manager:toggle_maximize(win)
+<<<<<<< HEAD
   return self:tile_to(win, "full")
+=======
+  if not is_manageable(win) then
+    return "unsupported"
+  end
+  return toggle_to(self, win, frame_math.full(usable_area(win)))
+end
+
+--- Maximize; does nothing when the window is already maximized.
+function window_manager:maximize(win)
+  if not is_manageable(win) then
+    return "unsupported"
+  end
+  return apply_to(self, win, frame_math.full(usable_area(win)))
+>>>>>>> 669e447 (feat: text navigation module complete)
 end
 
 --- Go back to the frame before Rakuen moved the window.
@@ -90,6 +131,7 @@ function window_manager:unmaximize(win)
   return run_decision(self, win, decision)
 end
 
+<<<<<<< HEAD
 --- Go to `layout` ("left", "top_right", ...); press again to restore.
 function window_manager:tile_to(win, layout)
   if not is_manageable(win) then
@@ -120,11 +162,18 @@ end
 
 --- Cmd+<arrow>: move to the next tiling layout (halves, quarters, maximize).
 function window_manager:tile_step(win, direction)
+=======
+--- Fill the left or right half; press again to restore.
+function window_manager:tile(win, side)
+  assert(side == "left" or side == "right", "side must be 'left' or 'right'")
+
+>>>>>>> 669e447 (feat: text navigation module complete)
   if not is_manageable(win) then
     return "unsupported"
   end
 
   local area = usable_area(win)
+<<<<<<< HEAD
   local current = win:frame()
   local state = self.states[win:id()]
 
@@ -143,6 +192,16 @@ end
 --- Send the window to the neighbor display. Does nothing when there is none.
 --- A maximized or tiled window keeps its layout on the new display, and its
 --- saved frame is scaled to that display so restoring still works.
+=======
+  local target = frame_math.left_half(area)
+  if side == "right" then
+    target = frame_math.right_half(area)
+  end
+  return toggle_to(self, win, target)
+end
+
+--- Send the window to the neighbor display. Does nothing when there is none.
+>>>>>>> 669e447 (feat: text navigation module complete)
 function window_manager:move_to_display(win, direction)
   local method = NEIGHBOR_METHODS[direction]
   assert(method ~= nil, "direction must be left, right, up or down")
@@ -157,6 +216,7 @@ function window_manager:move_to_display(win, direction)
     return "unchanged"
   end
 
+<<<<<<< HEAD
   local source_area = usable_area(win)
   local state = self.states[win:id()]
   local layout = current_layout(win, source_area, state)
@@ -176,6 +236,11 @@ function window_manager:move_to_display(win, direction)
 
   local target = tiling.frame_for(layout, target_area)
   return self:set_frame(win, target, original, layout)
+=======
+  win:moveToScreen(target_screen, false, true, NO_ANIMATION)
+  self.states[win:id()] = nil
+  return "done"
+>>>>>>> 669e447 (feat: text navigation module complete)
 end
 
 function window_manager:close(win)
@@ -184,7 +249,11 @@ function window_manager:close(win)
   return "done"
 end
 
+<<<<<<< HEAD
 function window_manager.minimize(_, win)
+=======
+function window_manager:minimize(win)
+>>>>>>> 669e447 (feat: text navigation module complete)
   win:minimize()
   return "done"
 end

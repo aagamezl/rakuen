@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 -- luacheck: ignore 212
+=======
+>>>>>>> 669e447 (feat: text navigation module complete)
 -- Fake Hammerspoon windows and screens for unit tests.
 --
 -- A fake window keeps its frame in memory. Options let a test mimic windows
