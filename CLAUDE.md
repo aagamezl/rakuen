@@ -20,7 +20,7 @@ Rakuen is a Hammerspoon (Lua) configuration that makes macOS behave like GNOME. 
 ## Layout
 
 - `rakuen/core/` – engine (keycombo, app filter, registry, binder)
-- `rakuen/modules/` – keybinding modules (editing, text navigation, windows, focus, workspaces, shell, session)
+- `rakuen/modules/` – keybinding modules (editing, text navigation, windows, focus, workspaces, applications, shell, session)
 - `rakuen/ui/` – cheatsheet window
 - `spec/` – tests; `spec/helpers/hs_mock.lua` mocks the `hs` global
 - `bin/install.sh` – installer

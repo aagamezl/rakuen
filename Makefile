@@ -7,6 +7,7 @@ test:
 
 lint:
 	luacheck $(LUA_SOURCES)
+	shellcheck -x bin/install.sh
 
 format:
 	stylua $(LUA_SOURCES)

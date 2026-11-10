@@ -44,34 +44,40 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
 
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
-| Start of line | Home | Home | Cmd+Left | Yes | Text field only |
-| End of line | End | End | Cmd+Right | Yes | Text field only |
-| Start of document | Ctrl+Home | Ctrl+Home | Cmd+Up | Yes | Text field only |
-| End of document | Ctrl+End | Ctrl+End | Cmd+Down | Yes | Text field only |
-| Previous word | Ctrl+Left | Ctrl+Left | Opt+Left | Yes | Text field only |
-| Next word | Ctrl+Right | Ctrl+Right | Opt+Right | Yes | Text field only |
-| Previous paragraph | Ctrl+Up | Ctrl+Up | Opt+Up | Yes | Text field only |
-| Next paragraph | Ctrl+Down | Ctrl+Down | Opt+Down | Yes | Text field only |
-| Select to start of line | Shift+Home | Shift+Home | Shift+Cmd+Left | Yes | Text field only |
-| Select to end of line | Shift+End | Shift+End | Shift+Cmd+Right | Yes | Text field only |
-| Select previous word | Ctrl+Shift+Left | Ctrl+Shift+Left | Shift+Opt+Left | Yes | Text field only |
-| Select next word | Ctrl+Shift+Right | Ctrl+Shift+Right | Shift+Opt+Right | Yes | Text field only |
-| Select to start of document | Ctrl+Shift+Home | Ctrl+Shift+Home | Shift+Cmd+Up | Yes | Text field only |
-| Select to end of document | Ctrl+Shift+End | Ctrl+Shift+End | Shift+Cmd+Down | Yes | Text field only |
-| Delete previous word | Ctrl+Backspace | Ctrl+Backspace | Opt+Delete | Yes | Text field only |
-| Delete next word | Ctrl+ForwardDelete | Ctrl+ForwardDelete | Opt+ForwardDelete | Yes | Text field only |
+| Start of line | Home | Home | Cmd+Left | Yes | Spike 1.6 for Fn+Left |
+| End of line | End | End | Cmd+Right | Yes | Spike 1.6 |
+| Start of document | Ctrl+Home | Ctrl+Home | Cmd+Up | Yes | Synthetic `Cmd+Up` must not maximize the window |
+| End of document | Ctrl+End | Ctrl+End | Cmd+Down | Yes | Synthetic `Cmd+Down` must not unmaximize |
+| Previous word | Ctrl+Left | Ctrl+Left | Opt+Left | Yes | No longer conflicts with Spaces (D7) |
+| Next word | Ctrl+Right | Ctrl+Right | Opt+Right | Yes | No longer conflicts with Spaces (D7) |
+| Previous paragraph | Ctrl+Up | Ctrl+Up | Opt+Up | Yes | No longer conflicts with Mission Control (D7) |
+| Next paragraph | Ctrl+Down | Ctrl+Down | Opt+Down | Yes | No longer conflicts with Application windows (D7) |
+| Select to start of line | Shift+Home | Shift+Home | Shift+Cmd+Left | Yes | |
+| Select to end of line | Shift+End | Shift+End | Shift+Cmd+Right | Yes | |
+| Select previous word | Ctrl+Shift+Left | Ctrl+Shift+Left | Shift+Opt+Left | Yes | |
+| Select next word | Ctrl+Shift+Right | Ctrl+Shift+Right | Shift+Opt+Right | Yes | |
+| Select to previous paragraph | Ctrl+Shift+Up | Ctrl+Shift+Up | Shift+Opt+Up | Yes | |
+| Select to next paragraph | Ctrl+Shift+Down | Ctrl+Shift+Down | Shift+Opt+Down | Yes | |
+| Select to start of document | Ctrl+Shift+Home | Ctrl+Shift+Home | Shift+Cmd+Up | Yes | |
+| Select to end of document | Ctrl+Shift+End | Ctrl+Shift+End | Shift+Cmd+Down | Yes | |
+| Delete previous word | Ctrl+Backspace | Ctrl+Backspace | Opt+Delete | Yes | |
+| Delete next word | Ctrl+Delete | Ctrl+Delete | Opt+Fn+Delete | Yes | |
 
 ### Windows
 
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
 | Close | Alt+F4 | Opt+F4 | Cmd+W | Yes | Apps that quit on the last window still quit |
-| Toggle maximize | Alt+F10 | Opt+F10 | none | Yes | Fills the screen and restores the saved frame. Not a macOS fullscreen Space |
-| Maximize | Super+Up | Cmd+Up | none | Yes | Same fill. Ignores synthetic Cmd+Up from Ctrl+Home |
-| Unmaximize | Super+Down, Alt+F5 | Cmd+Down, Opt+F5 | none | Yes | Ctrl+Down stays App Expose. Ignores synthetic Cmd+Down from Ctrl+End |
-| Tile left | Super+Left | Cmd+Left | none | Yes | Left half; press again to restore. macOS tiling shortcuts may already occupy this chord |
+| Toggle maximize | Alt+F10 | Opt+F10 | none | Yes | Fills the screen and restores the saved frame. Not a fullscreen Space |
+| Maximize | Super+Up | Cmd+Up | none | Yes | Ignores synthetic `Cmd+Up` from `Ctrl+Home`. From a half it goes to the top quarter |
+| Unmaximize | Super+Down, Alt+F5 | Cmd+Down, Opt+F5 | none | Yes | Ignores synthetic `Cmd+Down` from `Ctrl+End`. From a half it goes to the bottom quarter |
+| Tile left | Super+Left | Cmd+Left | none | Yes | Left half; press again to restore. System tiling shortcuts may overlap |
 | Tile right | Super+Right | Cmd+Right | none | Yes | Right half; press again to restore |
-| Minimize | Super+H | Cmd+H | Cmd+M | Yes | Overrides Hide. Hide moves to Ctrl+H |
+| Tile top left | none | Cmd+Left, then Cmd+Up | none | Yes | Quarter. From the left half. Cmd+Down goes back to the half |
+| Tile top right | none | Cmd+Right, then Cmd+Up | none | Yes | Quarter. From the right half |
+| Tile bottom left | none | Cmd+Left, then Cmd+Down | none | Yes | Quarter. From the left half |
+| Tile bottom right | none | Cmd+Right, then Cmd+Down | none | Yes | Quarter. From the right half. Arrow toward the edge restores |
+| Minimize | Super+H | Cmd+H | Cmd+M | Yes | Overrides Hide. Hide moves to `Ctrl+H` |
 | Move to display left | Super+Shift+Left | Cmd+Shift+Left | none | Yes | `window:moveToScreen` |
 | Move to display right | Super+Shift+Right | Cmd+Shift+Right | none | Yes | `window:moveToScreen` |
 | Move to display up | Super+Shift+Up | Cmd+Shift+Up | none | Yes | No-op when displays are side by side |

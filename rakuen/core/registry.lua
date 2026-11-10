@@ -10,6 +10,7 @@
 --     to = "Ctrl+C",               -- chord Rakuen listens for
 --     applications = { enable = {}, disable = { "com.apple.Terminal" } },
 --     action = { mods = { "cmd" }, key = "c" },   -- or a function
+--     when = function(bundle_id) return true end,  -- optional extra gate, run last
 --     feasibility = "yes",         -- yes | partial | no
 --     note = "optional limitation note",
 --   }
@@ -42,6 +43,10 @@ local function validate_rule(rule)
   local description = rule.description
   assert(type(rule.to) == "string", "rule '" .. description .. "': to must be a string")
   validate_action(rule.action, description)
+
+  if rule.when ~= nil then
+    assert(type(rule.when) == "function", "rule '" .. description .. "': when must be a function")
+  end
 
   if rule.feasibility ~= nil then
     assert(
@@ -99,9 +104,13 @@ function registry:add_all(module_name, rules)
 end
 
 --- Return the rule that applies to `chord` in `bundle_id`, or nil.
+--- A rule with a `when` function applies only while that function returns true.
 function registry:find(chord, bundle_id)
   for _, rule in ipairs(self.by_chord[chord] or {}) do
-    if app_filter.allows(rule.applications, bundle_id) then
+    if
+      app_filter.allows(rule.applications, bundle_id)
+      and (rule.when == nil or rule.when(bundle_id))
+    then
       return rule
     end
   end

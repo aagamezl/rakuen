@@ -76,6 +76,28 @@ describe("registry", function()
     end)
   end)
 
+  it("applies a rule only while its when function returns true", function()
+    local open = false
+    rules:add(
+      "editing",
+      make_rule({
+        when = function()
+          return open
+        end,
+      })
+    )
+
+    assert.is_nil(rules:find("ctrl+c", "com.apple.TextEdit"))
+    open = true
+    assert.is_not_nil(rules:find("ctrl+c", "com.apple.TextEdit"))
+  end)
+
+  it("rejects a when that is not a function", function()
+    assert.has_error(function()
+      rules:add("editing", make_rule({ when = true }))
+    end)
+  end)
+
   it("returns rules in registration order", function()
     rules:add_all("editing", {
       make_rule(),
