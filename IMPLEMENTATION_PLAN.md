@@ -21,14 +21,23 @@ Inputs: `task.md` (requirements), `gnome-keybindings.txt` (GNOME dump), `gnome_h
 | D2 | Remap mechanism | One `hs.eventtap` (keyDown) dispatching to a registry of rules. Rule either runs a function or posts a translated key (e.g. `Ctrl+C` → `Cmd+C`). | Hammerspoon-only, as required. One tap is cheaper and easier to debug than many hotkeys. |
 | D3 | Native `Cmd+<key>` after remap | **Pass through by default** (configurable `block_native_cmd`). | Swallowing every `Cmd` chord is risky; make it opt-in once the setup is proven. |
 | D4 | App filters | Each binding has `applications = { enable = {}, disable = {} }` (bundle IDs). Empty `enable` means all apps. `disable` always wins. | Task item 3.1. |
-| D5 | Text-navigation scope | Default: runs only when the focused AX element is an editable text role. Per-app `force` list for Chrome/Electron apps that do not expose AX roles (decided in the Phase 1 spike). | Avoids stealing `Ctrl+Left/Right` (Spaces) and `Ctrl+Up/Down` (Mission Control) outside text fields. |
+| D5 | Text-navigation scope | Default: runs only when the focused AX element is an editable text role. Per-app `force` list for Chrome/Electron apps that do not expose AX roles (decided in the Phase 1 spike). | Keeps `Ctrl+Arrow`, `Home/End` and `Ctrl+Backspace` untouched outside text fields. The macOS Spaces, Mission Control and Application windows shortcuts no longer use `Ctrl+Arrow` (D7), so they cannot collide. |
 | D6 | Spaces | No public API. Switch via Mission Control shortcuts. Moving windows across Spaces is best-effort. No vertical workspaces. | macOS limitation, documented in the keybinding docs. |
-| D7 | Spaces shortcut conflict | Installer moves the macOS "Move left/right a space" shortcuts off `Ctrl+Arrow` (via `com.apple.symbolichotkeys`), and Rakuen sends the new chord. | Otherwise `Ctrl+Left/Right` cannot be both word-motion and Space switching. To confirm in the Phase 1 spike. |
+| D7 | Navigation shortcut conflict | The installer, from its first version, moves four macOS shortcuts to `Ctrl+Cmd+Arrow` (via `com.apple.symbolichotkeys`, with backup): Move left a space `Ctrl+Left` → `Ctrl+Cmd+Left`, Move right a space `Ctrl+Right` → `Ctrl+Cmd+Right`, Mission Control `Ctrl+Up` → `Ctrl+Cmd+Up`, Application windows `Ctrl+Down` → `Ctrl+Cmd+Down`. Hotkey IDs 79, 81, 32, 33. Their Shift variants are left alone. Rakuen sends the new chords for the GNOME bindings. | All four `Ctrl+Arrow` chords stay free for text navigation and no longer depend on the text gate. Spike 1.4 showed the tap could swallow them, but moving the system shortcuts is simpler and safer. |
 | D8 | Docs source of truth | `docs/keybindings.md` and the cheatsheet are **generated from the registry**. | Prevents the three lists drifting apart. |
 | D9 | GNOME dump quirks | `switch-to-workspace-right` uses `Super+Page_Down` (dump repeats `Page_Up`). Entries with `''` or `[]`, and `XF86*` media/brightness keys, are not bound. | Dump error; macOS already handles media keys. |
 | D10 | Hard limits (documented, not fought) | Secure Input (password fields), `Cmd+Tab`, `Cmd+Space`, `Cmd+Opt+Esc`, Touch ID, most `XF86*` keys. | Not interceptable by Hammerspoon. |
+| D11 | Quit on last window | A new Applications module quits an app once its last window closes. Per-app `disable` list protects apps that must keep running (Finder, menu-bar apps, apps with no windows by design). | Matches GNOME, where closing the last window ends the app. macOS keeps apps alive by default. |
+| D12 | Deployment | Two stages. **Stage A (Phase 2):** `bin/install.sh` first version only sets the Spaces shortcuts (backup, apply, restore, dry-run). **Stage B (Phase 13):** the same script gains Hammerspoon install, config copy, permissions guidance and tarball bootstrap. | The shortcut change is a precondition for every other module, so it ships first and every later phase is tested with it applied. |
 
-Open question for you: confirm D3 (pass-through) and D7 (rewriting the macOS Spaces shortcuts in the installer). Defaults above apply unless you change them.
+Open question for you: confirm D3 (pass-through). D7 is decided. For D11, confirm the default `disable` list (Finder and similar).
+
+## Deployment architecture
+
+- `bin/install.sh` is the single entry point and is built in two stages (D12). It runs from a local clone, and from Phase 13 also via `curl | bash`.
+- **System layer (shell, may need a Dock restart or logout to apply):** macOS Spaces, Mission Control and Application windows shortcuts on `Ctrl+Cmd+Arrow`, written to `com.apple.symbolichotkeys`. Previous values are saved in `~/.config/rakuen/backup/spaces-shortcuts.tsv` and restored by `--restore` / `--uninstall`. `--status` shows what is stored.
+- **Runtime layer (Hammerspoon, Lua):** `~/.hammerspoon/init.lua` loads Rakuen. User settings live in `~/.config/rakuen/config.lua`.
+- **Order of setup:** 1) system shortcuts (install.sh, Phase 2) 2) Hammerspoon and config (Phase 13) 3) permissions (Accessibility, Input Monitoring). Rakuen assumes the system shortcuts are already moved, so the workspaces module and docs never describe `Ctrl+Arrow` as Space switching, Mission Control or Application windows.
 
 ## Target layout
 
@@ -37,10 +46,10 @@ rakuen/
 ├── init.lua                  # entry point copied to ~/.hammerspoon/init.lua
 ├── rakuen/
 │   ├── core/                 # keycombo, app_filter, registry, binder, synthetic, config, logger
-│   ├── modules/              # editing, text_navigation, windows, focus, workspaces, shell, session
+│   ├── modules/              # editing, text_navigation, windows, focus, workspaces, applications, shell, session
 │   └── ui/                   # cheatsheet
 ├── spec/                     # busted unit tests (hs mocked)
-├── bin/install.sh
+├── bin/install.sh            # stage A (Phase 2): Spaces shortcuts; stage B (Phase 13): full installer
 ├── scripts/                  # generate_docs, lint, test helpers
 ├── docs/keybindings.md       # generated
 ├── .github/workflows/ci.yml
@@ -95,7 +104,9 @@ make check
 
 **Done when:** every catalog row has a feasibility verdict backed by a spike result, and D5/D7 are settled.
 
-## Phase 2 – Core engine
+Note: per D7 the macOS Spaces shortcuts are `Ctrl+Cmd+Left/Right` (set by `bin/install.sh`, task 2.10). Catalog rows use these as the macOS original for Spaces, and `docs/feasibility.md` records the spike result against that design.
+
+## Phase 2 – Core Engine And Navigation Shortcut Setup
 
 - [x] 2.1 `keycombo`: parse and normalize chords (`"Ctrl+Shift+Tab"` ↔ modifiers + keycode); unit tests including aliases (`Opt`/`Alt`, `Cmd`/`Super`)
 - [x] 2.2 `app_filter`: `enable`/`disable` bundle-ID evaluation (D4); unit tests for empty, enable-only, disable-only, both
@@ -106,8 +117,14 @@ make check
 - [x] 2.7 `binder` step two: match rules, evaluate app filter, run action or post synthetic key, swallow only on match
 - [x] 2.8 Guard rails: watchdog that restarts the tap if macOS disables it; `pcall` around every handler so an error never blocks input; panic hotkey to disable Rakuen
 - [x] 2.9 `init.lua`: load modules, show "Rakuen is ready" alert, reload hotkey
+- [x] 2.10 `bin/install.sh` (stage A): detect macOS, back up the current `com.apple.symbolichotkeys` Spaces entries to `~/.config/rakuen/backup/`, set "Move left a space", "Move right a space", "Mission Control" and "Application windows" to `Ctrl+Cmd+Left/Right/Up/Down` (hotkey IDs 79, 81, 32, 33; the Shift variants are left alone), run `activateSettings -u`, print the logout note
+- [x] 2.11 `install.sh` safety: `--dry-run` (prints changes, writes nothing), `--restore` (puts the backup back), idempotent re-runs (never overwrite the original backup), `set -euo pipefail`, shellcheck clean
+- [x] 2.12 Verify live: after the script and a logout, `Ctrl+Cmd+Left/Right` switch Spaces and `Ctrl+Left/Right` no longer do; `--restore` reverts it
+- [ ] 2.13 Extend the installer to Mission Control (`Ctrl+Cmd+Up`) and Application windows (`Ctrl+Cmd+Down`): code done and tested on a temporary plist; verify live that both open and that `Ctrl+Up/Down` no longer do, then restore works
 
-**Done when:** log-only mode shows keys in the Hammerspoon console with zero behavior change; switching to match mode passes unit tests for matching and filtering.
+Status (2.10, 2.11): `bin/install.sh` is written with the box UI from `bin/utils/box-ui.sh` (see `box-ui.md`), supports `--dry-run`, `--restore`, `--status` (shows the stored Spaces, Mission Control and Application windows shortcuts), `--restart-dock` and `--help`. After a change it asks macOS to reload the shortcuts right away (`activateSettings -u`); `--restart-dock` also restarts the Dock, which owns the Spaces shortcuts. The result box says what to do if the change is not live (restart the Dock, then log out). Whether a reload takes effect without a logout on this macOS version (26) is not yet confirmed and is part of 2.12, and passes shellcheck. It was exercised against a temporary plist (apply, repeat, restore, dry run, missing backup), never against the real settings. 2.12 stays open until it is run for real and checked after a logout. Backup file: `~/.config/rakuen/backup/spaces-shortcuts.tsv`. Every Bash script's UI uses `bin/utils/box-ui.sh`.
+
+**Done when:** log-only mode shows keys in the Hammerspoon console with zero behavior change; switching to match mode passes unit tests for matching and filtering; and `bin/install.sh` sets the Spaces, Mission Control and Application windows shortcuts to `Ctrl+Cmd+Arrow` and can restore the originals.
 
 Status: verified live on 2026-11-06 in log mode (keys logged, no behavior change, panic hotkey `Ctrl+Opt+Cmd+Escape` pauses and resumes, `Ctrl+Opt+Cmd+R` reloads). The watchdog restart was not triggered during the test, so it is covered by code review only. Load it before the installer exists by adding the repo to `package.path` and running `dofile` on `init.lua` from the Hammerspoon console.
 
@@ -124,34 +141,36 @@ Status: unit tests cover config validation, overrides and the loader, including 
 
 ## Phase 4 – Editing module (Ctrl performs Cmd)
 
-- [ ] 4.1 Copy, Paste, Cut (`Ctrl+C/V/X` → `Cmd+C/V/X`)
-- [ ] 4.2 Undo, Redo (`Ctrl+Z`, `Ctrl+Y`, `Ctrl+Shift+Z`)
-- [ ] 4.3 Select all, Save, Save as, Find, Find next, New, Open
-- [ ] 4.4 Close window, Quit, New tab, Close tab (`Ctrl+F4`), Next/Previous tab
-- [ ] 4.5 Bold, Italic, Underline, Settings (`Ctrl+,`)
-- [ ] 4.6 Rename: `F2` → `Return`, enabled only in Finder (`com.apple.finder`). In Finder, `Return` is the macOS rename key; `F2` is the GNOME file-manager rename key. Catalog row: GNOME `F2`, configured `F2`, macOS original `Return`, possible Yes
-- [ ] 4.7 Terminal behavior: disable conflicting bindings for Terminal, iTerm2, WezTerm, kitty, Alacritty, Ghostty; add `Ctrl+Shift+C/V` terminal-only copy/paste
-- [ ] 4.8 Browser behavior: leave `Ctrl+Tab` native where apps already handle it
+- [x] 4.1 Copy, Paste, Cut (`Ctrl+C/V/X` → `Cmd+C/V/X`)
+- [x] 4.2 Undo, Redo (`Ctrl+Z`, `Ctrl+Y`, `Ctrl+Shift+Z`)
+- [x] 4.3 Select all, Save, Save as, Find, Find next, New, Open
+- [x] 4.4 Close window, Quit, New tab, Close tab (`Ctrl+F4`), Next/Previous tab
+- [x] 4.5 Bold, Italic, Underline, Settings (`Ctrl+,`)
+- [x] 4.6 Rename: `F2` → `Return`, enabled only in Finder (`com.apple.finder`). In Finder, `Return` is the macOS rename key; `F2` is the GNOME file-manager rename key. Catalog row: GNOME `F2`, configured `F2`, macOS original `Return`, possible Yes
+- [x] 4.7 Terminal behavior: disable conflicting bindings for Terminal, iTerm2, WezTerm, kitty, Alacritty, Ghostty; add `Ctrl+Shift+C/V` terminal-only copy/paste
+- [x] 4.8 Browser behavior: leave `Ctrl+Tab` native where apps already handle it
 - [x] 4.9 Implement `block_native_cmd` option (default off, per D3)
-- [ ] 4.10 Unit tests for the rule table (every rule valid, no duplicate chords); manual test pass in TextEdit, Safari, Terminal
+- [x] 4.10 Unit tests for the rule table (every rule valid, no duplicate chords); manual test pass in TextEdit, Safari, Terminal
 
 **Done when:** `Ctrl+C/V/X/Z/A/S` work in TextEdit; `Ctrl+C` still interrupts in Terminal; `Ctrl+Shift+C/V` copy/paste in Terminal.
 
-Status: `rakuen/modules/editing.lua` holds the full rule table (4.1-4.8) and the `block_native_cmd` option (4.9, ticked), covered by unit tests. 4.1-4.8 and 4.10 stay unticked until the manual pass in TextEdit, Safari and Terminal confirms the posted Cmd chords work live. Test with `only = "editing"` and `mode = "match"` (see `docs/testing.md`).
+Status: complete. `rakuen/modules/editing.lua` holds the rule table and the `block_native_cmd` option, covered by unit tests and confirmed in the manual pass.
 
 ## Phase 5 – Text navigation module (Linux caret keys)
 
-- [ ] 5.1 Text-field gate using AX role (D5), with per-app `force` list
-- [ ] 5.2 Line: Home, End, Shift+Home, Shift+End
-- [ ] 5.3 Document: `Ctrl+Home/End`, `Ctrl+Shift+Home/End`
-- [ ] 5.4 Word: `Ctrl+Left/Right`, `Ctrl+Shift+Left/Right`
-- [ ] 5.5 Paragraph: `Ctrl+Up/Down`
-- [ ] 5.6 Delete word: `Ctrl+Backspace`, `Ctrl+Delete`
-- [ ] 5.7 Ensure synthetic `Cmd+Up/Down` from `Ctrl+Home/End` does not trigger window maximize (marker from 2.4)
-- [ ] 5.8 Disable in terminals; add `force` entries for Chrome/Electron apps per the spike
-- [ ] 5.9 Verify outside a text field: `Ctrl+Left/Right` still switch Spaces, `Ctrl+Up` still opens Mission Control (or D7 replacement)
+- [x] 5.1 Text-field gate using AX role (D5), with per-app `force` list
+- [x] 5.2 Line: Home, End, Shift+Home, Shift+End
+- [x] 5.3 Document: `Ctrl+Home/End`, `Ctrl+Shift+Home/End`
+- [x] 5.4 Word: `Ctrl+Left/Right`, `Ctrl+Shift+Left/Right`
+- [x] 5.5 Paragraph: `Ctrl+Up/Down`
+- [x] 5.6 Delete word: `Ctrl+Backspace`, `Ctrl+Delete`
+- [x] 5.7 Ensure synthetic `Cmd+Up/Down` from `Ctrl+Home/End` does not trigger window maximize (marker from 2.4)
+- [x] 5.8 Disable in terminals; add `force` entries for Chrome/Electron apps per the spike
+- [x] 5.9 Verify outside a text field: `Ctrl+Arrow` do nothing special (Spaces, Mission Control and Application windows use `Ctrl+Cmd+Arrow`, D7). Requires 2.10 and 2.13 applied
 
 **Done when:** every chord in task item 6 behaves as on Linux in TextEdit and Notes, and the fallback outside text fields works.
+
+Status: complete. `rakuen/modules/text_navigation.lua` holds all 18 rules (5.2-5.6) behind the AX text gate in `rakuen/core/text_gate.lua` (5.1), with terminals disabled and the `force` list for Chrome, VS Code and Slack (5.8). Rules have an optional `when` function, which the registry checks after the app filter. Synthetic chords carry the Rakuen marker, so Cmd+Up/Down never reach the windows module (5.7). Unit tests cover the rule table and the gate, and the manual pass in TextEdit and Notes, including 5.9, was confirmed on 2026-11-10.
 
 ## Phase 6 – Windows module
 
@@ -178,13 +197,16 @@ Status: `rakuen/modules/editing.lua` holds the full rule table (4.1-4.8) and the
 
 ## Phase 8 – Workspaces module
 
-- [ ] 8.1 Installer/helper to set the Mission Control shortcuts required by D7 (with backup of the previous values)
-- [ ] 8.2 Previous / next space (`Cmd+PageUp/PageDown`, `Cmd+Ctrl+Left/Right`)
+- [ ] 8.1 Check at startup that the Spaces, Mission Control and Application windows shortcuts are `Ctrl+Cmd+Arrow` (read `com.apple.symbolichotkeys`); if not, show an alert pointing to `bin/install.sh` (the change itself is done by 2.10)
+- [ ] 8.2 Previous / next space: `Ctrl+Cmd+Left/Right` (now the native macOS chords, passed through untouched) and `Cmd+PageUp/PageDown` (posts `Ctrl+Cmd+Left/Right`, marked synthetic)
+- [ ] 8.2b Document `Ctrl+Cmd+Up` (Mission Control) and `Ctrl+Cmd+Down` (Application windows) in the catalog as native macOS chords moved by the installer
 - [ ] 8.3 First / last space (only when the target desktop exists)
 - [ ] 8.4 Move window to previous / next / first / last space (best-effort; fail gracefully with an alert)
 - [ ] 8.5 Mark vertical workspace bindings as "No" in the catalog
 
-**Done when:** space switching works from the GNOME chords; move-window behavior is documented as best-effort.
+**Done when:** space switching works from `Ctrl+Cmd+Left/Right` and `Cmd+PageUp/PageDown`, `Ctrl+Left/Right` no longer switch Spaces, `Ctrl+Cmd+Up/Down` open Mission Control and Application windows, and move-window behavior is documented as best-effort.
+
+Status: `rakuen/modules/workspaces.lua` is still an empty rule table. Rules are written in this phase with the `Ctrl+Cmd+Left/Right` chords from the start.
 
 ## Phase 9 – Shell module
 
@@ -226,15 +248,15 @@ Status: `rakuen/modules/editing.lua` holds the full rule table (4.1-4.8) and the
 
 ## Phase 13 – Installer and distribution
 
-- [ ] 13.1 `bin/install.sh`: detect macOS, install Homebrew if missing, `brew install --cask hammerspoon`
+- [ ] 13.1 Extend `bin/install.sh` (stage A from 2.10 already sets the Spaces shortcuts): detect macOS, install Homebrew if missing, `brew install --cask hammerspoon`
 - [ ] 13.2 Copy config to `~/.hammerspoon`, backing up any existing `init.lua`
 - [ ] 13.3 Works both from a local clone and via `curl -fsSL <raw github url> | bash` (downloads the repo tarball when not in a clone)
 - [ ] 13.4 Idempotent re-runs; `--uninstall` restores the backup; `--dry-run`
 - [ ] 13.5 Guide for permissions: Accessibility, Input Monitoring; launch-at-login; reload Hammerspoon
-- [ ] 13.6 Apply D7 shortcut changes (with backup) and explain the logout requirement
+- [ ] 13.6 Run the stage A Spaces step first in the full flow, make `--uninstall` also call `--restore`, and keep the logout explanation in the final output
 - [ ] 13.7 Test installer on a clean macOS user account / VM; shellcheck in CI
 
-**Done when:** a fresh Mac goes from nothing to working Rakuen with one command.
+**Done when:** a fresh Mac goes from nothing to working Rakuen with one command, with the Spaces shortcuts already moved.
 
 ## Phase 14 – Hardening and release
 
@@ -246,11 +268,22 @@ Status: `rakuen/modules/editing.lua` holds the full rule table (4.1-4.8) and the
 
 **Done when:** the full checklist passes and the release is tagged.
 
-## Phase 15 – Optional / stretch
+## Phase 15 – Applications module
 
-- [ ] 15.1 Clipboard history (list, copy from entry); not a GNOME default, from your draft plan
-- [ ] 15.2 Rakuen menu bar item (enable/disable modules, open cheatsheet)
-- [ ] 15.3 Curated application list/Brewfile ("Curated Workflow" in the vision)
+- [ ] 15.1 Pure function `should_quit(app_info, window_count, disable_list)` decides when an app quits (unit tested with busted)
+- [ ] 15.2 Watch window close events (`hs.window.filter` or `hs.application.watcher` plus a window-destroyed subscription) and quit the app when its last window closes (D11)
+- [ ] 15.3 Ignore apps with no windows by design: only consider regular apps (`activationPolicy` regular), skip minimized and fullscreen-transition windows, and wait a short delay before counting so window swaps do not trigger a quit
+- [ ] 15.4 Default `disable` list: Finder and other apps that must keep running; configurable per app through `applications = { enable, disable }` (D4)
+- [ ] 15.5 Safety: never force-quit (`hs.application:kill()` only), so apps with unsaved changes can show their own prompt; log every quit
+- [ ] 15.6 Catalog and cheatsheet entry (no chord; description and feasibility note), manual test with Safari, TextEdit, Finder, Terminal
+
+**Done when:** closing the last window of TextEdit or Safari quits the app, Finder and listed apps keep running, and an app with unsaved changes is not force-closed.
+
+## Phase 16 – Optional / stretch
+
+- [ ] 16.1 Clipboard history (list, copy from entry); not a GNOME default, from your draft plan
+- [ ] 16.2 Rakuen menu bar item (enable/disable modules, open cheatsheet)
+- [ ] 16.3 Curated application list/Brewfile ("Curated Workflow" in the vision)
 
 ---
 
@@ -262,5 +295,6 @@ Status: `rakuen/modules/editing.lua` holds the full rule table (4.1-4.8) and the
 | Event loop from synthetic keys | Frozen input | Synthetic marker (2.4), watchdog and panic hotkey (2.8) |
 | Wrong terminal/app filters | `Ctrl+C` stops interrupting | Terminal disable list in 4.6, tested manually every release |
 | AX role missing in Electron/Chrome | Text navigation does not fire | `force` per-app list (D5) |
-| Spaces shortcut rewrite fails or is reverted | Space switching broken | Backup and restore in installer, documented manual fallback |
+| Spaces shortcut rewrite fails or is reverted (stage A, 2.10) | Space switching broken, or `Ctrl+Left/Right` switch Spaces again | Backup and restore in installer, documented manual fallback (System Settings > Keyboard > Keyboard Shortcuts > Mission Control) |
+| Quit-on-last-window quits an app the user wanted open | Lost state or unsaved work | Per-app `disable` list, graceful quit only, short delay before counting windows (Phase 15) |
 | macOS updates change behavior | Partial bindings break | Isolate OS-specific code in handlers, note tested versions |
