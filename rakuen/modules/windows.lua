@@ -61,24 +61,16 @@ end
 
 local function display_rule(direction, note)
   local name = direction:sub(1, 1):upper() .. direction:sub(2)
-  return make_rule(
-    "Move to display " .. direction,
-    "none",
-    "Cmd+Shift+" .. name,
-    function(win)
-      return manager:move_to_display(win, direction)
-    end,
-    "yes",
-    note
-  )
+  return make_rule("Move to display " .. direction, "none", "Cmd+Shift+" .. name, function(win)
+    return manager:move_to_display(win, direction)
+  end, "yes", note)
 end
 
-local function maximize(win)
-  return manager:maximize(win)
-end
-
-local function unmaximize(win)
-  return manager:unmaximize(win)
+local function tile_step_rule(description, direction, note)
+  local name = direction:sub(1, 1):upper() .. direction:sub(2)
+  return make_rule(description, "none", "Cmd+" .. name, function(win)
+    return manager:tile_step(win, direction)
+  end, "yes", note)
 end
 
 local function make_rules()
@@ -86,31 +78,53 @@ local function make_rules()
     make_rule("Close", "Cmd+W", "Opt+F4", function(win)
       return manager:close(win)
     end, "yes", "Apps that quit on the last window still quit"),
+
     make_rule("Toggle maximize", "none", "Opt+F10", function(win)
       return manager:toggle_maximize(win)
     end, "yes", "Fills the screen and restores the saved frame. Not a fullscreen Space"),
-    make_rule("Maximize", "none", "Cmd+Up", maximize),
-    make_rule("Unmaximize", "none", "Cmd+Down", unmaximize),
-    make_rule("Unmaximize (F5)", "none", "Opt+F5", unmaximize),
-    make_rule("Tile left", "none", "Cmd+Left", function(win)
-      return manager:tile(win, "left")
-    end, "yes", "Left half; press again to restore"),
-    make_rule("Tile right", "none", "Cmd+Right", function(win)
-      return manager:tile(win, "right")
-    end, "yes", "Right half; press again to restore"),
+
+    tile_step_rule(
+      "Maximize",
+      "up",
+      "Maximize; from a half it goes to the top quarter (Left then Up = top-left)"
+    ),
+    tile_step_rule(
+      "Unmaximize",
+      "down",
+      "Restore; from a half it goes to the bottom quarter (Left then Down = bottom-left)"
+    ),
+    make_rule("Unmaximize (F5)", "none", "Opt+F5", function(win)
+      return manager:unmaximize(win)
+    end, "yes", "Restores the frame from before Rakuen moved the window"),
+
+    tile_step_rule(
+      "Tile left",
+      "left",
+      "Left half; from a quarter it moves along the row; press again at the edge to restore"
+    ),
+    tile_step_rule(
+      "Tile right",
+      "right",
+      "Right half; from a quarter it moves along the row; press again at the edge to restore"
+    ),
+
     make_rule("Minimize", "Cmd+M", "Cmd+H", function(win)
       return manager:minimize(win)
     end, "yes", "Overrides Hide. Hide moves to Ctrl+H"),
+
     display_rule("left"),
     display_rule("right"),
     display_rule("up", "No-op when displays are side by side"),
     display_rule("down", "No-op when displays are side by side"),
+
     make_rule("Begin move", "none", "Opt+F7", function(win)
       window_modal.start(win, "move")
     end, "yes", "Arrows move; Shift for bigger steps; Return keeps; Escape cancels"),
+
     make_rule("Begin resize", "none", "Opt+F8", function(win)
       window_modal.start(win, "resize")
     end, "yes", "Arrows resize from the bottom-right; Return keeps; Escape cancels"),
+
     make_rule("Window action menu", "none", "Opt+Space", function(win)
       window_menu.show(win, manager, window_modal)
     end, "partial", "Chooser for close, minimize, maximize, tile, move, resize and displays"),

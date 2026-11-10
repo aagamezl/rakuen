@@ -31,6 +31,38 @@ local ENTRIES = {
     end,
   },
   {
+    id = "tile_top_left",
+    text = "Tile top left",
+    hint = "Cmd+Left, then Cmd+Up",
+    run = function(manager, win)
+      return manager:tile_to(win, "top_left")
+    end,
+  },
+  {
+    id = "tile_top_right",
+    text = "Tile top right",
+    hint = "Cmd+Right, then Cmd+Up",
+    run = function(manager, win)
+      return manager:tile_to(win, "top_right")
+    end,
+  },
+  {
+    id = "tile_bottom_left",
+    text = "Tile bottom left",
+    hint = "Cmd+Left, then Cmd+Down",
+    run = function(manager, win)
+      return manager:tile_to(win, "bottom_left")
+    end,
+  },
+  {
+    id = "tile_bottom_right",
+    text = "Tile bottom right",
+    hint = "Cmd+Right, then Cmd+Down",
+    run = function(manager, win)
+      return manager:tile_to(win, "bottom_right")
+    end,
+  },
+  {
     id = "minimize",
     text = "Minimize",
     hint = "Cmd+H",

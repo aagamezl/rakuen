@@ -12,6 +12,7 @@
 --   "unsupported"  fullscreen or non-standard window (dialogs, panels)
 
 local frame_math = require("rakuen.core.frame_math")
+local tiling = require("rakuen.core.tiling")
 local window_state = require("rakuen.core.window_state")
 
 local window_manager = {}
@@ -41,8 +42,9 @@ local function usable_area(win)
 end
 
 --- Move the window to `frame` and remember what is needed to restore it.
---- `original` is the frame to restore to; nil when restoring.
-function window_manager:set_frame(win, frame, original)
+--- `original` is the frame to restore to; nil when restoring. `layout` is the
+--- tiling layout name, kept so the next arrow press knows where the window is.
+function window_manager:set_frame(win, frame, original, layout)
   win:setFrame(frame, NO_ANIMATION)
   local applied = win:frame()
   local window_id = win:id()
@@ -52,7 +54,8 @@ function window_manager:set_frame(win, frame, original)
     return "done"
   end
 
-  self.states[window_id] = { original = original, requested = frame, applied = applied }
+  self.states[window_id] =
+    { original = original, requested = frame, applied = applied, layout = layout }
 
   if frame_math.same_frame(applied, frame, frame_math.DEFAULT_TOLERANCE) then
     return "done"
@@ -69,33 +72,12 @@ local function run_decision(self, win, decision)
     return self:set_frame(win, decision.frame, nil)
   end
 
-  return self:set_frame(win, decision.frame, decision.original)
-end
-
-local function toggle_to(self, win, target)
-  local decision = window_state.decide_toggle(win:frame(), target, self.states[win:id()])
-  return run_decision(self, win, decision)
-end
-
-local function apply_to(self, win, target)
-  local decision = window_state.decide_apply(win:frame(), target, self.states[win:id()])
-  return run_decision(self, win, decision)
+  return self:set_frame(win, decision.frame, decision.original, decision.layout)
 end
 
 --- Maximize, or restore when the window is already maximized by Rakuen.
 function window_manager:toggle_maximize(win)
-  if not is_manageable(win) then
-    return "unsupported"
-  end
-  return toggle_to(self, win, frame_math.full(usable_area(win)))
-end
-
---- Maximize; does nothing when the window is already maximized.
-function window_manager:maximize(win)
-  if not is_manageable(win) then
-    return "unsupported"
-  end
-  return apply_to(self, win, frame_math.full(usable_area(win)))
+  return self:tile_to(win, "full")
 end
 
 --- Go back to the frame before Rakuen moved the window.
@@ -108,23 +90,59 @@ function window_manager:unmaximize(win)
   return run_decision(self, win, decision)
 end
 
+--- Go to `layout` ("left", "top_right", ...); press again to restore.
+function window_manager:tile_to(win, layout)
+  if not is_manageable(win) then
+    return "unsupported"
+  end
+
+  local target = tiling.frame_for(layout, usable_area(win))
+  local decision = window_state.decide_toggle(win:frame(), target, self.states[win:id()])
+  decision.layout = layout
+  return run_decision(self, win, decision)
+end
+
 --- Fill the left or right half; press again to restore.
 function window_manager:tile(win, side)
   assert(side == "left" or side == "right", "side must be 'left' or 'right'")
+  return self:tile_to(win, side)
+end
 
+--- The tiling layout the window is in, or nil for a free window. A layout Rakuen set
+--- is trusted while the window has not moved, even when the app refused part of the size.
+local function current_layout(win, area, state)
+  local current = win:frame()
+  if state ~= nil and state.layout ~= nil and frame_math.same_frame(current, state.applied) then
+    return state.layout
+  end
+  return tiling.detect(current, area)
+end
+
+--- Cmd+<arrow>: move to the next tiling layout (halves, quarters, maximize).
+function window_manager:tile_step(win, direction)
   if not is_manageable(win) then
     return "unsupported"
   end
 
   local area = usable_area(win)
-  local target = frame_math.left_half(area)
-  if side == "right" then
-    target = frame_math.right_half(area)
+  local current = win:frame()
+  local state = self.states[win:id()]
+
+  local layout = current_layout(win, area, state)
+  local next_layout = tiling.next_layout(layout, direction)
+  if next_layout == tiling.RESTORE then
+    return run_decision(self, win, window_state.decide_restore(current, state))
   end
-  return toggle_to(self, win, target)
+
+  local target = tiling.frame_for(next_layout, area)
+  local decision = window_state.decide_apply(current, target, state)
+  decision.layout = next_layout
+  return run_decision(self, win, decision)
 end
 
 --- Send the window to the neighbor display. Does nothing when there is none.
+--- A maximized or tiled window keeps its layout on the new display, and its
+--- saved frame is scaled to that display so restoring still works.
 function window_manager:move_to_display(win, direction)
   local method = NEIGHBOR_METHODS[direction]
   assert(method ~= nil, "direction must be left, right, up or down")
@@ -139,9 +157,25 @@ function window_manager:move_to_display(win, direction)
     return "unchanged"
   end
 
+  local source_area = usable_area(win)
+  local state = self.states[win:id()]
+  local layout = current_layout(win, source_area, state)
+
   win:moveToScreen(target_screen, false, true, NO_ANIMATION)
   self.states[win:id()] = nil
-  return "done"
+
+  if layout == nil then
+    return "done"
+  end
+
+  local target_area = target_screen:frame()
+  local original = win:frame()
+  if state ~= nil then
+    original = frame_math.rescale(state.original, source_area, target_area)
+  end
+
+  local target = tiling.frame_for(layout, target_area)
+  return self:set_frame(win, target, original, layout)
 end
 
 function window_manager:close(win)
@@ -150,7 +184,7 @@ function window_manager:close(win)
   return "done"
 end
 
-function window_manager:minimize(win)
+function window_manager.minimize(_, win)
   win:minimize()
   return "done"
 end

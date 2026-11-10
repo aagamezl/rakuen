@@ -68,12 +68,16 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
 | Close | Alt+F4 | Opt+F4 | Cmd+W | Yes | Apps that quit on the last window still quit |
-| Toggle maximize | Alt+F10 | Opt+F10 | none | Yes | Fills the screen and restores the saved frame. Not a macOS fullscreen Space |
-| Maximize | Super+Up | Cmd+Up | none | Yes | Same fill. Ignores synthetic Cmd+Up from Ctrl+Home |
-| Unmaximize | Super+Down, Alt+F5 | Cmd+Down, Opt+F5 | none | Yes | Ctrl+Down stays App Expose. Ignores synthetic Cmd+Down from Ctrl+End |
-| Tile left | Super+Left | Cmd+Left | none | Yes | Left half; press again to restore. macOS tiling shortcuts may already occupy this chord |
+| Toggle maximize | Alt+F10 | Opt+F10 | none | Yes | Fills the screen and restores the saved frame. Not a fullscreen Space |
+| Maximize | Super+Up | Cmd+Up | none | Yes | Ignores synthetic `Cmd+Up` from `Ctrl+Home`. From a half it goes to the top quarter |
+| Unmaximize | Super+Down, Alt+F5 | Cmd+Down, Opt+F5 | none | Yes | Ignores synthetic `Cmd+Down` from `Ctrl+End`. From a half it goes to the bottom quarter |
+| Tile left | Super+Left | Cmd+Left | none | Yes | Left half; press again to restore. System tiling shortcuts may overlap |
 | Tile right | Super+Right | Cmd+Right | none | Yes | Right half; press again to restore |
-| Minimize | Super+H | Cmd+H | Cmd+M | Yes | Overrides Hide. Hide moves to Ctrl+H |
+| Tile top left | none | Cmd+Left, then Cmd+Up | none | Yes | Quarter. From the left half. Cmd+Down goes back to the half |
+| Tile top right | none | Cmd+Right, then Cmd+Up | none | Yes | Quarter. From the right half |
+| Tile bottom left | none | Cmd+Left, then Cmd+Down | none | Yes | Quarter. From the left half |
+| Tile bottom right | none | Cmd+Right, then Cmd+Down | none | Yes | Quarter. From the right half. Arrow toward the edge restores |
+| Minimize | Super+H | Cmd+H | Cmd+M | Yes | Overrides Hide. Hide moves to `Ctrl+H` |
 | Move to display left | Super+Shift+Left | Cmd+Shift+Left | none | Yes | `window:moveToScreen` |
 | Move to display right | Super+Shift+Right | Cmd+Shift+Right | none | Yes | `window:moveToScreen` |
 | Move to display up | Super+Shift+Up | Cmd+Shift+Up | none | Yes | No-op when displays are side by side |

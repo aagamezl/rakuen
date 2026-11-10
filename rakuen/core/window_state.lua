@@ -43,7 +43,8 @@ local function apply_decision(current, target, live)
 end
 
 --- Press once to reach `target`, press again to go back (maximize toggle, tiling).
---- Returns { action = "apply", frame, original } | { action = "restore", frame } | { action = "none" }.
+--- Returns { action = "apply", frame, original }, { action = "restore", frame }
+--- or { action = "none" }.
 function window_state.decide_toggle(current, target, state)
   local live = live_state(current, state)
 

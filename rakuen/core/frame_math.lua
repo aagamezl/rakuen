@@ -36,6 +36,31 @@ function frame_math.right_half(area)
   return { x = area.x + left_width, y = area.y, w = area.w - left_width, h = area.h }
 end
 
+--- A quarter of the area. `row` is "top" or "bottom"; `column` is "left" or "right".
+function frame_math.quarter(area, row, column)
+  assert(row == "top" or row == "bottom", "row must be 'top' or 'bottom'")
+  assert(column == "left" or column == "right", "column must be 'left' or 'right'")
+
+  local left_width = math.floor(area.w / 2)
+  local top_height = math.floor(area.h / 2)
+
+  local x = area.x
+  local width = left_width
+  if column == "right" then
+    x = area.x + left_width
+    width = area.w - left_width
+  end
+
+  local y = area.y
+  local height = top_height
+  if row == "bottom" then
+    y = area.y + top_height
+    height = area.h - top_height
+  end
+
+  return { x = x, y = y, w = width, h = height }
+end
+
 function frame_math.shift(frame, delta_x, delta_y)
   return { x = frame.x + delta_x, y = frame.y + delta_y, w = frame.w, h = frame.h }
 end
@@ -47,6 +72,19 @@ function frame_math.resize(frame, delta_w, delta_h, min_size)
     y = frame.y,
     w = math.max(min_size.w, frame.w + delta_w),
     h = math.max(min_size.h, frame.h + delta_h),
+  }
+end
+
+--- Map `frame` from one area to another, keeping its relative position and size.
+function frame_math.rescale(frame, from_area, to_area)
+  local scale_x = to_area.w / from_area.w
+  local scale_y = to_area.h / from_area.h
+
+  return {
+    x = to_area.x + (frame.x - from_area.x) * scale_x,
+    y = to_area.y + (frame.y - from_area.y) * scale_y,
+    w = frame.w * scale_x,
+    h = frame.h * scale_y,
   }
 end
 
