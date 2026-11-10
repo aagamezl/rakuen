@@ -1,188 +1,189 @@
 #!/usr/bin/env zsh
+# Install Hammerspoon and copy Rakuen's config into ~/.hammerspoon.
+# From a git checkout:  bin/install.sh
+# From GitHub:          curl -fsSL https://raw.githubusercontent.com/aagamezl/rakuen/master/bin/install.sh | zsh
 
-# Hammerspoon Installer (Copy-based)
-# Recursively copies a source directory into target, backing up existing files
+set -euo pipefail
 
-set -e
-
-# Default paths (mirror create-symlink-links.sh)
-DEFAULT_SOURCE="$HOME/dotfiles/hammerspoon"
-DEFAULT_TARGET="$HOME/.hammerspoon"
+REPO_URL="https://github.com/aagamezl/rakuen.git"
+CLONE_DIR="${HOME}/.rakuen"
+TARGET_DIR="${HOME}/.hammerspoon"
+DRY_RUN=false
 
 usage() {
-    cat << EOF
-Hammerspoon Installer (Copy-based)
+  cat << EOF
+Install Rakuen's Hammerspoon config.
 
-Usage: $(basename $0) [source_directory] [target_directory]
+Usage: $(basename "$0") [--dry-run] [--target DIR]
 
-If no arguments provided, uses defaults:
-  Source: $DEFAULT_SOURCE
-  Target: $DEFAULT_TARGET
-
-Options:
-  --dry-run    Show what would be done without making changes
-  --help       Show this help message
-
-Behavior:
-  - Recursively copies the contents of the source directory into the target
-  - Creates the target directory if it does not exist
-  - If a target file already exists, it is renamed with a timestamp suffix
-    before copying the new file (e.g. init.lua -> init-20251217-112233.lua)
+  --dry-run   Print the copy plan and do not change the machine
+  --target    Config directory (default: ${HOME}/.hammerspoon)
 EOF
-    exit 0
+  exit 0
 }
 
-# Parse arguments
-DRY_RUN=false
-CUSTOM_SOURCE=""
-CUSTOM_TARGET=""
-
 while [[ $# -gt 0 ]]; do
-  case $1 in
+  case "$1" in
     --dry-run)
       DRY_RUN=true
       shift
       ;;
+    --target)
+      TARGET_DIR="$2"
+      shift 2
+      ;;
     --help|-h)
       usage
       ;;
-    -* )
+    *)
       echo "Unknown option: $1"
       usage
-      ;;
-    * )
-      if [[ -z "$CUSTOM_SOURCE" ]]; then
-        CUSTOM_SOURCE="$1"
-      elif [[ -z "$CUSTOM_TARGET" ]]; then
-        CUSTOM_TARGET="$1"
-      else
-        echo "Too many arguments"
-        usage
-      fi
-      shift
       ;;
   esac
 done
 
-SOURCE_DIR="${CUSTOM_SOURCE:-$DEFAULT_SOURCE}"
-TARGET_DIR="${CUSTOM_TARGET:-$DEFAULT_TARGET}"
+run() {
+  if [[ "$DRY_RUN" == true ]]; then
+    echo "[DRY-RUN] $*"
+  else
+    eval "$@"
+  fi
+}
 
-# Validate source
+repo_root_from_checkout() {
+  local invoked="$1"
+
+  if [[ ! -f "$invoked" ]]; then
+    return 1
+  fi
+
+  case "$(basename "$invoked")" in
+    zsh|-zsh|sh|-sh) return 1 ;;
+  esac
+
+  local script_dir root
+  script_dir="$(cd "$(dirname "$invoked")" && pwd)"
+  root="$(cd "${script_dir}/.." && pwd)"
+
+  if [[ -f "${root}/hammerspoon/init.lua" ]]; then
+    echo "$root"
+    return 0
+  fi
+
+  return 1
+}
+
+clone_repo() {
+  if ! command -v git >/dev/null 2>&1; then
+    echo "git is required to clone ${REPO_URL}"
+    exit 1
+  fi
+
+  if [[ -d "${CLONE_DIR}/.git" ]]; then
+    echo "Updating ${CLONE_DIR}"
+    git -C "$CLONE_DIR" pull --ff-only
+  else
+    echo "Cloning ${REPO_URL} into ${CLONE_DIR}"
+    git clone --depth 1 "$REPO_URL" "$CLONE_DIR"
+  fi
+
+  echo "$CLONE_DIR"
+}
+
+if ROOT="$(repo_root_from_checkout "$0")"; then
+  echo "Using checkout: ${ROOT}"
+else
+  echo "No local checkout detected. Cloning the GitHub repository."
+  if [[ "$DRY_RUN" == true ]]; then
+    echo "[DRY-RUN] Would clone ${REPO_URL} into ${CLONE_DIR}"
+    echo "A dry run from a pipe cannot copy files until the repository exists."
+    exit 0
+  fi
+  ROOT="$(clone_repo)"
+fi
+
+SOURCE_DIR="${ROOT}/hammerspoon"
+
 if [[ ! -d "$SOURCE_DIR" ]]; then
-  echo "Error: Source directory '$SOURCE_DIR' does not exist"
+  echo "Hammerspoon config not found at ${SOURCE_DIR}"
   exit 1
 fi
 
-echo "🔨 Hammerspoon Install (copy)"
-echo "Source: $SOURCE_DIR"
-echo "Target: $TARGET_DIR"
-[[ "$DRY_RUN" = true ]] && echo "Mode: DRY RUN"
-echo "---"
-
-# Normalize paths
-SOURCE_DIR=$(realpath "$SOURCE_DIR")
-
-# Ensure target exists (requirement 2)
-if [[ ! -d "$TARGET_DIR" ]]; then
-  if [[ "$DRY_RUN" = true ]]; then
-    echo "[DRY-RUN] Would create directory: $TARGET_DIR"
-  else
-    mkdir -p "$TARGET_DIR"
-    echo "Created directory: $TARGET_DIR"
-  fi
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is required to install Hammerspoon: https://brew.sh"
+  exit 1
 fi
 
-TARGET_DIR=$(realpath "$TARGET_DIR")
+if [[ -d "/Applications/Hammerspoon.app" ]] || brew list --cask hammerspoon >/dev/null 2>&1; then
+  echo "Hammerspoon is already installed"
+else
+  run "brew install --cask hammerspoon"
+fi
 
-# Helper to compute backup name with timestamp
 backup_name() {
   local path="$1"
-  local timestamp
-  timestamp=$(/bin/date +%Y%m%d-%H%M%S)
+  local timestamp dir base ext
+  timestamp="$(date +%Y%m%d-%H%M%S)"
+  dir="$(dirname "$path")"
+  base="$(basename "$path")"
 
-  local dir base ext
-
-  # Compute directory and base name without external commands
-  if [[ "$path" == */* ]]; then
-    dir="${path%/*}"
-    base="${path##*/}"
-  else
-    dir="."
-    base="$path"
-  fi
-
-  # Split extension (if any)
   if [[ "$base" == *.* ]]; then
     ext=".${base##*.}"
     base="${base%.*}"
-    echo "$dir/$base-$timestamp$ext"
+    echo "${dir}/${base}-${timestamp}${ext}"
   else
-    echo "$dir/$base-$timestamp"
+    echo "${dir}/${base}-${timestamp}"
   fi
 }
 
-# Copy a single file, backing up existing target file (requirement 3)
-copy_file_with_backup() {
-  local source="$1"
-  local target="$2"
+if [[ ! -d "$TARGET_DIR" ]]; then
+  run "mkdir -p $(printf '%q' "$TARGET_DIR")"
+fi
 
-  local parent
-  parent=$(dirname "$target")
+echo "Copying ${SOURCE_DIR} -> ${TARGET_DIR}"
+
+while IFS= read -r src_dir; do
+  rel="${src_dir#${SOURCE_DIR}}"
+  rel="${rel#/}"
+  dest="${TARGET_DIR}/${rel}"
+
+  if [[ -n "$rel" && ! -d "$dest" ]]; then
+    run "mkdir -p $(printf '%q' "$dest")"
+  fi
+done < <(find "$SOURCE_DIR" -type d)
+
+while IFS= read -r src_file; do
+  rel="${src_file#${SOURCE_DIR}/}"
+  dest="${TARGET_DIR}/${rel}"
+  parent="$(dirname "$dest")"
 
   if [[ ! -d "$parent" ]]; then
-    if [[ "$DRY_RUN" = true ]]; then
-      echo "[DRY-RUN] Would create directory: $parent"
-    else
-      mkdir -p "$parent"
-    fi
+    run "mkdir -p $(printf '%q' "$parent")"
   fi
 
-  if [[ -f "$target" ]]; then
-    local backup
-    backup=$(backup_name "$target")
-
-    if [[ "$DRY_RUN" = true ]]; then
-      echo "[DRY-RUN] Would rename existing file: $target -> $backup"
-    else
-      mv "$target" "$backup"
-      echo "Renamed existing: $target -> $backup"
-    fi
+  if [[ -f "$dest" ]]; then
+    backup="$(backup_name "$dest")"
+    run "mv $(printf '%q' "$dest") $(printf '%q' "$backup")"
   fi
 
-  if [[ "$DRY_RUN" = true ]]; then
-    echo "[DRY-RUN] Would copy file: $source -> $target"
-  else
-    cp -f "$source" "$target"
-    echo "✓ Copied: ${target#$TARGET_DIR/}"
-  fi
-}
+  run "cp -f $(printf '%q' "$src_file") $(printf '%q' "$dest")"
+done < <(find "$SOURCE_DIR" -type f)
 
-# Requirement 1: recursively copy directory contents
-# First ensure all directories exist in target
-find "$SOURCE_DIR" -type d | while read -r src_dir; do
-  if [[ "$src_dir" = "$SOURCE_DIR" ]]; then
-    continue
-  fi
+if [[ "$DRY_RUN" == true ]]; then
+  echo "[DRY-RUN] Would open Hammerspoon"
+else
+  open -a Hammerspoon || true
+fi
 
-  rel="${src_dir#$SOURCE_DIR/}"
-  dst_dir="$TARGET_DIR/$rel"
+cat << EOF
 
-  if [[ ! -d "$dst_dir" ]]; then
-    if [[ "$DRY_RUN" = true ]]; then
-      echo "[DRY-RUN] Would create directory: $dst_dir"
-    else
-      mkdir -p "$dst_dir"
-      echo "Created directory: $dst_dir"
-    fi
-  fi
-done
+Rakuen files are in ${TARGET_DIR}.
 
-# Then copy all files with backup semantics
-find "$SOURCE_DIR" -type f | while read -r src_file; do
-  rel="${src_file#$SOURCE_DIR/}"
-  dst_file="$TARGET_DIR/$rel"
-  copy_file_with_backup "$src_file" "$dst_file"
-done
+Grant Hammerspoon these permissions, then reload the config:
+  System Settings -> Privacy & Security -> Accessibility -> Hammerspoon
+  System Settings -> Privacy & Security -> Screen Recording -> Hammerspoon
+    (window screenshots only)
 
-echo "---"
-echo "✅ ${CUSTOM_SOURCE#./} files installed successfully (copy mode)!"
+Press Ctrl+Opt+/ to open the keybinding list.
+The full table is in docs/keybindings.md in the repository.
+EOF

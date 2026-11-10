@@ -1,59 +1,25 @@
-local mergeObjects = require("utils/mergeObjects")
-local reloadConfig = require("utils/reloadConfig")
+local binder = require("core.binder")
+local cheatsheet = require("modules.cheatsheet")
 
--- Window management
-local windows = require("windows")
+local modules = {
+  require("modules.editing"),
+  require("modules.text-navigation"),
+  require("modules.windows"),
+  require("modules.focus"),
+  require("modules.workspaces"),
+  require("modules.shell"),
+  require("modules.session"),
+  require("modules.accessibility"),
+}
 
--- Keybindings Events management
-local keyEventListener = require("keybindings/utils/key-event-listener").keyEventListener
+-- The cheatsheet row is registered with the other modules so it appears in the list.
+cheatsheet:attach()
+table.insert(modules, cheatsheet)
 
--- Keybindings
-local applicationManagement = require("keybindings/application-management")
-local browserNavigation = require("keybindings/browser-navigation")
-local caffeine = require("caffeine/caffeine")
-local cpu = require("system-stats/cpu")
-local generalSystem = require("keybindings/general-system")
--- local mouse = require("mouse/mouse")
-local spaces = require("spaces/spaces")
-local textCursorMovement = require("keybindings/text-cursor-movement")
-local textEditing = require("keybindings/text-editing")
-local textSelection = require("keybindings/text-selection")
-local usage = require("usage/usage")
+binder.start(modules)
 
--- Initialize Keybindings
-local shortcutsRules = mergeObjects(
--- applicationManagement.rules,
--- browserNavigation.rules,
--- textEditing.rules,
--- generalSystem.rules,
--- mouse.rules,
--- spaces.rules,
--- textCursorMovement.rules,
--- textSelection.rules,
--- usage.rules,
--- windows.rules
-
-  applicationManagement.rules,
-  browserNavigation.rules,
-  caffeine.keybindings.rules,
-  cpu.keybindings.rules,
-  generalSystem.rules,
-  -- mouse.rules,
-  spaces.rules,
-  textCursorMovement.rules,
-  textEditing.rules,
-  textSelection.rules,
-  usage.rules,
-  windows.rules
-)
-
--- Initialize Keybindings
-keyEventListener(shortcutsRules)
-
-caffeine.init()
-cpu.init()
-
--- Reload config on change
-local myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
+hs.pathwatcher.new(hs.configdir, function()
+  hs.reload()
+end):start()
 
 hs.alert.show("Rakuen Config Reloaded")
