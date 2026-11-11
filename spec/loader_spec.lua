@@ -102,3 +102,34 @@ describe("loader", function()
     assert.are.equal(#config.MODULE_NAMES, #loaded)
   end)
 end)
+
+describe("loader on_load hook", function()
+  it("runs on_load once and survives an error in it", function()
+    local calls = 0
+    local warnings = {}
+    local fake_logger = {
+      warn = function(_, message)
+        table.insert(warnings, message)
+      end,
+    }
+
+    local loaded = loader.load({
+      settings = config.merge({ modules = { workspaces = { enabled = true } } }),
+      registry = registry.new(),
+      logger = fake_logger,
+      require_module = function()
+        return {
+          rules = {},
+          on_load = function()
+            calls = calls + 1
+            error("boom")
+          end,
+        }
+      end,
+    })
+
+    assert.same({ "workspaces" }, loaded)
+    assert.equals(1, calls)
+    assert.equals(1, #warnings)
+  end)
+end)
