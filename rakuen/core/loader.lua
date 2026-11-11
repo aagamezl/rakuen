@@ -3,6 +3,8 @@
 -- A module file under rakuen/modules/ returns { rules = { ... } }.
 -- A module may also return `block_rules`: rules that swallow the native chords
 -- its own rules replace. They are registered only when `block_native_cmd` is on.
+-- A module may also return `on_load(logger)`, run once after its rules are
+-- registered (for startup checks); an error there never stops loading.
 -- Setting `only` in the config loads one module alone, so it can be tested
 -- without the others (task 3.2).
 
@@ -40,6 +42,13 @@ function loader.load(options)
         registry:add_all(module_name, module.block_rules)
       end
       table.insert(loaded, module_name)
+
+      if type(module.on_load) == "function" then
+        local ok, load_error = pcall(module.on_load, logger)
+        if not ok then
+          logger:warn(string.format("%s on_load failed: %s", module_name, tostring(load_error)))
+        end
+      end
     end
   end
 

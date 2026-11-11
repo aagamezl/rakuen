@@ -31,7 +31,6 @@ local ENTRIES = {
     end,
   },
   {
-<<<<<<< HEAD
     id = "tile_top_left",
     text = "Tile top left",
     hint = "Cmd+Left, then Cmd+Up",
@@ -64,8 +63,6 @@ local ENTRIES = {
     end,
   },
   {
-=======
->>>>>>> 669e447 (feat: text navigation module complete)
     id = "minimize",
     text = "Minimize",
     hint = "Cmd+H",

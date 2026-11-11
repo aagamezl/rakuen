@@ -22,7 +22,7 @@ Inputs: `task.md` (requirements), `gnome-keybindings.txt` (GNOME dump), `gnome_h
 | D3 | Native `Cmd+<key>` after remap | **Pass through by default** (configurable `block_native_cmd`). | Swallowing every `Cmd` chord is risky; make it opt-in once the setup is proven. |
 | D4 | App filters | Each binding has `applications = { enable = {}, disable = {} }` (bundle IDs). Empty `enable` means all apps. `disable` always wins. | Task item 3.1. |
 | D5 | Text-navigation scope | Default: runs only when the focused AX element is an editable text role. Per-app `force` list for Chrome/Electron apps that do not expose AX roles (decided in the Phase 1 spike). | Keeps `Ctrl+Arrow`, `Home/End` and `Ctrl+Backspace` untouched outside text fields. The macOS Spaces, Mission Control and Application windows shortcuts no longer use `Ctrl+Arrow` (D7), so they cannot collide. |
-| D6 | Spaces | No public API. Switch via Mission Control shortcuts. Moving windows across Spaces is best-effort. No vertical workspaces. | macOS limitation, documented in the keybinding docs. |
+| D6 | Spaces | No public API. Switch via Mission Control shortcuts. Moving windows across Spaces, and inserting or removing Spaces, are best-effort (title-bar drag and Mission Control accessibility). No vertical workspaces. | macOS limitation, documented in the keybinding docs. |
 | D7 | Navigation shortcut conflict | The installer, from its first version, moves four macOS shortcuts to `Ctrl+Cmd+Arrow` (via `com.apple.symbolichotkeys`, with backup): Move left a space `Ctrl+Left` → `Ctrl+Cmd+Left`, Move right a space `Ctrl+Right` → `Ctrl+Cmd+Right`, Mission Control `Ctrl+Up` → `Ctrl+Cmd+Up`, Application windows `Ctrl+Down` → `Ctrl+Cmd+Down`. Hotkey IDs 79, 81, 32, 33. Their Shift variants are left alone. Rakuen sends the new chords for the GNOME bindings. | All four `Ctrl+Arrow` chords stay free for text navigation and no longer depend on the text gate. Spike 1.4 showed the tap could swallow them, but moving the system shortcuts is simpler and safer. |
 | D8 | Docs source of truth | `docs/keybindings.md` and the cheatsheet are **generated from the registry**. | Prevents the three lists drifting apart. |
 | D9 | GNOME dump quirks | `switch-to-workspace-right` uses `Super+Page_Down` (dump repeats `Page_Up`). Entries with `''` or `[]`, and `XF86*` media/brightness keys, are not bound. | Dump error; macOS already handles media keys. |
@@ -190,7 +190,7 @@ Status: complete. Code and unit tests are done for 6.1-6.9 (`make check` passes,
 
 Manual pass (1 display, then 2): `Opt+F10` maximizes and restores; `Cmd+Up` maximizes, `Cmd+Down` / `Opt+F5` restore; `Cmd+Left/Right` tile and restore on a second press; `Cmd+Left` then `Cmd+Up` gives the top-left quarter, then `Cmd+Down` the left half, `Cmd+Left` restores, and the same for the right side and bottom quarters; `Cmd+H` minimizes; `Opt+F4` closes; `Cmd+Shift+Left/Right` moves between displays and does nothing with one display; `Opt+F7` / `Opt+F8` move and resize with the arrows, Return keeps, Escape cancels; `Opt+Space` opens the menu and each entry works; a window maximized on the small display is still maximized after `Cmd+Shift+Left/Right` to the big one (and back), and `Cmd+Down` there restores it; a fullscreen window shows the alert; `Ctrl+Home` in TextEdit still goes to the document start and does not maximize the window.
 
-## Phase 7 – Focus module
+## Phase 7 – Focus Module
 
 - [x] 7.1 Switch applications with `Opt+Tab` / `Opt+Shift+Tab` (drives the native switcher)
 - [x] 7.2 Cycle app windows (`Opt+grave`, `Cmd+grave`, and backward variants)
@@ -206,16 +206,31 @@ Manual pass: with two apps open, `Opt+Tab` jumps to the other app and pressing i
 
 ## Phase 8 – Workspaces module
 
-- [ ] 8.1 Check at startup that the Spaces, Mission Control and Application windows shortcuts are `Ctrl+Cmd+Arrow` (read `com.apple.symbolichotkeys`); if not, show an alert pointing to `bin/install.sh` (the change itself is done by 2.10)
-- [ ] 8.2 Previous / next space: `Ctrl+Cmd+Left/Right` (now the native macOS chords, passed through untouched) and `Cmd+PageUp/PageDown` (posts `Ctrl+Cmd+Left/Right`, marked synthetic)
-- [ ] 8.2b Document `Ctrl+Cmd+Up` (Mission Control) and `Ctrl+Cmd+Down` (Application windows) in the catalog as native macOS chords moved by the installer
-- [ ] 8.3 First / last space (only when the target desktop exists)
-- [ ] 8.4 Move window to previous / next / first / last space (best-effort; fail gracefully with an alert)
-- [ ] 8.5 Mark vertical workspace bindings as "No" in the catalog
+- [x] 8.1 Check at startup that the Spaces, Mission Control and Application windows shortcuts are `Ctrl+Cmd+Arrow` (read `com.apple.symbolichotkeys`); if not, show an alert pointing to `bin/install.sh` (the change itself is done by 2.10)
+- [x] 8.2 Previous / next space: left to macOS. `Ctrl+Cmd+Left/Right` are the native chords after the installer, so Rakuen has no rules for them (no `Cmd+PageUp/PageDown` remap)
+- [x] 8.2b Document `Ctrl+Cmd+Up` (Mission Control) and `Ctrl+Cmd+Down` (Application windows) in the catalog as native macOS chords moved by the installer
+- [x] 8.3 First / last space (`Cmd+Home` / `Cmd+End`; only when the target desktop exists)
+- [x] 8.4 Move window to previous / next / first / last space (best-effort; fail gracefully with an alert)
+- [x] 8.5 Mark vertical workspace bindings as "No" in the catalog
+- [x] 8.6 Insert space (`Ctrl+Cmd+=`): add a Space at the end of the display through Mission Control
+- [x] 8.7 Remove space (`Ctrl+Cmd+-`): leave the current Space, then remove it through Mission Control
+- [x] 8.8 Workspace indicator: menu bar glyphs and a numbered on-screen flash on every Space change
 
-**Done when:** space switching works from `Ctrl+Cmd+Left/Right` and `Cmd+PageUp/PageDown`, `Ctrl+Left/Right` no longer switch Spaces, `Ctrl+Cmd+Up/Down` open Mission Control and Application windows, and move-window behavior is documented as best-effort.
+**Done when:** `Ctrl+Cmd+Left/Right` switch Spaces natively, `Ctrl+Left/Right` no longer do, `Ctrl+Cmd+Up/Down` open Mission Control and Application windows, first/last Space, move-window, insert and remove work, the indicator follows the current Space, and the private-API features are documented as best-effort.
 
-Status: `rakuen/modules/workspaces.lua` is still an empty rule table. Rules are written in this phase with the `Ctrl+Cmd+Left/Right` chords from the start.
+Status: complete. Manual pass done by the user on macOS 27.2.1. Layout: `rakuen/core/space_nav.lua` (pure: target Space, key presses, removal direction, indicator text, flash layout, window grab point), `rakuen/core/shortcut_check.lua` (8.1), `rakuen/core/mission_control.lua` (accessibility driver for insert and remove), `rakuen/ui/space_indicator.lua` (8.8) and `rakuen/modules/workspaces.lua` (12 rules). The loader gained an optional `on_load(logger)` module hook, used for the startup check and to start the indicator.
+
+Findings that shaped the design:
+- `Cmd+Home/End` first failed because the posted `Ctrl+Cmd+Arrow` lacked the `fn` flag that arrow keys carry on a real keyboard; the chord is now posted with `ctrl`, `cmd` and `fn`. Spaces are reached by repeating it with a 0.4 s gap.
+- `hs.spaces.moveWindowToSpace` no longer works on recent macOS. A window is moved by grabbing its title bar near the left side (the middle often holds tabs or toolbar buttons), nudging 1 px, switching Space with the chord while the mouse is held, releasing, then restoring the frame, raising and focusing the window and putting the pointer back. A second move is ignored until the first ends (3 s timeout). The Finder desktop is skipped.
+- `hs.spaces.addSpaceToScreen` and `removeSpace` fail on macOS 27 with "Unable to get mission control data from the dock": Mission Control now lives in the `com.apple.WindowManager` process. `mission_control.lua` opens it, polls for `mc.spaces.add` (insert) or the Nth child of `mc.spaces.list` on the matching `mc.display` (remove, action `AXRemoveDesktop`), then closes it with Escape, because `hs.spaces.closeMissionControl` fails the same way. Both wait for the shortcut's modifier keys to be released.
+- Remove cannot delete the Space being shown. It switches to a neighbor, polls until the active Space really changed (the animation time varies), waits 0.6 s, then removes the old one. Timer callbacks alert on error instead of failing silently.
+- `rakuen/core/space_nav.lua` assumes the Nth `mc.spaces.list` child is the Nth entry of `hs.spaces.spacesForScreen`.
+- The on-screen flash is an `hs.canvas` panel with one numbered square per Space (current filled, others outlined), shown on all Spaces; a text glyph cannot show a number inside a square.
+- `scripts/spikes/mission_control_dump.lua` dumps the WindowManager accessibility tree for diagnosing future macOS changes.
+- Vertical workspace rows stay "No" in the catalog (8.5). Test with `only = "workspaces"` and `mode = "match"`.
+
+Manual pass (needs 3+ Spaces and `bin/install.sh` applied): start with the shortcuts not moved and check the startup alert names them; `Ctrl+Cmd+Left/Right` switch Spaces; `Cmd+Home/End` reach the first and last Space and do nothing when already there; `Ctrl+Cmd+Up/Down` open Mission Control and Application windows; `Ctrl+Left/Right/Up/Down` do none of that; `Cmd+Shift+PageUp/PageDown`, `Cmd+Shift+Opt+Left/Right`, `Cmd+Shift+Home/End` move the window and follow it, including from apps such as Telegram, or alert; `Ctrl+Cmd+=` adds a Space and `Ctrl+Cmd+-` removes the current one, and Mission Control closes afterwards; the indicator shows the right number and highlight after every change.
 
 ## Phase 9 – Shell module
 

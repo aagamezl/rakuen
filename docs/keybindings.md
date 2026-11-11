@@ -104,18 +104,20 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
 
 ### Workspaces
 
-macOS Spaces are a horizontal list and must already exist. The dump lists `Super+Page_Up` for both directions; right uses `Super+Page_Down`.
+macOS Spaces are a horizontal list and must already exist. Previous and next space are left to macOS (Ctrl+Cmd+Left/Right). The dump lists `Super+Page_Up` for both directions; right uses `Super+Page_Down`.
 
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
-| Previous space | Super+PageUp, Super+Ctrl+Left | Cmd+PageUp, Cmd+Ctrl+Left | Ctrl+Left | Yes | Sends Ctrl+Left |
-| Next space | Super+PageDown, Super+Ctrl+Right | Cmd+PageDown, Cmd+Ctrl+Right | Ctrl+Right | Yes | Sends Ctrl+Right |
-| First space | Super+Home | Cmd+Home | none | Partial | Repeats Ctrl+Left until the first existing Space |
-| Last space | Super+End | Cmd+End | none | Partial | Repeats Ctrl+Right until the last existing Space |
-| Move window to previous space | Super+Shift+PageUp, Super+Shift+Alt+Left, Ctrl+Shift+Alt+Left | Cmd+Shift+PageUp, Cmd+Shift+Opt+Left, Ctrl+Shift+Opt+Left | none | Partial | Best-effort. Hammerspoon often cannot move a window across Spaces |
+| First space | Super+Home | Cmd+Home | none | Partial | Repeats Ctrl+Cmd+Left until the first Space. Does nothing when already there |
+| Last space | Super+End | Cmd+End | none | Partial | Repeats Ctrl+Cmd+Right until the last Space |
+| Mission Control | none | Ctrl+Cmd+Up | Ctrl+Up | Yes | Native chord, moved by `bin/install.sh`. No Rakuen rule |
+| Application windows | none | Ctrl+Cmd+Down | Ctrl+Down | Yes | Native chord, moved by `bin/install.sh`. No Rakuen rule |
+| Move window to previous space | Super+Shift+PageUp, Super+Shift+Alt+Left, Ctrl+Shift+Alt+Left | Cmd+Shift+PageUp, Cmd+Shift+Opt+Left, Ctrl+Shift+Opt+Left | none | Partial | Best-effort. Grabs the title bar near its left side, switches Space with Ctrl+Cmd+Arrow while the mouse is held, then releases and restores the frame. The view follows the window |
 | Move window to next space | Super+Shift+PageDown, Super+Shift+Alt+Right, Ctrl+Shift+Alt+Right | Cmd+Shift+PageDown, Cmd+Shift+Opt+Right, Ctrl+Shift+Opt+Right | none | Partial | Same restriction |
 | Move window to first space | Super+Shift+Home | Cmd+Shift+Home | none | Partial | Same restriction |
 | Move window to last space | Super+Shift+End | Cmd+Shift+End | none | Partial | Same restriction |
+| Insert space | none | Ctrl+Cmd+= | none | Partial | Adds a Space at the end of the display with `hs.spaces`, a private API; alerts if macOS refuses. GNOME has no default key, so this chord is Rakuen's own |
+| Remove space | none | Ctrl+Cmd+- | none | Partial | Switches to a neighbor Space, waits for the animation, then removes the old one. Its windows move to a neighbor. Alerts when it cannot |
 | Move window up or down a workspace | Ctrl+Shift+Alt+Up, Ctrl+Shift+Alt+Down | — | none | No | Spaces are not a vertical grid |
 | Switch workspace up or down | unbound in the dump | — | none | No | No vertical Spaces |
 
