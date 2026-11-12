@@ -123,8 +123,6 @@ macOS Spaces are a horizontal list and must already exist. Previous and next spa
 
 ### Shell
 
-Favorites live in [hammerspoon/config/favorites.lua](hammerspoon/config/favorites.lua).
-
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
 | Run dialog | Alt+F2 | Opt+F2 | Cmd+Space | Yes | Opens Spotlight. Cmd+Space stays Spotlight |
@@ -143,12 +141,14 @@ Favorites live in [hammerspoon/config/favorites.lua](hammerspoon/config/favorite
 
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
-| Lock | Super+L | Cmd+L | Cmd+Ctrl+Q | Yes | `hs.caffeinate.lockScreen`. Browsers keep location-bar focus on Ctrl+L, enabled for browsers only |
-| Log out | Ctrl+Alt+Delete | Ctrl+Opt+ForwardDelete | Cmd+Shift+Q | Yes | Confirms, then tells loginwindow to log out |
+| Lock | Super+L | Cmd+L | Cmd+Ctrl+Q | Yes | `hs.caffeinate.lockScreen`. Cmd+L is native in browsers (location bar), so browsers keep GNOME's Ctrl+L instead |
+| Focus location bar | Ctrl+L | Ctrl+L | Cmd+L | Yes | Browsers only. Posts Cmd+L, since Cmd+L now locks the screen |
+| Log out | Super+Alt+L | Cmd+Opt+L | Cmd+Shift+Q | Yes | macOS confirms, then logs out with `hs.caffeinate.logOut` |
+| Shut down | Super+Alt+F4 | Cmd+Opt+F4 | none | Yes | Confirms, then shuts down with `hs.caffeinate.shutdownSystem` |
 | Zoom toggle | Alt+Super+8 | Opt+Cmd+8 | Opt+Cmd+8 | Yes | Native shortcut, listed in the cheatsheet |
 | Zoom in | Alt+Super+= | Opt+Cmd+= | Opt+Cmd+= | Yes | Native shortcut |
 | Zoom out | Alt+Super+- | Opt+Cmd+- | Opt+Cmd+- | Yes | Native shortcut |
-| Screen reader | Alt+Super+S | Opt+Cmd+S | Cmd+F5 | Partial | Toggles VoiceOver. VoiceOver must already be installed |
+| Screen reader | Alt+Super+S | Opt+Cmd+S | Cmd+F5 | Partial | Posts the VoiceOver shortcut Cmd+F5. Needs the macOS shortcut enabled |
 
 ### Not configured
 

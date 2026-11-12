@@ -4,10 +4,11 @@
 #   Move left/right a space  Ctrl+Left/Right -> Ctrl+Cmd+Left/Right
 #   Mission Control          Ctrl+Up         -> Ctrl+Cmd+Up
 #   Application windows      Ctrl+Down       -> Ctrl+Cmd+Down
+# It also asks for the privacy permissions Hammerspoon needs (--permissions).
 # Later stages (Phase 13) add Hammerspoon and config installation.
 #
 # Test hooks (environment): RAKUEN_HOTKEYS_DOMAIN (defaults domain or plist
-# path), RAKUEN_BACKUP_DIR, RAKUEN_SKIP_ACTIVATE=1.
+# path), RAKUEN_BACKUP_DIR, RAKUEN_SKIP_ACTIVATE=1, RAKUEN_SKIP_PERMISSIONS=1.
 
 set -euo pipefail
 
@@ -42,6 +43,12 @@ readonly MOD_CMD=1048576
 readonly MODIFIERS_DEFAULT=8650752
 readonly MODIFIERS_TARGET=9699328
 
+# Hammerspoon privacy permissions. macOS keeps them in the TCC database, which
+# no script can write (SIP). The installer asks Hammerspoon to request each one
+# so macOS shows its own prompt, and opens the Settings pane for the rest.
+readonly HAMMERSPOON_APP="/Applications/Hammerspoon.app"
+readonly SETTINGS_URL="x-apple.systempreferences:com.apple.preference.security?"
+
 MODE="apply"
 DRY_RUN=0
 RESTART_DOCK=0
@@ -55,12 +62,14 @@ usage() {
   box_row "$C_BOLD" "install.sh --restore [--dry-run]" "$BORDER"
   box_row "$C_BOLD" "install.sh --status" "$BORDER"
   box_row "$C_BOLD" "install.sh --restart-dock" "$BORDER"
+  box_row "$C_BOLD" "install.sh --permissions" "$BORDER"
   box_blank "$BORDER"
   box_row "$C_DIM" "Moves the macOS Spaces (Left/Right), Mission Control (Up) and Application windows (Down) shortcuts to Ctrl+Cmd+Arrow so Ctrl+Arrow stays free for text navigation. The previous values are saved first." "$BORDER"
   box_row "$C_DIM" "  -n, --dry-run     show the changes, write nothing" "$BORDER"
   box_row "$C_DIM" "  --restore         put the saved shortcuts back" "$BORDER"
   box_row "$C_DIM" "  -s, --status      show the shortcuts stored in the system" "$BORDER"
   box_row "$C_DIM" "  --restart-dock    also restart the Dock so the change is live now" "$BORDER"
+  box_row "$C_DIM" "  --permissions     only request the Hammerspoon permissions" "$BORDER"
   box_row "$C_DIM" "  -h, --help      show this help" "$BORDER"
   section_close
 }
@@ -83,6 +92,9 @@ parse_args() {
         ;;
       --restart-dock)
         RESTART_DOCK=1
+        ;;
+      --permissions)
+        MODE="permissions"
         ;;
       -h | --help)
         box_banner "rakuen install" "Navigation shortcuts installer."
@@ -415,6 +427,86 @@ refresh_settings() {
   fi
 }
 
+# Runs Lua inside Hammerspoon through its hs command line tool. Prints the
+# output. Fails when Hammerspoon is not reachable.
+hs_eval() {
+  hs -t 10 -c "$1" 2> /dev/null
+}
+
+# Starts Hammerspoon when it is not running and waits until hs answers.
+ensure_hammerspoon() {
+  if [[ ! -d "$HAMMERSPOON_APP" ]]; then
+    box_row "$C_YELLOW" "› Hammerspoon is not installed. Run: brew install --cask hammerspoon" "$BORDER"
+    return 1
+  fi
+  if ! command -v hs > /dev/null 2>&1; then
+    box_row "$C_YELLOW" "› The hs command is missing. Install it from the Hammerspoon console: hs.ipc.cliInstall()" "$BORDER"
+    return 1
+  fi
+  open -ga Hammerspoon
+  for _ in {1..10}; do
+    if [[ "$(hs_eval 'print(1)' || true)" == "1" ]]; then
+      return 0
+    fi
+    sleep 1
+  done
+  box_row "$C_YELLOW" "› Hammerspoon does not answer. Reload its config and run this again" "$BORDER"
+  return 1
+}
+
+open_settings_pane() {
+  open "${SETTINGS_URL}$1" > /dev/null 2>&1 || true
+}
+
+# Reports one permission: label, Lua expression that requests it and prints
+# true or false, and the Settings pane to open when it is not granted.
+request_permission() {
+  local label="$1"
+  local lua="$2"
+  local pane="$3"
+  local answer
+
+  answer="$(hs_eval "$lua" || true)"
+  if [[ "$answer" == "true" ]]; then
+    box_row "$C_GREEN" "✓ $label" "$BORDER"
+    return 0
+  fi
+  box_row "$C_YELLOW" "› $label: approve the prompt or enable Hammerspoon" "$BORDER"
+  open_settings_pane "$pane"
+  return 1
+}
+
+# Asks Hammerspoon for every permission Rakuen uses. Never stops the installer.
+# Returns 1 when something still needs the user.
+request_permissions() {
+  local pending=0
+
+  if (( DRY_RUN )); then
+    box_row "$C_YELLOW" "› would request: Accessibility, Screen Recording, Automation (System Events)" "$BORDER"
+    return 0
+  fi
+  if [[ "${RAKUEN_SKIP_PERMISSIONS:-0}" == "1" ]]; then
+    box_row "$C_DIM" "Skipped permissions (RAKUEN_SKIP_PERMISSIONS=1)" "$BORDER"
+    return 0
+  fi
+  if ! ensure_hammerspoon; then
+    return 1
+  fi
+
+  # Key events, window control and the Spaces / Mission Control actions.
+  request_permission "Accessibility" \
+    'print(hs.accessibilityState(true))' "Privacy_Accessibility" || pending=1
+  # The window screenshot action (screencapture -l) and screen capture.
+  request_permission "Screen & System Audio Recording" \
+    'print(hs.screenRecordingState(true))' "Privacy_ScreenCapture" || pending=1
+  # Control of System Events (Device Control and Data Access prompt).
+  request_permission "Automation: System Events" \
+    'local ok = hs.osascript.applescript([[tell application "System Events" to count processes]]) print(ok)' \
+    "Privacy_Automation" || pending=1
+
+  return "$pending"
+}
+
 # Prints the final result of a change, telling the user what to do next.
 finish_changed() {
   local summary="$1"
@@ -487,6 +579,18 @@ run_status() {
   finish 0 "$C_GREEN" "Result" "✓ Status shown, nothing was changed."
 }
 
+run_permissions() {
+  section_open "2 · Permissions" "$C_CYAN"
+  STEP=2
+  if request_permissions; then
+    finish 0 "$C_GREEN" "Result" "✓ Hammerspoon permissions are ready."
+  fi
+  finish 0 "$C_YELLOW" "Result" \
+    "› Some permissions still need you. Approve the prompts or enable" \
+    "  Hammerspoon in the Settings panes that opened, then run again." \
+    "  Screen Recording may need Hammerspoon to be restarted."
+}
+
 run_apply() {
   local changed=1
 
@@ -513,6 +617,8 @@ run_apply() {
 
   next_step "Reload"
   refresh_settings
+  next_step "Permissions"
+  request_permissions || true
   finish_changed "Spaces, Mission Control and Application windows use Ctrl+Cmd+Arrow."
 }
 
@@ -544,6 +650,9 @@ main() {
       ;;
     status)
       run_status
+      ;;
+    permissions)
+      run_permissions
       ;;
     *)
       run_apply
