@@ -83,6 +83,7 @@ local function show_flash(screen, ids, current_id)
     if is_current then
       text_color = DARK
     end
+
     canvas:appendElements({
       type = "text",
       text = tostring(index),
@@ -95,6 +96,7 @@ local function show_flash(screen, ids, current_id)
 
   state.flash = canvas
   canvas:show(FLASH_FADE_SECONDS)
+
   hs.timer.doAfter(FLASH_SECONDS, function()
     if state.flash == canvas then
       canvas:delete(FLASH_FADE_SECONDS)
@@ -112,6 +114,7 @@ function space_indicator.render(flash)
   local screen = screens.current()
   local ids = hs.spaces.spacesForScreen(screen)
   local current_id = hs.spaces.activeSpaceOnScreen(screen)
+
   if ids == nil then
     return
   end
@@ -151,6 +154,7 @@ function space_indicator.stop()
     state.flash:delete()
     state.flash = nil
   end
+
   state.space_watcher:stop()
   state.screen_watcher:stop()
   state.menubar:delete()

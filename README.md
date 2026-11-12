@@ -35,7 +35,7 @@ The same catalog is in [docs/keybindings.md](docs/keybindings.md).
 
 ## Shortcut reference
 
-Every shortcut Rakuen registers today (modules for Phases 4 to 10). `Cmd` stands in for GNOME's Super key and `Opt` for Alt. The full catalog, with the GNOME chord and the original macOS chord for each row, is in [docs/keybindings.md](docs/keybindings.md). Press `Ctrl+Opt+Cmd+R` to reload Rakuen.
+Every shortcut Rakuen registers today (modules for Phases 4 to 10). `Cmd` stands in for GNOME's Super key and `Opt` for Alt. The full catalog, with the GNOME chord and the original macOS chord for each row, is in [docs/keybindings.md](docs/keybindings.md). Press `Ctrl+Opt+/` to open this list as a window (search box, `Escape` to close), and `Ctrl+Opt+Cmd+R` to reload Rakuen.
 
 Rows marked *partial* work with a restriction, described in the description.
 
