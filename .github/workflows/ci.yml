@@ -45,3 +45,15 @@ jobs:
 
       - name: Busted
         run: busted
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "5.4"
+
+      - name: Docs are up to date
+        run: lua scripts/generate_docs.lua --check

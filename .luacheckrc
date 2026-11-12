@@ -12,3 +12,8 @@ read_globals = {
 files["spec/**/*.lua"] = {
   std = "+busted",
 }
+
+-- Docs text lives in long strings; wrapping them would change the generated docs.
+files["scripts/docs_data.lua"] = {
+  max_line_length = false,
+}

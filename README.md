@@ -31,7 +31,7 @@ curl -fsSL https://raw.githubusercontent.com/aagamezl/rakuen/master/bin/install.
 
 The installer opens the macOS prompts or Settings panes for any permission that is not granted yet. Approve them, restart Hammerspoon if Screen Recording asks for it, then see the [shortcut reference](#shortcut-reference) below.
 
-The same catalog is in [docs/keybindings.md](docs/keybindings.md).
+The same catalog is in [docs/keybindings.md](docs/keybindings.md), generated from the registry with `make docs`.
 
 ## Shortcut reference
 
@@ -149,6 +149,52 @@ The Spaces list is horizontal and the Spaces must already exist.
 ### Not available on macOS
 
 Some GNOME shortcuts have no macOS equivalent and are not registered: vertical workspaces, switching the input source with `Cmd+Space`, monitor rotation, switching displays, and fullscreen. See the "Not configured" table in [docs/keybindings.md](docs/keybindings.md).
+
+## Configuration
+
+Rakuen works with no configuration. To change it, create `~/.config/rakuen/config.lua` (outside the repository) that returns a table. Every key is optional:
+
+```lua
+return {
+  mode = "match",           -- "log" (default, only logs matches) or "match" (runs the actions)
+  log_level = "info",       -- debug | info | warn | error
+  only = "editing",         -- load just this module, to test it alone
+  block_native_cmd = false, -- also swallow the native Cmd chords Rakuen replaces
+  modules = {
+    editing = {
+      enabled = true,
+      bindings = {
+        -- keyed by the rule's description (see docs/keybindings.md)
+        Copy = { applications = { disable = { "com.apple.Terminal" } } },
+        Bold = { enabled = false },
+      },
+    },
+  },
+}
+```
+
+Modules: `editing`, `text_navigation`, `windows`, `focus`, `workspaces`, `shell`, `session`.
+
+### Per-app enable and disable
+
+Each binding can have an `applications` filter made of bundle IDs. An empty `enable` means all apps, and `disable` always wins:
+
+```lua
+Copy = { applications = { enable = { "com.apple.TextEdit" } } },       -- only in TextEdit
+Paste = { applications = { disable = { "com.googlecode.iterm2" } } },  -- everywhere but iTerm
+```
+
+Find a bundle ID with `osascript -e 'id of app "Safari"'`.
+
+## Uninstall
+
+1. Put the macOS shortcuts back: `bin/install.sh --restore`.
+2. Remove the Rakuen lines from `~/.hammerspoon/init.lua` and reload Hammerspoon.
+3. Optionally delete `~/.config/rakuen/` (your config and the shortcut backup).
+
+## Limitations
+
+What Rakuen cannot do on macOS (Secure Input, Spaces, permissions) is in [docs/limitations.md](docs/limitations.md).
 
 ## 🤝 Contributing & Philosophy
 This project is a personal vision, but ideas and constructive feedback are welcome. The goal is to inspire others to build their own digital paradise. If you have a suggestion that aligns with the core philosophy, please open an Issue or a Pull Request.
