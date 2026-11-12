@@ -115,6 +115,9 @@ describe("workspaces module", function()
     local mouse_events = {}
     local frames = {}
     local win = {
+      screen = function()
+        return {}
+      end,
       application = function()
         return {
           bundleID = function()
@@ -207,9 +210,28 @@ describe("workspaces module", function()
       end
     end)
 
+    it("adds a Space on the display under the mouse", function()
+      local added_display
+      mock_hs.mouse = {
+        getCurrentScreen = function()
+          return {
+            id = function()
+              return 42
+            end,
+          }
+        end,
+      }
+      mission_control.add_space = function(display_id, on_done)
+        added_display = display_id
+        on_done(true)
+      end
+      find_rule("Ctrl+Cmd+=").action()
+      assert.equals(42, added_display)
+    end)
+
     it("adds a Space through Mission Control", function()
       local added = false
-      mission_control.add_space = function(on_done)
+      mission_control.add_space = function(_, on_done)
         added = true
         on_done(true)
       end
@@ -219,7 +241,7 @@ describe("workspaces module", function()
     end)
 
     it("alerts when the Add Space button cannot be pressed", function()
-      mission_control.add_space = function(on_done)
+      mission_control.add_space = function(_, on_done)
         on_done(false, "not found")
       end
       find_rule("Ctrl+Cmd+=").action()

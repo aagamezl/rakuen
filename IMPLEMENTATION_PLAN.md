@@ -235,18 +235,23 @@ Manual pass (needs 3+ Spaces and `bin/install.sh` applied): start with the short
 ## Phase 9 – Shell module
 
 - [ ] 9.1 Run dialog (`Opt+F2`)
-- [ ] 9.2 Application grid (`Cmd+A`), overview up/down (`Cmd+Opt+Up/Down`)
+- [ ] 9.2 Application grid (`Cmd+A`). Overview up/down (`Cmd+Opt+Up/Down`) are not bound: macOS has no Overview and Space switching is left to macOS, so a second shortcut for the same action would be redundant
 - [ ] 9.3 Screenshot UI, area, window, screen-recording UI (F13 stand-in for Print; `screencapture -l` for window)
-- [ ] 9.4 Quick settings (`Cmd+S`), message tray (`Cmd+V`, `Cmd+M`), help (`Cmd+F1`)
+- [ ] 9.4 Quick settings (`Cmd+S`), message tray (`Cmd+M` only; GNOME also binds `Super+V`, but one action gets one shortcut), help (`Cmd+F1`)
 - [ ] 9.5 Mark partial behaviors in the catalog (no real Overview, Notification Center item may move across macOS versions)
 
 **Done when:** each Shell row works or is documented as partial.
+
+Status: code and unit tests are done for 9.1-9.5 (`make check` passes); the tasks stay unticked until the manual pass below. Layout: `rakuen/modules/shell.lua` (9 rules), `rakuen/core/screenshot.lua` (pure: file name, path and `screencapture -l` command), and `rakuen/core/ax_tree.lua` (identifier search shared with `mission_control.lua` and the message tray). Run dialog, screenshot UI/area, recording UI and help post a marked key chord. Application grid opens `Apps`, falling back to `Launchpad`. Quick settings opens System Settings. The message tray presses the `com.apple.menuextra.clock` item through accessibility (on macOS 27 it belongs to `com.apple.MenuBarAgent` and hangs off its `AXExtrasMenuBar` attribute; found with `scripts/spikes/menu_bar_dump.lua`) and alerts if it is missing (partial, 9.5). The window screenshot runs `screencapture -l <id>` into `~/Desktop` and alerts when it fails (Screen Recording permission). Favorite-app rows belong to Phase 15. Test with `only = "shell"` and `mode = "match"`.
+
+Manual pass: `Opt+F2` opens Spotlight; `Cmd+A` opens Apps and Select All still works with `Ctrl+A`; `F13` opens the screenshot panel, `Shift+F13` the crosshair, `Opt+F13` saves a PNG of the focused window to the Desktop (and alerts without permission); `Ctrl+Shift+Opt+R` opens the panel; `Cmd+S` opens System Settings; `Cmd+M` opens Notification Center (and `Cmd+V` is still Paste where native) (check the alert if not); `Cmd+F1` opens the Help search.
 
 ## Phase 10 – Session and accessibility module
 
 - [ ] 10.1 Lock screen (`Cmd+L`; browsers keep `Ctrl+L` for the location bar)
 - [ ] 10.2 Log out (`Ctrl+Opt+ForwardDelete`) with a confirmation dialog
-- [ ] 10.3 Zoom toggle / in / out and screen reader (document native shortcuts; VoiceOver toggle)
+- [ ] 10.3 Shut down (`Ctrl+Cmd+ForwardDelete`) with a confirmation dialog
+- [ ] 10.4 Zoom toggle / in / out and screen reader (document native shortcuts; VoiceOver toggle)
 
 **Done when:** lock and logout work safely; accessibility rows are listed in the cheatsheet.
 

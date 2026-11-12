@@ -93,7 +93,7 @@ describe("mission_control.add_space", function()
       end),
     })
     local result = {}
-    mission_control.add_space(function(succeeded, message)
+    mission_control.add_space(1, function(succeeded, message)
       result = { succeeded, message }
     end)
 
@@ -108,7 +108,7 @@ describe("mission_control.add_space", function()
   it("keeps looking, then reports a missing button and still closes", function()
     root = fake_element("root", {})
     local result = {}
-    mission_control.add_space(function(succeeded, message)
+    mission_control.add_space(1, function(succeeded, message)
       result = { succeeded, message }
     end)
 
@@ -128,7 +128,7 @@ describe("mission_control.add_space", function()
       end),
     })
     local result = {}
-    mission_control.add_space(function(succeeded, message)
+    mission_control.add_space(1, function(succeeded, message)
       result = { succeeded, message }
     end)
     timers[1]()
@@ -231,5 +231,44 @@ describe("mission_control.remove_space", function()
     assert.equals(1, escapes)
     assert.is_true(result)
     hs_mock.uninstall()
+  end)
+end)
+
+describe("mission_control.find_add_button", function()
+  local function display_with_button(display_id, button)
+    local element = fake_element("mc.display", { button })
+    local base = element.attributeValue
+    element.attributeValue = function(self, name)
+      if name == "AXDisplayID" then
+        return display_id
+      end
+      return base(self, name)
+    end
+    return element
+  end
+
+  it("takes the button of the requested display, not the first one", function()
+    local first = fake_element("mc.spaces.add")
+    local second = fake_element("mc.spaces.add")
+    local root = fake_element("root", {
+      display_with_button(1, first),
+      display_with_button(2, second),
+    })
+    assert.equals(second, mission_control.find_add_button(root, 2))
+    assert.equals(first, mission_control.find_add_button(root, 1))
+  end)
+
+  it("finds the button anywhere when there is a single display", function()
+    local button = fake_element("mc.spaces.add")
+    local root = fake_element("root", { fake_element("other", { button }) })
+    assert.equals(button, mission_control.find_add_button(root, 5))
+  end)
+
+  it("does not guess between several displays", function()
+    local root = fake_element("root", {
+      display_with_button(1, fake_element("x")),
+      display_with_button(2, fake_element("y")),
+    })
+    assert.is_nil(mission_control.find_add_button(root, 9))
   end)
 end)
