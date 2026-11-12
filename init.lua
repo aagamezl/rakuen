@@ -1,5 +1,8 @@
 -- Rakuen entry point. ~/.hammerspoon/init.lua sets package.path to this folder and runs it.
 
+-- Lets bin/install.sh reach Hammerspoon through the hs command line tool.
+require("hs.ipc")
+
 local binder = require("rakuen.core.binder")
 local config = require("rakuen.core.config")
 local loader = require("rakuen.core.loader")

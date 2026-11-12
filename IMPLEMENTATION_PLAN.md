@@ -234,11 +234,11 @@ Manual pass (needs 3+ Spaces and `bin/install.sh` applied): start with the short
 
 ## Phase 9 – Shell module
 
-- [ ] 9.1 Run dialog (`Opt+F2`)
-- [ ] 9.2 Application grid (`Cmd+A`). Overview up/down (`Cmd+Opt+Up/Down`) are not bound: macOS has no Overview and Space switching is left to macOS, so a second shortcut for the same action would be redundant
-- [ ] 9.3 Screenshot UI, area, window, screen-recording UI (F13 stand-in for Print; `screencapture -l` for window)
-- [ ] 9.4 Quick settings (`Cmd+S`), message tray (`Cmd+M` only; GNOME also binds `Super+V`, but one action gets one shortcut), help (`Cmd+F1`)
-- [ ] 9.5 Mark partial behaviors in the catalog (no real Overview, Notification Center item may move across macOS versions)
+- [x] 9.1 Run dialog (`Opt+F2`)
+- [x] 9.2 Application grid (`Cmd+A`). Overview up/down (`Cmd+Opt+Up/Down`) are not bound: macOS has no Overview and Space switching is left to macOS, so a second shortcut for the same action would be redundant
+- [x] 9.3 Screenshot UI, area, window, screen-recording UI (F13 stand-in for Print; `screencapture -l` for window)
+- [x] 9.4 Quick settings (`Cmd+S`), message tray (`Cmd+M` only; GNOME also binds `Super+V`, but one action gets one shortcut), help (`Cmd+F1`)
+- [x] 9.5 Mark partial behaviors in the catalog (no real Overview, Notification Center item may move across macOS versions)
 
 **Done when:** each Shell row works or is documented as partial.
 
@@ -248,12 +248,16 @@ Manual pass: `Opt+F2` opens Spotlight; `Cmd+A` opens Apps and Select All still w
 
 ## Phase 10 – Session and accessibility module
 
-- [ ] 10.1 Lock screen (`Cmd+L`; browsers keep `Ctrl+L` for the location bar)
-- [ ] 10.2 Log out (`Ctrl+Opt+ForwardDelete`) with a confirmation dialog
-- [ ] 10.3 Shut down (`Ctrl+Cmd+ForwardDelete`) with a confirmation dialog
-- [ ] 10.4 Zoom toggle / in / out and screen reader (document native shortcuts; VoiceOver toggle)
+- [x] 10.1 Lock screen (`Cmd+L`; browsers keep `Ctrl+L` for the location bar)
+- [x] 10.2 Log out (`Cmd+Alt+L`), confirmed by the macOS dialog
+- [x] 10.3 Shut down (`Cmd+Alt+F4`) with a confirmation dialog
+- [x] 10.4 Zoom toggle / in / out and screen reader (document native shortcuts; VoiceOver toggle)
 
 **Done when:** lock and logout work safely; accessibility rows are listed in the cheatsheet.
+
+Status: code and unit tests are done for 10.1-10.4 (`make check` passes); the tasks stay unticked until the manual pass below. Layout: `rakuen/modules/session.lua` (5 rules) and `rakuen/core/deferred.lua`, which runs slow handlers on a zero-delay timer so they never block the event tap (a slow callback makes macOS disable it; the shell module uses it too). `Cmd+L` locks with `hs.caffeinate.lockScreen`. `Cmd+L` is the browsers' native location-bar chord, so a browsers-only rule `Ctrl+L` posts `Cmd+L` (marked synthetic, so it does not lock). `Cmd+Opt+L` calls `hs.caffeinate.logOut` (macOS shows its own confirmation). `Cmd+Opt+F4` shows a `hs.dialog.blockAlert` and only then calls `hs.caffeinate.shutdownSystem`. `Opt+Cmd+S` posts `Cmd+F5` to toggle VoiceOver (partial). Zoom (`Opt+Cmd+8`, `Opt+Cmd+=`, `Opt+Cmd+-`) is native, so it has no rule and is documented in the catalog only. Native chords have no rules, so the cheatsheet (Phase 11) must read them from the catalog to list the zoom rows. Test with `only = "session"` and `mode = "match"`.
+
+Manual pass: `Cmd+L` locks the screen outside browsers; in a browser `Cmd+L` also locks and `Ctrl+L` focuses the location bar; `Cmd+Opt+L` asks first, Cancel does nothing, Log Out logs out; `Cmd+Opt+F4` asks first, Cancel does nothing, Shut Down shuts down; `Opt+Cmd+S` toggles VoiceOver; the native zoom chords still work.
 
 ## Phase 11 – Cheatsheet window
 

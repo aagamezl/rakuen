@@ -7,6 +7,7 @@
 -- clicked through accessibility, which can move between macOS versions.
 
 local ax_tree = require("rakuen.core.ax_tree")
+local deferred = require("rakuen.core.deferred")
 local screens = require("rakuen.core.screens")
 local screenshot = require("rakuen.core.screenshot")
 
@@ -25,21 +26,6 @@ local CLICK_HOLD = 0.05
 
 local function key_action(mods, key)
   return { mods = mods, key = key }
-end
-
---- Run a handler later, outside the event tap, and alert instead of raising.
---- macOS disables an event tap whose callback is slow, and these handlers talk
---- to other processes (accessibility, launching apps), so they must not run
---- inside the tap; a disabled tap stops every Rakuen shortcut.
-local function guarded(handler)
-  return function()
-    hs.timer.doAfter(0, function()
-      local succeeded, handler_error = pcall(handler)
-      if not succeeded then
-        hs.alert.show("Rakuen: " .. tostring(handler_error))
-      end
-    end)
-  end
 end
 
 local function open_application_grid()
@@ -175,7 +161,7 @@ shell.rules = {
     "Application grid",
     "Launchpad (F4)",
     "Cmd+A",
-    guarded(open_application_grid),
+    deferred.guard(open_application_grid),
     "yes",
     "Opens Apps (Launchpad before macOS 26). Select All is Ctrl+A"
   ),
@@ -199,7 +185,7 @@ shell.rules = {
     "Screenshot window",
     "Cmd+Shift+4 then Space",
     "Opt+F13",
-    guarded(capture_window),
+    deferred.guard(capture_window),
     "yes",
     "screencapture -l. Needs Screen Recording permission. Saved to the Desktop"
   ),
@@ -215,7 +201,7 @@ shell.rules = {
     "Quick settings",
     "none",
     "Cmd+S",
-    guarded(open_quick_settings),
+    deferred.guard(open_quick_settings),
     "partial",
     "Opens System Settings. Control Center cannot be toggled. Save is Ctrl+S"
   ),
@@ -223,7 +209,7 @@ shell.rules = {
     "Message tray",
     "none",
     "Cmd+M",
-    guarded(toggle_message_tray),
+    deferred.guard(toggle_message_tray),
     "partial",
     "Clicks the Notification Center status item. That target moves across macOS versions. "
       .. "GNOME also binds Super+V; only Cmd+M is used so one action has one shortcut. "
