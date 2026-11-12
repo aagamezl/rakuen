@@ -119,9 +119,11 @@ local SHOW_DELAY_SECONDS = 0.15
 --- Chooser rows: { text, subText, id }.
 function window_menu.choices()
   local rows = {}
+
   for _, entry in ipairs(ENTRIES) do
     table.insert(rows, { text = entry.text, subText = entry.hint, id = entry.id })
   end
+
   return rows
 end
 
@@ -132,6 +134,7 @@ function window_menu.run(id, win, manager, modal)
       return entry.run(manager, win, modal)
     end
   end
+
   return "unchanged"
 end
 
@@ -146,8 +149,10 @@ function window_menu.show(win, manager, modal)
     end
 
     win:focus()
+
     hs.timer.doAfter(SHOW_DELAY_SECONDS, function()
       local succeeded = pcall(window_menu.run, choice.id, win, manager, modal)
+
       if not succeeded then
         hs.alert.show("Rakuen: window action failed")
       end

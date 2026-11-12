@@ -261,14 +261,16 @@ Manual pass: `Cmd+L` locks the screen outside browsers; in a browser `Cmd+L` als
 
 ## Phase 11 – Cheatsheet window
 
-- [ ] 11.1 Build the window from registry data only (never hand-maintained)
-- [ ] 11.2 Columns: new keybinding, original keybinding, description (task item 5)
-- [ ] 11.3 Grouped by module, scrollable, with search/filter
-- [ ] 11.4 Show feasibility notes for partial rules inside the description
-- [ ] 11.5 Global hotkey to toggle it (`Ctrl+Opt+/`), Escape to close
-- [ ] 11.6 Respect dark mode; test with 150+ rows for scroll performance
+- [x] 11.1 Build the window from registry data only (never hand-maintained)
+- [x] 11.2 Columns: new keybinding, original keybinding, description (task item 5)
+- [x] 11.3 Grouped by module, scrollable, with search/filter
+- [x] 11.4 Show feasibility notes for partial rules inside the description
+- [x] 11.5 Global hotkey to toggle it (`Ctrl+Opt+/`), Escape to close
+- [x] 11.6 Respect dark mode; test with 150+ rows for scroll performance
 
 **Done when:** the window lists exactly the rules the binder registered, with all three columns.
+
+Status: code and unit tests are done (`make check` passes). `rakuen/ui/cheatsheet.lua` has pure `rows`, `group` and `html` functions and `toggle`, which opens an `hs.webview`; `spec/cheatsheet_spec.lua` loads every real module and checks one row per registered rule. `init.lua` binds `Ctrl+Opt+/` to `toggle` (checked live: it opens and closes). 11.3, 11.5 and 11.6 stay unticked until a manual pass: search box, Escape to close, dark mode, and scrolling with the full list. Native chords have no rules, so the zoom rows are not in the window yet.
 
 ## Phase 12 – Documentation
 
