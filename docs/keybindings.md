@@ -130,16 +130,14 @@ Favorites live in [hammerspoon/config/favorites.lua](hammerspoon/config/favorite
 | Run dialog | Alt+F2 | Opt+F2 | Cmd+Space | Yes | Opens Spotlight. Cmd+Space stays Spotlight |
 | Favorite app 1–9 | Super+1 … Super+9 | Cmd+1 … Cmd+9 | none | Yes | Disabled in apps that already use Cmd+number (browsers, Terminal tabs, Slack) |
 | New window of favorite app 1–9 | Super+Ctrl+1 … 9 | Cmd+Ctrl+1 … 9 | none | Partial | Activates a New Window menu item when the app has one |
-| Application grid | Super+A | Cmd+A | Launchpad (F4) | Yes | Select All is Ctrl+A |
+| Application grid | Super+A | Cmd+A | Launchpad (F4) | Yes | Opens Apps (Launchpad before macOS 26). Select All is Ctrl+A |
 | Screenshot UI | Print | F13, and native Cmd+Shift+5 | Cmd+Shift+5 | Yes | Mac keyboards have no Print key. F13 is the stand-in |
 | Screenshot area | Shift+Print | Shift+F13 | Cmd+Shift+4 | Yes | |
-| Screenshot window | Alt+Print | Opt+F13 | Cmd+Shift+4 then Space | Yes | `screencapture -l`. Needs Screen Recording permission |
+| Screenshot window | Alt+Print | Opt+F13 | Cmd+Shift+4 then Space | Yes | `screencapture -l`. Needs Screen Recording permission. Saved to the Desktop |
 | Screen recording UI | Ctrl+Shift+Alt+R | Ctrl+Shift+Opt+R | Cmd+Shift+5 | Yes | Opens the screenshot panel. The recording tab is not separately addressable |
-| Overview up | Super+Alt+Up | Cmd+Opt+Up | Ctrl+Left | Partial | No overview. Switches to the previous Space |
-| Overview down | Super+Alt+Down | Cmd+Opt+Down | Ctrl+Right | Partial | Switches to the next Space |
-| Quick settings | Super+S | Cmd+S | none | Partial | Opens System Settings. Control Center cannot be toggled |
-| Message tray | Super+V, Super+M | Cmd+V, Cmd+M | none | Partial | Clicks the Notification Center status item. That target moves across macOS versions. Paste is Ctrl+V |
-| Help | Super+F1 | Cmd+F1 | Cmd+Shift+/ | Partial | Sends the front app Help shortcut |
+| Quick settings | Super+S | Cmd+S | none | Partial | Opens System Settings. Control Center cannot be toggled. Save is Ctrl+S |
+| Message tray | Super+V, Super+M | Cmd+M | none | Partial | Clicks the Notification Center status item. That target moves across macOS versions. Only one shortcut is bound per action, so Super+V is not used. Minimize is Cmd+H |
+| Help | Super+F1 | Cmd+F1 | Cmd+Shift+/ | Partial | Sends Cmd+Shift+/ (the Help menu search) |
 
 ### Session and accessibility
 

@@ -7,6 +7,7 @@
 -- closeMissionControl fails the same way, so Mission Control is closed with
 -- Escape.
 
+local ax_tree = require("rakuen.core.ax_tree")
 local synthetic = require("rakuen.core.synthetic")
 
 local mission_control = {}
@@ -16,48 +17,12 @@ mission_control.ADD_BUTTON_ID = "mc.spaces.add"
 mission_control.DISPLAY_ID = "mc.display"
 mission_control.SPACES_LIST_ID = "mc.spaces.list"
 
-local MAX_DEPTH = 12
 local POLL_SECONDS = 0.2
 local OPEN_TIMEOUT_SECONDS = 3
 local CLOSE_DELAY_SECONDS = 0.5
 
---- Depth-first search for the element whose AXIdentifier is `identifier`.
---- Works on any object with `attributeValue(name)`, so tests can fake it.
-function mission_control.find_element(element, identifier, depth)
-  depth = depth or 0
-  if element == nil or depth > MAX_DEPTH then
-    return nil
-  end
-
-  if element:attributeValue("AXIdentifier") == identifier then
-    return element
-  end
-
-  for _, child in ipairs(element:attributeValue("AXChildren") or {}) do
-    local found = mission_control.find_element(child, identifier, depth + 1)
-    if found ~= nil then
-      return found
-    end
-  end
-  return nil
-end
-
---- Every element whose AXIdentifier is `identifier`, depth first.
-function mission_control.find_elements(element, identifier, results, depth)
-  results = results or {}
-  depth = depth or 0
-  if element == nil or depth > MAX_DEPTH then
-    return results
-  end
-
-  if element:attributeValue("AXIdentifier") == identifier then
-    table.insert(results, element)
-  end
-  for _, child in ipairs(element:attributeValue("AXChildren") or {}) do
-    mission_control.find_elements(child, identifier, results, depth + 1)
-  end
-  return results
-end
+mission_control.find_element = ax_tree.find_element
+mission_control.find_elements = ax_tree.find_elements
 
 --- Choose the Mission Control display for `display_id`; with a single
 --- display, that one whatever its id.
@@ -159,10 +124,28 @@ local function press(find, action, label, on_done)
   end)
 end
 
---- Add a Space at the end of the current display.
-function mission_control.add_space(on_done)
-  press(function(root)
+--- The "add Space" button on the display `display_id`. Looks inside that
+--- display's Mission Control; with a single display the whole tree is searched.
+function mission_control.find_add_button(root, display_id)
+  local displays = mission_control.find_elements(root, mission_control.DISPLAY_ID)
+  local display = mission_control.pick_display(displays, display_id)
+  if display ~= nil then
+    local button = mission_control.find_element(display, mission_control.ADD_BUTTON_ID)
+    if button ~= nil then
+      return button
+    end
+  end
+
+  if #displays <= 1 then
     return mission_control.find_element(root, mission_control.ADD_BUTTON_ID)
+  end
+  return nil
+end
+
+--- Add a Space at the end of the display `display_id`.
+function mission_control.add_space(display_id, on_done)
+  press(function(root)
+    return mission_control.find_add_button(root, display_id)
   end, "AXPress", "Add Space button", on_done)
 end
 

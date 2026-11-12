@@ -5,6 +5,7 @@
 -- file only talks to Hammerspoon. The watchers and the menu bar item are
 -- kept in module state so Lua does not garbage-collect them.
 
+local screens = require("rakuen.core.screens")
 local space_nav = require("rakuen.core.space_nav")
 
 local space_indicator = {}
@@ -108,7 +109,7 @@ function space_indicator.render(flash)
     return
   end
 
-  local screen = hs.screen.mainScreen()
+  local screen = screens.current()
   local ids = hs.spaces.spacesForScreen(screen)
   local current_id = hs.spaces.activeSpaceOnScreen(screen)
   if ids == nil then

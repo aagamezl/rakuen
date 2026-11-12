@@ -12,6 +12,7 @@
 -- Space with the chord while the mouse is held, then releasing (best-effort).
 
 local mission_control = require("rakuen.core.mission_control")
+local screens = require("rakuen.core.screens")
 local shortcut_check = require("rakuen.core.shortcut_check")
 local space_indicator = require("rakuen.ui.space_indicator")
 local space_nav = require("rakuen.core.space_nav")
@@ -41,8 +42,9 @@ local MOVE_TIMEOUT = 3.0
 local move_in_progress = false
 local move_token = 0
 
-local function main_screen_spaces()
-  local screen = hs.screen.mainScreen()
+--- Spaces and the active Space of `screen`, or of the current display.
+local function main_screen_spaces(screen)
+  screen = screen or screens.current()
   local ids = hs.spaces.spacesForScreen(screen)
   local current_id = hs.spaces.activeSpaceOnScreen(screen)
   return ids, current_id
@@ -93,7 +95,7 @@ end
 --- Add a Space at the end of the current display.
 local function insert_space()
   when_modifiers_released(function()
-    mission_control.add_space(function(succeeded, message)
+    mission_control.add_space(screens.current():id(), function(succeeded, message)
       if not succeeded then
         hs.alert.show("Rakuen: could not add a Space: " .. tostring(message))
         return
@@ -106,9 +108,9 @@ end
 --- Poll until the active Space is no longer `previous_id`, then call
 --- `callback(true)`; `callback(false)` if it never changes. The switch
 --- animation takes a variable time, so a fixed wait is not reliable.
-local function wait_until_left(previous_id, callback, waited)
+local function wait_until_left(screen, previous_id, callback, waited)
   waited = waited or 0
-  local _, now_id = main_screen_spaces()
+  local _, now_id = main_screen_spaces(screen)
   if now_id ~= previous_id then
     callback(true)
     return
@@ -119,7 +121,7 @@ local function wait_until_left(previous_id, callback, waited)
   end
 
   hs.timer.doAfter(LEAVE_POLL, function()
-    wait_until_left(previous_id, callback, waited + LEAVE_POLL)
+    wait_until_left(screen, previous_id, callback, waited + LEAVE_POLL)
   end)
 end
 
@@ -138,18 +140,19 @@ end
 --- has settled, then remove the old one through Mission Control.
 --- Windows on the removed Space move to a neighbor, as in Mission Control.
 local function remove_space()
-  local ids, current_id = main_screen_spaces()
+  local screen = screens.current()
+  local ids, current_id = main_screen_spaces(screen)
   local direction = space_nav.removal_direction(ids, current_id)
   if direction == nil then
     hs.alert.show("Rakuen: cannot remove the only Space")
     return
   end
 
-  local screen = hs.screen.mainScreen()
   local index = space_nav.index_of(ids, current_id)
 
   press_space_chord(direction, 1, 0)
   wait_until_left(
+    screen,
     current_id,
     alert_on_error(function(left)
       if not left then
@@ -213,7 +216,7 @@ local function move_window_to(which)
       return
     end
 
-    local ids, current_id = main_screen_spaces()
+    local ids, current_id = main_screen_spaces(win:screen())
     local plan = space_nav.plan(ids, current_id, which)
     if plan == nil then
       hs.alert.show("No Space to move this window to")
