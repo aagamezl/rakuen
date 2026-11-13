@@ -37,7 +37,7 @@ Open question for you: confirm D3 (pass-through). D7 is decided. For D11, confir
 - `bin/install.sh` is the single entry point and is built in two stages (D12). It runs from a local clone, and from Phase 13 also via `curl | bash`.
 - **System layer (shell, may need a Dock restart or logout to apply):** macOS Spaces, Mission Control and Application windows shortcuts on `Ctrl+Cmd+Arrow`, written to `com.apple.symbolichotkeys`. Previous values are saved in `~/.config/rakuen/backup/spaces-shortcuts.tsv` and restored by `--restore` / `--uninstall`. `--status` shows what is stored.
 - **Runtime layer (Hammerspoon, Lua):** `~/.hammerspoon/init.lua` loads Rakuen. User settings live in `~/.config/rakuen/config.lua`.
-- **Order of setup:** 1) system shortcuts (install.sh, Phase 2) 2) Hammerspoon and config (Phase 13) 3) permissions (Accessibility, Input Monitoring). Rakuen assumes the system shortcuts are already moved, so the workspaces module and docs never describe `Ctrl+Arrow` as Space switching, Mission Control or Application windows.
+- **Order of setup:** 1) system shortcuts (install.sh, Phase 2) 2) Hammerspoon and config (Phase 13) 3) permissions (Accessibility, Screen Recording, Automation). Rakuen assumes the system shortcuts are already moved, so the workspaces module and docs never describe `Ctrl+Arrow` as Space switching, Mission Control or Application windows.
 
 ## Target Layout
 
@@ -289,8 +289,8 @@ Status: complete. `rakuen/core/docs.lua` renders the registry (pure); `scripts/g
 - [x] 13.1 Extend `bin/install.sh` (stage A from 2.10 already sets the Spaces shortcuts): detect macOS, install Homebrew if missing, `brew install --cask hammerspoon`
 - [x] 13.2 Copy config to `~/.hammerspoon`, backing up any existing `init.lua`
 - [x] 13.3 Works both from a local clone and via `curl -fsSL <raw github url> | bash` (downloads the repo tarball when not in a clone)
-- [x] 13.4 Idempotent re-runs; `--uninstall` restores the backup; `--dry-run`
-- [x] 13.5 Guide for permissions: Accessibility, Input Monitoring; launch-at-login; reload Hammerspoon
+- [x] 13.4 Idempotent re-runs; `--uninstall` removes Rakuen and its config and restores the shortcuts (it keeps a saved `init.lua` backup but does not restore it); `--dry-run`
+- [x] 13.5 Guide for permissions: Accessibility, Screen Recording, Automation (Rakuen needs no Input Monitoring); launch-at-login; reload Hammerspoon (`docs/permissions.md`)
 - [x] 13.6 Run the stage A Spaces step first in the full flow, make `--uninstall` also call `--restore`, and keep the logout explanation in the final output
 - [ ] 13.7 Test installer on a clean macOS user account / VM; shellcheck in CI
 

@@ -10,9 +10,9 @@ This is more than a dotfiles repository; it's a blueprint for a saner, more effi
 
 ---
 
-## ✨ The Vision
+## ✨ The Vision And Motivation
 
-The default macOS environment is powerful, but it can feel fragmented. Rakuen is built on a few core principles:
+I find the default macOS environment annoying and incomplete; honestly, I don’t like macOS. I am a Linux user, and whenever I am forced to use macOS, I feel like a fish out of water. The "Cmd" key, in particular, is extremely bothersome to me; given that my muscle memory is entirely tuned for Linux—which I use as my personal platform—I had to find a solution. Following the UNIX/Linux philosophy—if you don’t like something, change it—"Rakuen" began to take shape, built upon the following fundamental principles:
 
 * **`Ctrl` is King:** Reclaim consistency by making the Control key the primary modifier for global shortcuts, reducing finger gymnastics and cognitive load.
 
@@ -37,7 +37,7 @@ The installer, in order:
 3. Copies `init.lua` and `rakuen/` to `~/.hammerspoon`. An existing `init.lua` is saved to `~/.config/rakuen/backup/init.lua`. Writes a starter `~/.config/rakuen/config.lua` (match mode, all modules on) unless you already have one.
 4. Reloads Hammerspoon, enables launch at login, and requests the permissions (Accessibility, Screen & System Audio Recording, Automation for System Events).
 
-It is safe to run again. Use `--dry-run` to see what it would do without writing anything. Approve the macOS prompts (or enable Hammerspoon in the Settings panes that open), restart Hammerspoon if Screen Recording asks for it, then see [Shortcuts](#shortcuts).
+It is safe to run again. Use `--dry-run` to see what it would do without writing anything. Approve the macOS prompts (or enable Hammerspoon in the Settings panes that open), restart Hammerspoon if Screen Recording asks for it, then see [Shortcuts](#shortcuts). To grant the permissions by hand, see [docs/permissions.md](docs/permissions.md).
 
 ## Shortcuts
 
@@ -89,6 +89,7 @@ Run `bin/install.sh --uninstall`. It removes `~/.hammerspoon/rakuen` and Rakuen'
 
 * [docs/keybindings.md](docs/keybindings.md): every shortcut. Generated with `make docs`; do not edit by hand.
 
+* [docs/permissions.md](docs/permissions.md): the permissions Rakuen needs and how to enable them by hand.
 * [docs/limitations.md](docs/limitations.md): what Rakuen cannot do on macOS (Secure Input, Spaces, permissions).
 
 * [docs/feasibility.md](docs/feasibility.md): results of the feasibility spikes behind the design decisions.

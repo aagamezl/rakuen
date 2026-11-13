@@ -10,7 +10,7 @@ make check
 
 All of luacheck, stylua and busted must pass before any manual test.
 
-## 2. Enable only the module under test
+## 2. Enable Only The Module Under Test
 
 Create or edit `~/.config/rakuen/config.lua`. Replace `editing` with the module name (`editing`, `text_navigation`, `windows`, `focus`, `workspaces`, `shell`, `session`):
 
@@ -38,7 +38,7 @@ Expect the alert "Rakuen is ready" and a console line `modules loaded: <name>`. 
 
 Press `Ctrl+Opt+Cmd+R` to reload and stop Rakuen. Press `Ctrl+Opt+Cmd+Escape` to pause and resume it. Do not run the `dofile` line twice in one session.
 
-## 4. Manual checklist template
+## 4. Manual Checklist Template
 
 Copy this block into the module's pull request or notes and fill it in.
 
@@ -62,7 +62,7 @@ Always check:
 Notes / bugs:
 ```
 
-## 5. Per-binding overrides
+## 5. Per-Binding Overrides
 
 To test a rule in a different set of apps, or turn one off, override it by its description:
 
