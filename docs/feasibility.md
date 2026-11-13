@@ -1,8 +1,8 @@
-# Feasibility spikes (Phase 1)
+# Feasibility Spikes (Phase 1)
 
 These spikes answer questions that decide how Rakuen is built. Results below come from a run on 2026-11-06 (built-in keyboard, Secure Input off).
 
-## How to run
+## How To Run
 
 1. Open the Hammerspoon console (menu bar icon → Console).
 2. Load the spike script and print the help:
@@ -27,7 +27,7 @@ Hammerspoon needs Accessibility permission (System Settings → Privacy & Securi
 | 1.7 | Which apps expose a focused text role? | `spikes.inspect_focus()` | Native apps: yes. Chrome, VS Code, Slack: no (see table below). |
 | 1.8 | Are Rakuen's synthetic events marked and distinguishable? | `spikes.synthetic_marker()` | Yes. The tap receives its own events. Marked `F19` arrived with marker `1380010837` (`0x52414B55`). Unmarked `F20` arrived with marker `0`. |
 
-### Spike 1.7 results per app
+### Spike 1.7 Results Per App
 
 Role found is the same for `system_wide` and `application`, and unchanged by `AXManualAccessibility`.
 
@@ -40,7 +40,7 @@ Role found is the same for `system_wide` and `application`, and unchanged by `AX
 | VS Code Insiders | `com.microsoft.VSCodeInsiders` | nil | nil | **Yes** (stable VS Code, `com.microsoft.VSCode`, not tested; assume the same) |
 | Slack | `com.tinyspeck.slackmacgap` | nil | nil | **Yes** |
 
-### Spike 1.4 / 1.5 chord results
+### Spike 1.4 / 1.5 Chord Results
 
 | Chord | Seen | Native action after swallow | Verdict |
 | --- | --- | --- | --- |
