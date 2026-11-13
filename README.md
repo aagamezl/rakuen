@@ -6,7 +6,7 @@ Rakuen (楽園), meaning "Paradise" or "Utopia" in Japanese, is an opinionated m
 
 This is more than a dotfiles repository; it's a blueprint for a saner, more efficient, and truly personalized macOS experience.
 
-**Begin your journey to a more elegant macOS. Welcome to Rakuen.**
+**Begin your journey to a more elegant, efficient and easy to use macOS. Welcome to Rakuen.**
 
 ---
 
@@ -22,21 +22,22 @@ The default macOS environment is powerful, but it can feel fragmented. Rakuen is
 
 ## Installation
 
-Rakuen runs inside Hammerspoon (`brew install --cask hammerspoon`). `~/.hammerspoon/init.lua` loads this repository's `init.lua`. The installer moves the macOS navigation shortcuts to `Ctrl+Cmd+Arrow` and requests the Hammerspoon permissions (Accessibility, Screen & System Audio Recording, Automation for System Events).
-
-From a checkout of this repository:
+Rakuen runs inside Hammerspoon. One command does the whole setup:
 
 ```bash
-bin/install.sh
+curl -fsSL https://raw.githubusercontent.com/aagamezl/rakuen/master/bin/install.sh | bash
 ```
 
-From GitHub, without cloning first:
+Or from a checkout of this repository: `bin/install.sh` (same as `bin/install.sh --install`).
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/aagamezl/rakuen/master/bin/install.sh | zsh
-```
+The installer, in order:
 
-The installer opens the macOS prompts or Settings panes for any permission that is not granted yet. Approve them, restart Hammerspoon if Screen Recording asks for it, then see [Shortcuts](#shortcuts).
+1. Moves the macOS Spaces, Mission Control and Application windows shortcuts to `Ctrl+Cmd+Arrow` (previous values are saved first). You may need to restart the Dock (`--restart-dock`) or log out and back in for them to apply.
+2. Installs Homebrew if it is missing, then Hammerspoon (`brew install --cask hammerspoon`).
+3. Copies `init.lua` and `rakuen/` to `~/.hammerspoon`. An existing `init.lua` is saved to `~/.config/rakuen/backup/init.lua`. Writes a starter `~/.config/rakuen/config.lua` (match mode, all modules on) unless you already have one.
+4. Reloads Hammerspoon, enables launch at login, and requests the permissions (Accessibility, Screen & System Audio Recording, Automation for System Events).
+
+It is safe to run again. Use `--dry-run` to see what it would do without writing anything. Approve the macOS prompts (or enable Hammerspoon in the Settings panes that open), restart Hammerspoon if Screen Recording asks for it, then see [Shortcuts](#shortcuts).
 
 ## Shortcuts
 
@@ -82,11 +83,7 @@ Find a bundle ID with `osascript -e 'id of app "Safari"'`.
 
 ## Uninstall
 
-1. Put the macOS shortcuts back: `bin/install.sh --restore`.
-
-2. Remove the Rakuen lines from `~/.hammerspoon/init.lua` and reload Hammerspoon.
-
-3. Optionally delete `~/.config/rakuen/` (your config and the shortcut backup).
+Run `bin/install.sh --uninstall`. It removes `~/.hammerspoon/rakuen` and Rakuen's `init.lua` (a different `init.lua` is left alone; a saved backup stays in `~/.config/rakuen/backup/`), puts the macOS shortcuts back and reloads Hammerspoon. Hammerspoon itself stays installed. It also deletes `~/.config/rakuen/config.lua`.
 
 ## Documentation
 
