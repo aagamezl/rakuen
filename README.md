@@ -1,10 +1,10 @@
 # Rakuen (楽園)
 
-Your Mac, Perfected. A paradise of keyboard-centric control and streamlined workflow.
+macOS, perfected. A haven of keyboard-centric control and an optimized workflow.
 
-Rakuen (楽園), meaning "Paradise" or "Utopia" in Japanese, is an opinionated macOS configuration designed to transform your Mac into the machine you've always dreamed of. It tames the inconsistent Command and Control keys, brings fluid window management and Spaces control reminiscent of GNOME, and curates a set of applications and shortcuts that work in harmony.
+`Rakuen` (`楽園`), meaning "Paradise" or "Utopia" in Japanese, is an opinionated macOS configuration designed to transform it into the machine you've always dreamed of. It `FIX` the inconsistent `Command` and `Control` keys, brings fluid window management and Spaces control reminiscent of GNOME, and curates a set of shortcuts that work in harmony.
 
-This is more than a dotfiles repository; it's a blueprint for a saner, more efficient, and truly personalized macOS experience.
+Rakuen is a model for a more `sensible`, `efficient`, and truly `functional` experience on macOS.
 
 **Begin your journey to a more elegant, efficient and easy to use macOS. Welcome to Rakuen.**
 
@@ -12,13 +12,17 @@ This is more than a dotfiles repository; it's a blueprint for a saner, more effi
 
 ## ✨ The Vision And Motivation
 
-I find the default macOS environment annoying and incomplete; honestly, I don’t like macOS. I am a Linux user, and whenever I am forced to use macOS, I feel like a fish out of water. The "Cmd" key, in particular, is extremely bothersome to me; given that my muscle memory is entirely tuned for Linux—which I use as my personal platform—I had to find a solution. Following the UNIX/Linux philosophy—if you don’t like something, change it—"Rakuen" began to take shape, built upon the following fundamental principles:
+I find the default macOS environment annoying and incomplete; honestly, I don’t like macOS. I am a Linux user, and whenever I am forced to use macOS, I feel like a fish out of water. The "Cmd" key, in particular, is extremely bothersome to me; given that my muscle memory is entirely tuned for Linux —which I use as my personal platform— I had to find a solution.
 
-* **`Ctrl` is King:** Reclaim consistency by making the Control key the primary modifier for global shortcuts, reducing finger gymnastics and cognitive load.
+The solution was to follow the UNIX/Linux philosophy `if you don't like something, change it` and so `Rakuen` began to take shape, built upon the following fundamental principles:
+
+* **`Ctrl` Is King:** Reclaim consistency by making the Control key the primary modifier for global shortcuts, reducing finger gymnastics and cognitive load.
 
 * **Tamed Windows & Spaces:** Experience window management that just makes sense. Move, tile, and manage your workspace with the fluidity found in other modern desktop environments.
 
-* **Curated Workflow:** A hand-picked selection of applications and utilities that complement this setup, creating a cohesive and powerful toolset.
+* **Extended Workflow:** GNOME-inspired shortcuts that make working with macOS feel comfortable and familiar.
+
+* **The Keyboard At The Center:** Anything that can be done using the keyboard should be done via the keyboard—it’s faster and simpler, and macOS does not offer this level of simplicity.
 
 ## Installation
 

@@ -28,6 +28,7 @@ config.MODULE_NAMES = {
   "windows",
   "focus",
   "workspaces",
+  "applications",
   "shell",
   "session",
 }

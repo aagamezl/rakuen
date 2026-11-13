@@ -3,8 +3,10 @@
 -- A module file under rakuen/modules/ returns { rules = { ... } }.
 -- A module may also return `block_rules`: rules that swallow the native chords
 -- its own rules replace. They are registered only when `block_native_cmd` is on.
--- A module may also return `on_load(logger)`, run once after its rules are
--- registered (for startup checks); an error there never stops loading.
+-- A module may also return `on_load(logger, rules)`, run once after its rules are
+-- registered (for startup checks and watchers); `rules` are its rules after the
+-- user's overrides, so a disabled binding is missing. An error there never
+-- stops loading.
 -- Setting `only` in the config loads one module alone, so it can be tested
 -- without the others (task 3.2).
 
@@ -36,7 +38,8 @@ function loader.load(options)
         logger:warn(string.format("config: %s has no binding '%s'", module_name, description))
       end
 
-      registry:add_all(module_name, config.apply_overrides(module.rules, bindings))
+      local effective_rules = config.apply_overrides(module.rules, bindings)
+      registry:add_all(module_name, effective_rules)
 
       if settings.block_native_cmd and type(module.block_rules) == "table" then
         registry:add_all(module_name, module.block_rules)
@@ -44,7 +47,7 @@ function loader.load(options)
       table.insert(loaded, module_name)
 
       if type(module.on_load) == "function" then
-        local ok, load_error = pcall(module.on_load, logger)
+        local ok, load_error = pcall(module.on_load, logger, effective_rules)
         if not ok then
           logger:warn(string.format("%s on_load failed: %s", module_name, tostring(load_error)))
         end

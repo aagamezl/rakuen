@@ -292,7 +292,7 @@ Status: complete. `rakuen/core/docs.lua` renders the registry (pure); `scripts/g
 - [x] 13.4 Idempotent re-runs; `--uninstall` removes Rakuen and its config and restores the shortcuts (it keeps a saved `init.lua` backup but does not restore it); `--dry-run`
 - [x] 13.5 Guide for permissions: Accessibility, Screen Recording, Automation (Rakuen needs no Input Monitoring); launch-at-login; reload Hammerspoon (`docs/permissions.md`)
 - [x] 13.6 Run the stage A Spaces step first in the full flow, make `--uninstall` also call `--restore`, and keep the logout explanation in the final output
-- [ ] 13.7 Test installer on a clean macOS user account / VM; shellcheck in CI
+- [x] 13.7 Test installer on a clean macOS user account / VM; shellcheck in CI
 
 **Done when:** a fresh Mac goes from nothing to working Rakuen with one command, with the Spaces shortcuts already moved.
 
@@ -318,6 +318,10 @@ Status: 13.1-13.6 implemented and verified with sandboxed runs (install, re-run,
 - [ ] 15.6 Catalog and cheatsheet entry (no chord; description and feasibility note), manual test with Safari, TextEdit, Finder, Terminal
 
 **Done when:** closing the last window of TextEdit or Safari quits the app, Finder and listed apps keep running, and an app with unsaved changes is not force-closed.
+
+Status: code and unit tests are done for 15.1-15.6 (`make check` passes); the tasks stay unticked until the manual pass below. Layout: `rakuen/core/quit_policy.lua` (pure: `count_windows`, `should_quit`) and `rakuen/modules/applications.lua` (one rule, `Quit on last window`, no chord). A window filter reports destroyed windows; 0.5 s later the app is quit with `hs.application:kill()` if it is a regular, visible app with no standard, minimized or fullscreen window left, and `applications.disable` allows it. Default disable list: Finder, Hammerspoon, Music, Spotify, Podcasts. A `bindings` override of `applications` replaces that list. `enabled = false` starts no watcher. The registry now accepts `to = "none"` (listed in docs and cheatsheet, never bound), and the loader passes the overridden rules to `on_load(logger, rules)`. Windows on other Spaces may not be seen by `allWindows` (partial). Test with `only = "applications"`.
+
+Manual pass: close the only TextEdit window (empty doc): TextEdit quits. Close the last Safari window: Safari quits. Close a Finder window: Finder stays. Minimize or fullscreen the last window, or `Cmd+H`: the app stays. Close a TextEdit window with unsaved text: TextEdit shows its save prompt and is not killed. Add an app to the disable list in the config and confirm it stays.
 
 ## Phase 16 – Optional / Stretch
 

@@ -63,6 +63,7 @@ docs_data.gnome = {
   [ [==[Log out|Cmd+Opt+L]==] ] = [==[Super+Alt+L]==],
   [ [==[Screen reader|Opt+Cmd+S]==] ] = [==[Alt+Super+S]==],
   [ [==[Shut down|Cmd+Opt+F4]==] ] = [==[Super+Alt+F4]==],
+  [ [==[Quit on last window|none]==] ] = [==[none]==],
   [ [==[Application grid|Cmd+A]==] ] = [==[Super+A]==],
   [ [==[Help|Cmd+F1]==] ] = [==[Super+F1]==],
   [ [==[Message tray|Cmd+M]==] ] = [==[Super+V, Super+M]==],
@@ -220,6 +221,11 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[No vertical Spaces]==],
       },
     },
+  },
+  applications = {
+    title = [==[Applications]==],
+    intro = [==[GNOME ends an app with its last window; macOS keeps it running. Rakuen quits the app, gracefully, half a second after its last window closes, so an app with unsaved changes shows its own prompt. Minimized, fullscreen and hidden apps stay open. Finder, Hammerspoon, Music, Spotify and Podcasts are skipped. Replace the list with `bindings = { ["Quit on last window"] = { applications = { disable = { "bundle.id" } } } }`.]==],
+    extra_rows = {},
   },
   shell = {
     title = [==[Shell]==],

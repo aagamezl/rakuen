@@ -7,7 +7,7 @@
 --   {
 --     description = "Copy",
 --     from = "Cmd+C",              -- original macOS chord, for docs ("none" if absent)
---     to = "Ctrl+C",               -- chord Rakuen listens for
+--     to = "Ctrl+C",               -- chord Rakuen listens for ("none": listed, never bound)
 --     applications = { enable = {}, disable = { "com.apple.Terminal" } },
 --     action = { mods = { "cmd" }, key = "c" },   -- or a function
 --     when = function(bundle_id) return true end,  -- optional extra gate, run last
@@ -22,6 +22,10 @@ local registry = {}
 registry.__index = registry
 
 local VALID_FEASIBILITY = { yes = true, partial = true, no = true }
+
+-- A rule with this `to` has no chord: it documents behavior that runs without a
+-- key press (the Applications module). It needs no action and is never bound.
+local NO_CHORD = "none"
 
 local function validate_action(action, description)
   if type(action) == "function" then
@@ -42,7 +46,10 @@ local function validate_rule(rule)
 
   local description = rule.description
   assert(type(rule.to) == "string", "rule '" .. description .. "': to must be a string")
-  validate_action(rule.action, description)
+
+  if rule.to ~= NO_CHORD then
+    validate_action(rule.action, description)
+  end
 
   if rule.when ~= nil then
     assert(type(rule.when) == "function", "rule '" .. description .. "': when must be a function")
@@ -68,6 +75,17 @@ function registry:add(module_name, rule)
   assert(type(module_name) == "string" and module_name ~= "", "module name is required")
   validate_rule(rule)
 
+  local entry = {}
+  for field, value in pairs(rule) do
+    entry[field] = value
+  end
+  entry.module = module_name
+
+  if rule.to == NO_CHORD then
+    table.insert(self.rules, entry)
+    return
+  end
+
   local chord = keycombo.normalize(rule.to)
 
   for _, existing in ipairs(self.by_chord[chord] or {}) do
@@ -84,11 +102,6 @@ function registry:add(module_name, rule)
     )
   end
 
-  local entry = {}
-  for field, value in pairs(rule) do
-    entry[field] = value
-  end
-  entry.module = module_name
   entry.chord = chord
 
   table.insert(self.rules, entry)

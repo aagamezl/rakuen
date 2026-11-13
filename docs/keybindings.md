@@ -10,42 +10,42 @@ Disabled in Terminal, iTerm, WezTerm, kitty, and Alacritty unless the Notes colu
 
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
-| Copy | Ctrl+C | Ctrl+C | Cmd+C | Yes | |
-| Copy in terminal | Ctrl+Shift+C | Ctrl+Shift+C | Cmd+C | Yes | |
-| Paste | Ctrl+V | Ctrl+V | Cmd+V | Yes | |
-| Paste in terminal | Ctrl+Shift+V | Ctrl+Shift+V | Cmd+V | Yes | |
-| Cut | Ctrl+X | Ctrl+X | Cmd+X | Yes | |
-| Undo | Ctrl+Z | Ctrl+Z | Cmd+Z | Yes | |
-| Redo | Ctrl+Y | Ctrl+Y | Cmd+Shift+Z | Yes | |
-| Redo alternate | Ctrl+Shift+Z | Ctrl+Shift+Z | Cmd+Shift+Z | Yes | |
-| Select all | Ctrl+A | Ctrl+A | Cmd+A | Yes | |
-| Save | Ctrl+S | Ctrl+S | Cmd+S | Yes | |
-| Save as | Ctrl+Shift+S | Ctrl+Shift+S | Cmd+Shift+S | Yes | |
-| Find | Ctrl+F | Ctrl+F | Cmd+F | Yes | |
-| Find next | Ctrl+G | Ctrl+G | Cmd+G | Yes | |
-| New | Ctrl+N | Ctrl+N | Cmd+N | Yes | |
-| Open | Ctrl+O | Ctrl+O | Cmd+O | Yes | |
+| Copy | Ctrl+C | Ctrl+C | Cmd+C | Yes |  |
+| Copy in terminal | Ctrl+Shift+C | Ctrl+Shift+C | Cmd+C | Yes |  |
+| Paste | Ctrl+V | Ctrl+V | Cmd+V | Yes |  |
+| Paste in terminal | Ctrl+Shift+V | Ctrl+Shift+V | Cmd+V | Yes |  |
+| Cut | Ctrl+X | Ctrl+X | Cmd+X | Yes |  |
+| Undo | Ctrl+Z | Ctrl+Z | Cmd+Z | Yes |  |
+| Redo | Ctrl+Y | Ctrl+Y | Cmd+Shift+Z | Yes |  |
+| Redo alternate | Ctrl+Shift+Z | Ctrl+Shift+Z | Cmd+Shift+Z | Yes |  |
+| Select all | Ctrl+A | Ctrl+A | Cmd+A | Yes |  |
+| Save | Ctrl+S | Ctrl+S | Cmd+S | Yes |  |
+| Save as | Ctrl+Shift+S | Ctrl+Shift+S | Cmd+Shift+S | Yes |  |
+| Find | Ctrl+F | Ctrl+F | Cmd+F | Yes |  |
+| Find next | Ctrl+G | Ctrl+G | Cmd+G | Yes |  |
+| New | Ctrl+N | Ctrl+N | Cmd+N | Yes |  |
+| Open | Ctrl+O | Ctrl+O | Cmd+O | Yes |  |
 | Rename | F2 | F2 | Return | Yes | Sends Return, which renames in Finder |
-| Close window or tab | Ctrl+W | Ctrl+W | Cmd+W | Yes | |
-| Close tab | Ctrl+F4 | Ctrl+F4 | Cmd+W | Yes | |
-| Quit | Ctrl+Q | Ctrl+Q | Cmd+Q | Yes | |
-| New tab | Ctrl+T | Ctrl+T | Cmd+T | Yes | |
-| Next tab | Ctrl+Tab | Ctrl+Tab | Cmd+Opt+Right | Yes | |
-| Previous tab | Ctrl+Shift+Tab | Ctrl+Shift+Tab | Cmd+Opt+Left | Yes | |
-| Bold | Ctrl+B | Ctrl+B | Cmd+B | Yes | |
-| Italic | Ctrl+I | Ctrl+I | Cmd+I | Yes | |
-| Underline | Ctrl+U | Ctrl+U | Cmd+U | Yes | |
-| Settings | Ctrl+, | Ctrl+, | Cmd+, | Yes | |
-| Hide app | Ctrl+H | Ctrl+H | Cmd+H | Yes | |
-| Switch to tab 1 | Alt+1 | Ctrl+1 | Cmd+1 | Yes | |
-| Switch to tab 2 | Alt+2 | Ctrl+2 | Cmd+2 | Yes | |
-| Switch to tab 3 | Alt+3 | Ctrl+3 | Cmd+3 | Yes | |
-| Switch to tab 4 | Alt+4 | Ctrl+4 | Cmd+4 | Yes | |
-| Switch to tab 5 | Alt+5 | Ctrl+5 | Cmd+5 | Yes | |
-| Switch to tab 6 | Alt+6 | Ctrl+6 | Cmd+6 | Yes | |
-| Switch to tab 7 | Alt+7 | Ctrl+7 | Cmd+7 | Yes | |
-| Switch to tab 8 | Alt+8 | Ctrl+8 | Cmd+8 | Yes | |
-| Switch to tab 9 | Alt+9 | Ctrl+9 | Cmd+9 | Yes | |
+| Close window or tab | Ctrl+W | Ctrl+W | Cmd+W | Yes |  |
+| Close tab | Ctrl+F4 | Ctrl+F4 | Cmd+W | Yes |  |
+| Quit | Ctrl+Q | Ctrl+Q | Cmd+Q | Yes |  |
+| New tab | Ctrl+T | Ctrl+T | Cmd+T | Yes |  |
+| Next tab | Ctrl+Tab | Ctrl+Tab | Cmd+Opt+Right | Yes |  |
+| Previous tab | Ctrl+Shift+Tab | Ctrl+Shift+Tab | Cmd+Opt+Left | Yes |  |
+| Bold | Ctrl+B | Ctrl+B | Cmd+B | Yes |  |
+| Italic | Ctrl+I | Ctrl+I | Cmd+I | Yes |  |
+| Underline | Ctrl+U | Ctrl+U | Cmd+U | Yes |  |
+| Settings | Ctrl+, | Ctrl+, | Cmd+, | Yes |  |
+| Hide app | Ctrl+H | Ctrl+H | Cmd+H | Yes |  |
+| Switch to tab 1 | Alt+1 | Ctrl+1 | Cmd+1 | Yes |  |
+| Switch to tab 2 | Alt+2 | Ctrl+2 | Cmd+2 | Yes |  |
+| Switch to tab 3 | Alt+3 | Ctrl+3 | Cmd+3 | Yes |  |
+| Switch to tab 4 | Alt+4 | Ctrl+4 | Cmd+4 | Yes |  |
+| Switch to tab 5 | Alt+5 | Ctrl+5 | Cmd+5 | Yes |  |
+| Switch to tab 6 | Alt+6 | Ctrl+6 | Cmd+6 | Yes |  |
+| Switch to tab 7 | Alt+7 | Ctrl+7 | Cmd+7 | Yes |  |
+| Switch to tab 8 | Alt+8 | Ctrl+8 | Cmd+8 | Yes |  |
+| Switch to tab 9 | Alt+9 | Ctrl+9 | Cmd+9 | Yes |  |
 
 ### Text navigation (Linux caret keys)
 
@@ -55,24 +55,24 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
 
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
-| Start of line | Home | Home | Cmd+Left | Yes | |
-| End of line | End | End | Cmd+Right | Yes | |
-| Select to start of line | Shift+Home | Shift+Home | Cmd+Shift+Left | Yes | |
-| Select to end of line | Shift+End | Shift+End | Cmd+Shift+Right | Yes | |
-| Start of document | Ctrl+Home | Ctrl+Home | Cmd+Up | Yes | |
-| End of document | Ctrl+End | Ctrl+End | Cmd+Down | Yes | |
-| Select to start of document | Ctrl+Shift+Home | Ctrl+Shift+Home | Cmd+Shift+Up | Yes | |
-| Select to end of document | Ctrl+Shift+End | Ctrl+Shift+End | Cmd+Shift+Down | Yes | |
-| Previous word | Ctrl+Left | Ctrl+Left | Opt+Left | Yes | |
-| Next word | Ctrl+Right | Ctrl+Right | Opt+Right | Yes | |
-| Select previous word | Ctrl+Shift+Left | Ctrl+Shift+Left | Opt+Shift+Left | Yes | |
-| Select next word | Ctrl+Shift+Right | Ctrl+Shift+Right | Opt+Shift+Right | Yes | |
-| Previous paragraph | Ctrl+Up | Ctrl+Up | Opt+Up | Yes | |
-| Next paragraph | Ctrl+Down | Ctrl+Down | Opt+Down | Yes | |
-| Select to previous paragraph | Ctrl+Shift+Up | Ctrl+Shift+Up | Opt+Shift+Up | Yes | |
-| Select to next paragraph | Ctrl+Shift+Down | Ctrl+Shift+Down | Opt+Shift+Down | Yes | |
-| Delete previous word | Ctrl+Backspace | Ctrl+Backspace | Opt+Delete | Yes | |
-| Delete next word | Ctrl+Delete | Ctrl+Del | Opt+Fn+Delete | Yes | |
+| Start of line | Home | Home | Cmd+Left | Yes |  |
+| End of line | End | End | Cmd+Right | Yes |  |
+| Select to start of line | Shift+Home | Shift+Home | Cmd+Shift+Left | Yes |  |
+| Select to end of line | Shift+End | Shift+End | Cmd+Shift+Right | Yes |  |
+| Start of document | Ctrl+Home | Ctrl+Home | Cmd+Up | Yes |  |
+| End of document | Ctrl+End | Ctrl+End | Cmd+Down | Yes |  |
+| Select to start of document | Ctrl+Shift+Home | Ctrl+Shift+Home | Cmd+Shift+Up | Yes |  |
+| Select to end of document | Ctrl+Shift+End | Ctrl+Shift+End | Cmd+Shift+Down | Yes |  |
+| Previous word | Ctrl+Left | Ctrl+Left | Opt+Left | Yes |  |
+| Next word | Ctrl+Right | Ctrl+Right | Opt+Right | Yes |  |
+| Select previous word | Ctrl+Shift+Left | Ctrl+Shift+Left | Opt+Shift+Left | Yes |  |
+| Select next word | Ctrl+Shift+Right | Ctrl+Shift+Right | Opt+Shift+Right | Yes |  |
+| Previous paragraph | Ctrl+Up | Ctrl+Up | Opt+Up | Yes |  |
+| Next paragraph | Ctrl+Down | Ctrl+Down | Opt+Down | Yes |  |
+| Select to previous paragraph | Ctrl+Shift+Up | Ctrl+Shift+Up | Opt+Shift+Up | Yes |  |
+| Select to next paragraph | Ctrl+Shift+Down | Ctrl+Shift+Down | Opt+Shift+Down | Yes |  |
+| Delete previous word | Ctrl+Backspace | Ctrl+Backspace | Opt+Delete | Yes |  |
+| Delete next word | Ctrl+Delete | Ctrl+Del | Opt+Fn+Delete | Yes |  |
 
 ### Windows
 
@@ -86,8 +86,8 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
 | Tile left | Super+Left | Cmd+Left | none | Yes | Left half; from a quarter it moves along the row; press again at the edge to restore |
 | Tile right | Super+Right | Cmd+Right | none | Yes | Right half; from a quarter it moves along the row; press again at the edge to restore |
 | Minimize | Super+H | Cmd+H | Cmd+M | Yes | Overrides Hide. Hide moves to Ctrl+H |
-| Move to display left | Super+Shift+Left | Cmd+Shift+Left | none | Yes | |
-| Move to display right | Super+Shift+Right | Cmd+Shift+Right | none | Yes | |
+| Move to display left | Super+Shift+Left | Cmd+Shift+Left | none | Yes |  |
+| Move to display right | Super+Shift+Right | Cmd+Shift+Right | none | Yes |  |
 | Move to display up | Super+Shift+Up | Cmd+Shift+Up | none | Yes | No-op when displays are side by side |
 | Move to display down | Super+Shift+Down | Cmd+Shift+Down | none | Yes | No-op when displays are side by side |
 | Begin move | Alt+F7 | Opt+F7 | none | Yes | Arrows move; Shift for bigger steps; Return keeps; Escape cancels |
@@ -136,6 +136,14 @@ macOS Spaces are a horizontal list and must already exist. Previous and next spa
 | Application windows | none | Ctrl+Cmd+Down | Ctrl+Down | Yes | Native chord, moved by `bin/install.sh`. No Rakuen rule |
 | Move window up or down a workspace | Ctrl+Shift+Alt+Up, Ctrl+Shift+Alt+Down | — | none | No | Spaces are not a vertical grid |
 | Switch workspace up or down | unbound in the dump | — | none | No | No vertical Spaces |
+
+### Applications
+
+GNOME ends an app with its last window; macOS keeps it running. Rakuen quits the app, gracefully, half a second after its last window closes, so an app with unsaved changes shows its own prompt. Minimized, fullscreen and hidden apps stay open. Finder, Hammerspoon, Music, Spotify and Podcasts are skipped. Replace the list with `bindings = { ["Quit on last window"] = { applications = { disable = { "bundle.id" } } } }`.
+
+| Action | GNOME | Configured as | macOS original | Possible | Notes |
+| --- | --- | --- | --- | --- | --- |
+| Quit on last window | none | none | none | Partial | No chord. Quits an app gracefully after its last window closes. Finder, Hammerspoon and music apps are skipped by default. Windows on other Spaces may not be seen |
 
 ### Shell
 
