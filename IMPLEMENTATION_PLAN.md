@@ -274,12 +274,14 @@ Status: code and unit tests are done (`make check` passes). `rakuen/ui/cheatshee
 
 ## Phase 12 – Documentation
 
-- [ ] 12.1 `scripts/generate_docs`: render registry to `docs/keybindings.md` (same section tables: action, GNOME, configured, macOS original, possible, notes)
-- [ ] 12.2 CI check that `docs/keybindings.md` is up to date
-- [ ] 12.3 `docs/limitations.md` (D10, Secure Input, Spaces)
-- [ ] 12.4 `README.md`: vision, install one-liner, usage, config, per-app enable/disable examples, uninstall
+- [x] 12.1 `scripts/generate_docs`: render registry to `docs/keybindings.md` (same section tables: action, GNOME, configured, macOS original, possible, notes)
+- [x] 12.2 CI check that `docs/keybindings.md` is up to date
+- [x] 12.3 `docs/limitations.md` (D10, Secure Input, Spaces)
+- [x] 12.4 `README.md`: vision, install one-liner, usage, config, per-app enable/disable examples, uninstall
 
 **Done when:** docs regenerate cleanly and match the cheatsheet.
+
+Status: complete. `rakuen/core/docs.lua` renders the registry (pure); `scripts/generate_docs.lua` writes `docs/keybindings.md` (`make docs`) or checks it (`--check`, run by `make check` and by a `docs` CI job). What a rule cannot say lives in `scripts/docs_data.lua`: the GNOME chord of each rule, section texts, native chords with no rule, and the not-configured table. A rule without a GNOME chord fails `spec/docs_spec.lua`, so a new rule forces a docs entry. The catalog now has one row per rule, the same rows as the cheatsheet.
 
 ## Phase 13 – Installer and distribution
 

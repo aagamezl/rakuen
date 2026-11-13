@@ -1,6 +1,6 @@
 LUA_SOURCES = init.lua rakuen spec scripts
 
-.PHONY: test lint format format-check check
+.PHONY: test lint format format-check docs docs-check check
 
 test:
 	busted
@@ -15,4 +15,10 @@ format:
 format-check:
 	stylua --check $(LUA_SOURCES)
 
-check: lint format-check test
+docs:
+	lua scripts/generate_docs.lua
+
+docs-check:
+	lua scripts/generate_docs.lua --check
+
+check: lint format-check docs-check test
