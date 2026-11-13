@@ -6,14 +6,14 @@ Inputs: `task.md` (requirements), `gnome-keybindings.txt` (GNOME dump), `gnome_h
 
 **How to use this file:** the checkboxes are the project's goals and status. Tick `[x]` when a task meets its phase's "Done when" criteria.
 
-## Conventions (apply to every phase)
+## Conventions (Apply To Every Phase)
 
 - Lua guidelines from `.claude/SKILL.md`: `snake_case` functions and variables, `UPPERCASE` constants, `local` by default, `pcall` around system calls, `assert` for preconditions.
 - Project rules: clear code over clever code, readable and maintainable, **no single-line `if` or loop statements**.
 - Every module is a pure rule table plus (optionally) handlers. Logic that does not touch `hs.*` is unit-testable outside Hammerspoon.
 - Synthetic events posted by Rakuen carry a marker so Rakuen never re-processes its own output (prevents infinite loops).
 
-## Design decisions
+## Design Decisions
 
 | # | Decision | Choice | Why |
 | --- | --- | --- | --- |
@@ -32,14 +32,14 @@ Inputs: `task.md` (requirements), `gnome-keybindings.txt` (GNOME dump), `gnome_h
 
 Open question for you: confirm D3 (pass-through). D7 is decided. For D11, confirm the default `disable` list (Finder and similar).
 
-## Deployment architecture
+## Deployment Architecture
 
 - `bin/install.sh` is the single entry point and is built in two stages (D12). It runs from a local clone, and from Phase 13 also via `curl | bash`.
 - **System layer (shell, may need a Dock restart or logout to apply):** macOS Spaces, Mission Control and Application windows shortcuts on `Ctrl+Cmd+Arrow`, written to `com.apple.symbolichotkeys`. Previous values are saved in `~/.config/rakuen/backup/spaces-shortcuts.tsv` and restored by `--restore` / `--uninstall`. `--status` shows what is stored.
 - **Runtime layer (Hammerspoon, Lua):** `~/.hammerspoon/init.lua` loads Rakuen. User settings live in `~/.config/rakuen/config.lua`.
 - **Order of setup:** 1) system shortcuts (install.sh, Phase 2) 2) Hammerspoon and config (Phase 13) 3) permissions (Accessibility, Input Monitoring). Rakuen assumes the system shortcuts are already moved, so the workspaces module and docs never describe `Ctrl+Arrow` as Space switching, Mission Control or Application windows.
 
-## Target layout
+## Target Layout
 
 ```
 rakuen/
@@ -71,7 +71,7 @@ Rule shape (every module):
 
 ---
 
-## Phase 0 – Project foundation
+## Phase 0 – Project Foundation
 
 - [x] 0.1 Initialize repo structure from "Target layout" and `.gitignore`
 - [x] 0.2 Add `stylua.toml` and `.luacheckrc` encoding the naming conventions
@@ -90,7 +90,7 @@ luarocks --lua-version 5.4 --lua-dir "$(brew --prefix lua@5.4)" install busted
 make check
 ```
 
-## Phase 1 – Keybinding catalog and feasibility spikes
+## Phase 1 – Keybinding Catalog And Feasibility Spikes
 
 - [x] 1.1 Build the keybinding catalog from `gnome-keybindings.txt`, grouped into: Editing, Text navigation, Windows, Focus, Workspaces, Shell, Session/accessibility (`docs/keybindings.md`)
 - [x] 1.2 For each row record: action, GNOME chord, configured chord, original macOS chord, feasibility (yes/partial/no), limitation note (task items 1.1, 1.2)
@@ -128,7 +128,7 @@ Status (2.10, 2.11): `bin/install.sh` is written with the box UI from `bin/utils
 
 Status: verified live on 2026-11-06 in log mode (keys logged, no behavior change, panic hotkey `Ctrl+Opt+Cmd+Escape` pauses and resumes, `Ctrl+Opt+Cmd+R` reloads). The watchdog restart was not triggered during the test, so it is covered by code review only. Load it before the installer exists by adding the repo to `package.path` and running `dofile` on `init.lua` from the Hammerspoon console.
 
-## Phase 3 – Per-module configuration and independent testing
+## Phase 3 – Per-Module Configuration And Independent Testing
 
 - [x] 3.1 `config`: per-module enabled flag, per-binding `applications` overrides, user config file outside the repo (`~/.config/rakuen/config.lua`) with safe defaults
 - [x] 3.2 Module loader supports enabling a single module in isolation (for testing)
@@ -139,7 +139,7 @@ Status: verified live on 2026-11-06 in log mode (keys logged, no behavior change
 
 Status: unit tests cover config validation, overrides and the loader, including loading one module alone with `only`. Not yet run live in Hammerspoon. Defaults keep every module disabled until its phase is verified.
 
-## Phase 4 – Editing module (Ctrl performs Cmd)
+## Phase 4 – Editing Module (Ctrl Performs Cmd)
 
 - [x] 4.1 Copy, Paste, Cut (`Ctrl+C/V/X` → `Cmd+C/V/X`)
 - [x] 4.2 Undo, Redo (`Ctrl+Z`, `Ctrl+Y`, `Ctrl+Shift+Z`)
@@ -156,7 +156,7 @@ Status: unit tests cover config validation, overrides and the loader, including 
 
 Status: complete. `rakuen/modules/editing.lua` holds the rule table and the `block_native_cmd` option, covered by unit tests and confirmed in the manual pass.
 
-## Phase 5 – Text navigation module (Linux caret keys)
+## Phase 5 – Text Navigation Module (Linux Caret Keys)
 
 - [x] 5.1 Text-field gate using AX role (D5), with per-app `force` list
 - [x] 5.2 Line: Home, End, Shift+Home, Shift+End
@@ -172,7 +172,7 @@ Status: complete. `rakuen/modules/editing.lua` holds the rule table and the `blo
 
 Status: complete. `rakuen/modules/text_navigation.lua` holds all 18 rules (5.2-5.6) behind the AX text gate in `rakuen/core/text_gate.lua` (5.1), with terminals disabled and the `force` list for Chrome, VS Code and Slack (5.8). Rules have an optional `when` function, which the registry checks after the app filter. Synthetic chords carry the Rakuen marker, so Cmd+Up/Down never reach the windows module (5.7). Unit tests cover the rule table and the gate, and the manual pass in TextEdit and Notes, including 5.9, was confirmed on 2026-11-10.
 
-## Phase 6 – Windows module
+## Phase 6 – Windows Module
 
 - [x] 6.1 Maximize / unmaximize / toggle maximize with saved-frame restore (`Cmd+Up`, `Cmd+Down`, `Opt+F10`, `Opt+F5`)
 - [x] 6.2 Tile left / right with press-again-to-restore (`Cmd+Left/Right`)
@@ -204,7 +204,7 @@ Status: code and unit tests are done for 7.1-7.5 (`make check` passes, 206 tests
 
 Manual pass: with two apps open, `Opt+Tab` jumps to the other app and pressing it again jumps back; with three apps `Opt+Shift+Tab` reaches the least recent one; with two windows of one app `Opt+grave` and `Opt+Shift+grave` alternate, and with three they step through all; `Opt+F6` behaves the same; `Opt+Escape` and `Opt+Shift+Escape` step through every visible window; `Cmd+grave` still cycles natively; minimized and other-Space windows are skipped.
 
-## Phase 8 – Workspaces module
+## Phase 8 – Workspaces Module
 
 - [x] 8.1 Check at startup that the Spaces, Mission Control and Application windows shortcuts are `Ctrl+Cmd+Arrow` (read `com.apple.symbolichotkeys`); if not, show an alert pointing to `bin/install.sh` (the change itself is done by 2.10)
 - [x] 8.2 Previous / next space: left to macOS. `Ctrl+Cmd+Left/Right` are the native chords after the installer, so Rakuen has no rules for them (no `Cmd+PageUp/PageDown` remap)
@@ -221,6 +221,7 @@ Manual pass: with two apps open, `Opt+Tab` jumps to the other app and pressing i
 Status: complete. Manual pass done by the user on macOS 27.2.1. Layout: `rakuen/core/space_nav.lua` (pure: target Space, key presses, removal direction, indicator text, flash layout, window grab point), `rakuen/core/shortcut_check.lua` (8.1), `rakuen/core/mission_control.lua` (accessibility driver for insert and remove), `rakuen/ui/space_indicator.lua` (8.8) and `rakuen/modules/workspaces.lua` (12 rules). The loader gained an optional `on_load(logger)` module hook, used for the startup check and to start the indicator.
 
 Findings that shaped the design:
+
 - `Cmd+Home/End` first failed because the posted `Ctrl+Cmd+Arrow` lacked the `fn` flag that arrow keys carry on a real keyboard; the chord is now posted with `ctrl`, `cmd` and `fn`. Spaces are reached by repeating it with a 0.4 s gap.
 - `hs.spaces.moveWindowToSpace` no longer works on recent macOS. A window is moved by grabbing its title bar near the left side (the middle often holds tabs or toolbar buttons), nudging 1 px, switching Space with the chord while the mouse is held, releasing, then restoring the frame, raising and focusing the window and putting the pointer back. A second move is ignored until the first ends (3 s timeout). The Finder desktop is skipped.
 - `hs.spaces.addSpaceToScreen` and `removeSpace` fail on macOS 27 with "Unable to get mission control data from the dock": Mission Control now lives in the `com.apple.WindowManager` process. `mission_control.lua` opens it, polls for `mc.spaces.add` (insert) or the Nth child of `mc.spaces.list` on the matching `mc.display` (remove, action `AXRemoveDesktop`), then closes it with Escape, because `hs.spaces.closeMissionControl` fails the same way. Both wait for the shortcut's modifier keys to be released.
@@ -232,7 +233,7 @@ Findings that shaped the design:
 
 Manual pass (needs 3+ Spaces and `bin/install.sh` applied): start with the shortcuts not moved and check the startup alert names them; `Ctrl+Cmd+Left/Right` switch Spaces; `Cmd+Home/End` reach the first and last Space and do nothing when already there; `Ctrl+Cmd+Up/Down` open Mission Control and Application windows; `Ctrl+Left/Right/Up/Down` do none of that; `Cmd+Shift+PageUp/PageDown`, `Cmd+Shift+Opt+Left/Right`, `Cmd+Shift+Home/End` move the window and follow it, including from apps such as Telegram, or alert; `Ctrl+Cmd+=` adds a Space and `Ctrl+Cmd+-` removes the current one, and Mission Control closes afterwards; the indicator shows the right number and highlight after every change.
 
-## Phase 9 – Shell module
+## Phase 9 – Shell Module
 
 - [x] 9.1 Run dialog (`Opt+F2`)
 - [x] 9.2 Application grid (`Cmd+A`). Overview up/down (`Cmd+Opt+Up/Down`) are not bound: macOS has no Overview and Space switching is left to macOS, so a second shortcut for the same action would be redundant
@@ -246,7 +247,7 @@ Status: code and unit tests are done for 9.1-9.5 (`make check` passes); the task
 
 Manual pass: `Opt+F2` opens Spotlight; `Cmd+A` opens Apps and Select All still works with `Ctrl+A`; `F13` opens the screenshot panel, `Shift+F13` the crosshair, `Opt+F13` saves a PNG of the focused window to the Desktop (and alerts without permission); `Ctrl+Shift+Opt+R` opens the panel; `Cmd+S` opens System Settings; `Cmd+M` opens Notification Center (and `Cmd+V` is still Paste where native) (check the alert if not); `Cmd+F1` opens the Help search.
 
-## Phase 10 – Session and accessibility module
+## Phase 10 – Session And Accessibility Module
 
 - [x] 10.1 Lock screen (`Cmd+L`; browsers keep `Ctrl+L` for the location bar)
 - [x] 10.2 Log out (`Cmd+Alt+L`), confirmed by the macOS dialog
@@ -259,7 +260,7 @@ Status: code and unit tests are done for 10.1-10.4 (`make check` passes); the ta
 
 Manual pass: `Cmd+L` locks the screen outside browsers; in a browser `Cmd+L` also locks and `Ctrl+L` focuses the location bar; `Cmd+Opt+L` asks first, Cancel does nothing, Log Out logs out; `Cmd+Opt+F4` asks first, Cancel does nothing, Shut Down shuts down; `Opt+Cmd+S` toggles VoiceOver; the native zoom chords still work.
 
-## Phase 11 – Cheatsheet window
+## Phase 11 – Cheatsheet Window
 
 - [x] 11.1 Build the window from registry data only (never hand-maintained)
 - [x] 11.2 Columns: new keybinding, original keybinding, description (task item 5)
@@ -283,19 +284,21 @@ Status: code and unit tests are done (`make check` passes). `rakuen/ui/cheatshee
 
 Status: complete. `rakuen/core/docs.lua` renders the registry (pure); `scripts/generate_docs.lua` writes `docs/keybindings.md` (`make docs`) or checks it (`--check`, run by `make check` and by a `docs` CI job). What a rule cannot say lives in `scripts/docs_data.lua`: the GNOME chord of each rule, section texts, native chords with no rule, and the not-configured table. A rule without a GNOME chord fails `spec/docs_spec.lua`, so a new rule forces a docs entry. The catalog now has one row per rule, the same rows as the cheatsheet.
 
-## Phase 13 – Installer and distribution
+## Phase 13 – Installer And Distribution
 
-- [ ] 13.1 Extend `bin/install.sh` (stage A from 2.10 already sets the Spaces shortcuts): detect macOS, install Homebrew if missing, `brew install --cask hammerspoon`
-- [ ] 13.2 Copy config to `~/.hammerspoon`, backing up any existing `init.lua`
-- [ ] 13.3 Works both from a local clone and via `curl -fsSL <raw github url> | bash` (downloads the repo tarball when not in a clone)
-- [ ] 13.4 Idempotent re-runs; `--uninstall` restores the backup; `--dry-run`
-- [ ] 13.5 Guide for permissions: Accessibility, Input Monitoring; launch-at-login; reload Hammerspoon
-- [ ] 13.6 Run the stage A Spaces step first in the full flow, make `--uninstall` also call `--restore`, and keep the logout explanation in the final output
+- [x] 13.1 Extend `bin/install.sh` (stage A from 2.10 already sets the Spaces shortcuts): detect macOS, install Homebrew if missing, `brew install --cask hammerspoon`
+- [x] 13.2 Copy config to `~/.hammerspoon`, backing up any existing `init.lua`
+- [x] 13.3 Works both from a local clone and via `curl -fsSL <raw github url> | bash` (downloads the repo tarball when not in a clone)
+- [x] 13.4 Idempotent re-runs; `--uninstall` restores the backup; `--dry-run`
+- [x] 13.5 Guide for permissions: Accessibility, Input Monitoring; launch-at-login; reload Hammerspoon
+- [x] 13.6 Run the stage A Spaces step first in the full flow, make `--uninstall` also call `--restore`, and keep the logout explanation in the final output
 - [ ] 13.7 Test installer on a clean macOS user account / VM; shellcheck in CI
 
 **Done when:** a fresh Mac goes from nothing to working Rakuen with one command, with the Spaces shortcuts already moved.
 
-## Phase 14 – Hardening and release
+Status: 13.1-13.6 implemented and verified with sandboxed runs (install, re-run, `--uninstall`, tarball bootstrap via stdin, shellcheck). 13.7 is open: shellcheck runs in CI, but a run on a clean macOS account or VM (including a real Homebrew and Hammerspoon install) is still to be done.
+
+## Phase 14 – Hardening And Release
 
 - [ ] 14.1 Full manual regression pass using the per-module checklists
 - [ ] 14.2 Secure Input behavior: detect with `hs.eventtap.isSecureInputEnabled()` and show a hint instead of failing silently
@@ -305,7 +308,7 @@ Status: complete. `rakuen/core/docs.lua` renders the registry (pure); `scripts/g
 
 **Done when:** the full checklist passes and the release is tagged.
 
-## Phase 15 – Applications module
+## Phase 15 – Applications Module
 
 - [ ] 15.1 Pure function `should_quit(app_info, window_count, disable_list)` decides when an app quits (unit tested with busted)
 - [ ] 15.2 Watch window close events (`hs.window.filter` or `hs.application.watcher` plus a window-destroyed subscription) and quit the app when its last window closes (D11)
@@ -316,7 +319,7 @@ Status: complete. `rakuen/core/docs.lua` renders the registry (pure); `scripts/g
 
 **Done when:** closing the last window of TextEdit or Safari quits the app, Finder and listed apps keep running, and an app with unsaved changes is not force-closed.
 
-## Phase 16 – Optional / stretch
+## Phase 16 – Optional / Stretch
 
 - [ ] 16.1 Clipboard history (list, copy from entry); not a GNOME default, from your draft plan
 - [ ] 16.2 Rakuen menu bar item (enable/disable modules, open cheatsheet)
