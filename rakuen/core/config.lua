@@ -29,6 +29,7 @@ config.MODULE_NAMES = {
   "focus",
   "workspaces",
   "applications",
+  "caffeine",
   "shell",
   "session",
 }

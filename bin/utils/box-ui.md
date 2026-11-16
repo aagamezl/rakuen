@@ -231,7 +231,7 @@ Prints one row in which every cell uses `<color>`. Each text is centered by `tab
 
 Use this when the row is one color. `workdays.sh` does not: a weekday, a day off, and an extra day each carry a different color, so it builds the cells with `table_cell` and passes them to `table_row`.
 
-## Options and arguments
+## Options And Arguments
 
 There are no flags. Configuration is environment variables read at source time, plus the arguments of each function.
 
@@ -245,7 +245,7 @@ There are no flags. Configuration is environment variables read at source time, 
 
 Color is also cleared when stdout is not a terminal at source time. Piping or redirecting the caller in a context where the library is sourced with stdout already redirected produces plain boxes. Sourcing on a terminal and redirecting later leaves the escape codes in the stream.
 
-### Function arguments
+### Function Arguments
 
 | Function | Arguments |
 | --- | --- |
@@ -355,7 +355,7 @@ source "${SCRIPT_DIR}/utils/box-ui.sh"
 
 The examples below assume that source has already run. Output is shown with color off so the box characters are visible. On a terminal the frames and the text use the `C_*` colors passed in.
 
-### Banner at the start of a run
+### Banner At The Start Of A Run
 
 `workdays.sh` prints this banner before help, before a missing-month error, and before the calendar. The subtitle is the one-line description above every later section. The sample is the default width of 68. `workdays.sh` calls `choose_box_width 100` first, so its banner is 100 columns on a wide terminal and one column short of the screen on a narrow one.
 
@@ -372,7 +372,7 @@ box_banner "workdays" "Contractor workday calculator."
 
 Pass `""` as the subtitle when the script name is enough. That second row is omitted. `rebase-push` uses that form for the same banner shape.
 
-### Usage and help
+### Usage And Help
 
 Help is a yellow section: a bold synopsis, a blank row, then the rules and the flags. `workdays.sh` and both copy-zsh-config scripts use this when `--help` is passed, and `workdays.sh` prints it again when the month is missing, just before a red result.
 
@@ -398,7 +398,7 @@ section_close
 
 `copy-zsh-config.sh` fills the same frame with the export and install synopses, a dim paragraph for each mode, another blank row, and one row per flag (`-d`, `-a`, `-n`, `-f`, `-h`). The blank rows are `box_blank "$BORDER"`. The dim rows are the explanation, indented inside the text so they sit under the synopsis.
 
-### Parameters and numbered steps
+### Parameters And Numbered Steps
 
 Export and install print one blue section for the resolved arguments, then a cyan section per step. The label column is spaces inside the text, so the values share a column. `copy-zsh-config.sh` does this for "1 · Parameters" through "7 · Compress". `workdays.sh` does it for "1 · Month", "2 · Summary", and "3 · <Month> <Year>".
 
@@ -434,7 +434,7 @@ section_close
 
 Cyan `›` is the step that is running. Green `✓` is a step that already holds. Yellow `› would` is a dry-run: the script is describing the write it skipped. Dim indented rows are the paths under that step. Opening the next section closes the previous one, which is why the blank line appears between the boxes even when the caller never calls `section_close` itself.
 
-### Command output inside a section
+### Command Output Inside A Section
 
 `box_lines` is for a string that already has newlines, such as stdout captured from Git. Each line is indented, then drawn as its own row. `rebase-push` uses this pattern under a `›` label.
 
@@ -451,7 +451,7 @@ section_close
 ╰──────────────────────────────────────────────────────────────────╯
 ```
 
-### Success and failure results
+### Success And Failure Results
 
 `finish` is the last thing a script prints. It closes whatever section is still open, draws a Result box, and exits. `copy-zsh-config.sh` uses exit `0` after a completed export, and a non-zero code for usage errors, a missing archive, or a missing package manager. `workdays.sh` sends failures through `die`, which is `finish` with a red Result border.
 
@@ -488,7 +488,7 @@ finish 1 "$C_RED" "Result" "✗ --destination requires a path."
 ╰──────────────────────────────────────────────────────────────────╯
 ```
 
-### Calendar table
+### Calendar Table
 
 `workdays.sh` draws the month inside the cyan section `3 · <Month> <Year>`. It calls `choose_box_width 100` first, then `table_layout 7 3`. Seven columns and a minimum cell of 3 are the calendar: Monday through Sunday, and a cell smaller than three characters is rejected. On that failure the section stays a normal box and lists the off days and extra days as text.
 
@@ -550,7 +550,7 @@ section_close
 
 The body rows above use `table_texts` because every cell in the sample is plain. The real calendar uses `table_cell` for those rows so each day can carry its own color. A uniform row, such as a header in one weight, can stay on `table_texts`.
 
-### Width and plain output
+### Width And Plain Output
 
 Set the width before sourcing when the default of 68 is wrong and the script will not call `choose_box_width`:
 

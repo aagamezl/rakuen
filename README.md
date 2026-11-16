@@ -74,7 +74,7 @@ return {
 
 Modules: `editing`, `text_navigation`, `windows`, `focus`, `workspaces`, `shell`, `session`.
 
-### Per-app Enable And Disable
+### Per-App Enable And Disable
 
 Each binding can have an `applications` filter made of bundle IDs. An empty `enable` means all apps, and `disable` always wins:
 

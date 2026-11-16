@@ -51,12 +51,12 @@ describe("docs", function()
     local text = docs.render(rules(), data)
 
     assert.is_truthy(text:find("# Title", 1, true))
-    assert.is_truthy(text:find("### Editing", 1, true))
+    assert.is_truthy(text:find("## Editing", 1, true))
     assert.is_truthy(text:find("Intro text.", 1, true))
     assert.is_truthy(
       text:find("| Copy | Ctrl+C | Ctrl+C | Cmd+C | Yes | Disabled \\| in terminals |", 1, true)
     )
-    assert.is_truthy(text:find("### Not configured", 1, true))
+    assert.is_truthy(text:find("## Not Configured", 1, true))
     assert.is_truthy(text:find("| Rotate |", 1, true))
   end)
 

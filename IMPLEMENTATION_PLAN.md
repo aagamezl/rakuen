@@ -310,12 +310,13 @@ Status: 13.1-13.6 implemented and verified with sandboxed runs (install, re-run,
 
 ## Phase 15 – Applications Module
 
-- [ ] 15.1 Pure function `should_quit(app_info, window_count, disable_list)` decides when an app quits (unit tested with busted)
-- [ ] 15.2 Watch window close events (`hs.window.filter` or `hs.application.watcher` plus a window-destroyed subscription) and quit the app when its last window closes (D11)
-- [ ] 15.3 Ignore apps with no windows by design: only consider regular apps (`activationPolicy` regular), skip minimized and fullscreen-transition windows, and wait a short delay before counting so window swaps do not trigger a quit
-- [ ] 15.4 Default `disable` list: Finder and other apps that must keep running; configurable per app through `applications = { enable, disable }` (D4)
-- [ ] 15.5 Safety: never force-quit (`hs.application:kill()` only), so apps with unsaved changes can show their own prompt; log every quit
-- [ ] 15.6 Catalog and cheatsheet entry (no chord; description and feasibility note), manual test with Safari, TextEdit, Finder, Terminal
+- [x] 15.1 Pure function `should_quit(app_info, window_count, disable_list)` decides when an app quits (unit tested with busted)
+- [x] 15.2 Watch window close events (`hs.window.filter` or `hs.application.watcher` plus a window-destroyed subscription) and quit the app when its last window closes (D11)
+- [x] 15.3 Ignore apps with no windows by design: only consider regular apps (`activationPolicy` regular), skip minimized and fullscreen-transition windows, and wait a short delay before counting so window swaps do not trigger a quit
+- [x] 15.4 Default `disable` list: Finder and other apps that must keep running; configurable per app through `applications = { enable, disable }` (D4)
+- [x] 15.5 Safety: never force-quit (`hs.application:kill()` only), so apps with unsaved changes can show their own prompt; log every quit
+- [x] 15.6 Catalog and cheatsheet entry (no chord; description and feasibility note), manual test with Safari, TextEdit, Finder, Terminal
+- [X] 15.7 Caffeine: `rakuen/modules/caffeine.lua` keeps the Mac and display awake (`hs.caffeinate`, `displayIdle`), starts awake, toggles with `Ctrl+Cmd+K` or a click on a white coffee-cup menu bar icon (`rakuen/ui/caffeine_icon.lua`); catalog and cheatsheet entry, manual test of the chord, the click and the icon states
 
 **Done when:** closing the last window of TextEdit or Safari quits the app, Finder and listed apps keep running, and an app with unsaved changes is not force-closed.
 

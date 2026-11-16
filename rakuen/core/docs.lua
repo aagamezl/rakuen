@@ -23,12 +23,19 @@ function docs.gnome_chord(rule, gnome_by_rule)
   return gnome_by_rule[rule.description .. "|" .. rule.to]
 end
 
+-- Compact table style: one space inside each pipe, and an empty cell is a
+-- single space ("| |"), not two.
 local function table_row(cells)
-  local escaped = {}
+  local padded = {}
   for _, cell in ipairs(cells) do
-    table.insert(escaped, docs.cell(cell))
+    local text = docs.cell(cell)
+    if text == "" then
+      table.insert(padded, " ")
+    else
+      table.insert(padded, " " .. text .. " ")
+    end
   end
-  return "| " .. table.concat(escaped, " | ") .. " |"
+  return "|" .. table.concat(padded, "|") .. "|"
 end
 
 local function table_lines(rows)
@@ -96,7 +103,7 @@ local function section_lines(module_name, rules, data)
     table.insert(rows, row)
   end
 
-  local lines = { "### " .. section.title, "" }
+  local lines = { "## " .. section.title, "" }
   if section.intro ~= nil and section.intro ~= "" then
     table.insert(lines, section.intro)
     table.insert(lines, "")
@@ -118,7 +125,7 @@ function docs.render(rules, data)
     end
   end
 
-  table.insert(lines, "### Not configured")
+  table.insert(lines, "## Not Configured")
   table.insert(lines, "")
   for _, line in ipairs(table_lines(data.not_configured)) do
     table.insert(lines, line)
