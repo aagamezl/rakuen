@@ -48,6 +48,6 @@ macOS has no public Spaces API (D6).
 - Log out and shut down rely on the macOS confirmation. Unsaved work in an app can still block them.
 - Zoom (`Opt+Cmd+8`, `Opt+Cmd+=`, `Opt+Cmd+-`) and VoiceOver (`Cmd+F5`) are native macOS shortcuts and must be enabled in System Settings → Accessibility.
 
-## GNOME Features With No Macos Equivalent
+## GNOME Features With No macOS Equivalent
 
 Rotating or switching monitors, rotation lock, panel focus, notification focus, input capture, and the always-on-top, corner and side window actions have no supported macOS API. See "Not configured" in [keybindings.md](keybindings.md).

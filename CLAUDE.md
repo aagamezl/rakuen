@@ -1,4 +1,4 @@
-# Rakuen – contributor and agent notes
+# Rakuen – Contributor And Agent Notes
 
 Rakuen is a Hammerspoon (Lua) configuration that makes macOS behave like GNOME. See `IMPLEMENTATION_PLAN.md` for goals and status, and `task.md` for requirements.
 
@@ -26,6 +26,6 @@ Rakuen is a Hammerspoon (Lua) configuration that makes macOS behave like GNOME. 
 - `bin/install.sh` – installer
 - `docs/` – generated keybinding docs and notes
 
-## Updating status
+## Updating Status
 
 Tick the matching checkbox in `IMPLEMENTATION_PLAN.md` only when the phase's "Done when" criterion for that task is met.

@@ -6,7 +6,7 @@
 
 local docs_data = {}
 
-docs_data.header = [==[# Rakuen keybindings
+docs_data.header = [==[# Rakuen Keybindings
 
 Command stands in for GNOME Super, and Option stands in for Alt. Each table lists the GNOME chord, the chord Rakuen registers, the original macOS chord, and whether that configuration is possible on macOS.
 
@@ -63,6 +63,8 @@ docs_data.gnome = {
   [ [==[Log out|Cmd+Opt+L]==] ] = [==[Super+Alt+L]==],
   [ [==[Screen reader|Opt+Cmd+S]==] ] = [==[Alt+Super+S]==],
   [ [==[Shut down|Cmd+Opt+F4]==] ] = [==[Super+Alt+F4]==],
+  [ [==[Quit on last window|none]==] ] = [==[none]==],
+  [ [==[Toggle Caffeine|Ctrl+Cmd+K]==] ] = [==[none]==],
   [ [==[Application grid|Cmd+A]==] ] = [==[Super+A]==],
   [ [==[Help|Cmd+F1]==] ] = [==[Super+F1]==],
   [ [==[Message tray|Cmd+M]==] ] = [==[Super+V, Super+M]==],
@@ -121,12 +123,12 @@ docs_data.gnome = {
 
 docs_data.sections = {
   editing = {
-    title = [==[Editing (Control performs Command)]==],
+    title = [==[Editing (Control Performs Command)]==],
     intro = [==[Disabled in Terminal, iTerm, WezTerm, kitty, and Alacritty unless the Notes column says otherwise. Minimize stays in the Windows table as GNOME `Super+H`.]==],
     extra_rows = {},
   },
   text_navigation = {
-    title = [==[Text navigation (Linux caret keys)]==],
+    title = [==[Text Navigation (Linux Caret Keys)]==],
     intro = [==[GTK text-field chords, which is what GNOME uses. Readline `Ctrl+A` / `Ctrl+E` / `Ctrl+K` are not used, because `Ctrl+A` is Select All. Bindings run only when the focused accessibility element is an editable text role. Outside a text field they are not consumed. Synthetic `Cmd+Up` / `Cmd+Down` from `Ctrl+Home` / `Ctrl+End` must not maximize or unmaximize.
 
 Chrome, Electron, and some cross-platform apps do not expose a focused text role, so the binding will not run there. Many Apple keyboards have no Home or End key; if the hardware never sends those events, the Home/End rows cannot fire. Disabled in Terminal, iTerm, WezTerm, kitty, and Alacritty so the shell keeps its own word motion.]==],
@@ -221,13 +223,23 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
       },
     },
   },
+  applications = {
+    title = [==[Applications]==],
+    intro = [==[GNOME ends an app with its last window; macOS keeps it running. Rakuen quits the app, gracefully, half a second after its last window closes, so an app with unsaved changes shows its own prompt. Minimized, fullscreen and hidden apps stay open. Finder, Hammerspoon, Music, Spotify and Podcasts are skipped. Replace the list with `bindings = { ["Quit on last window"] = { applications = { disable = { "bundle.id" } } } }`.]==],
+    extra_rows = {},
+  },
+  caffeine = {
+    title = [==[Caffeine]==],
+    intro = [==[GNOME has no default for this (it is an extension), so the chord is Rakuen's own, kept from the old standalone script. It starts awake when loaded. A coffee cup in the menu bar shows the state: filled with steam means the Mac and display stay awake. Click the cup or press the chord to toggle. Reloading Hammerspoon turns it off.]==],
+    extra_rows = {},
+  },
   shell = {
     title = [==[Shell]==],
     intro = [==[]==],
     extra_rows = {},
   },
   session = {
-    title = [==[Session and accessibility]==],
+    title = [==[Session And Accessibility]==],
     intro = [==[]==],
     extra_rows = {
       {

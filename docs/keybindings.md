@@ -1,10 +1,10 @@
-# Rakuen keybindings
+# Rakuen Keybindings
 
 Command stands in for GNOME Super, and Option stands in for Alt. Each table lists the GNOME chord, the chord Rakuen registers, the original macOS chord, and whether that configuration is possible on macOS.
 
 Press `Ctrl+Opt+/` in Hammerspoon to open the same list as a window: new binding, original binding, and description. Rows marked **No** are not registered.
 
-### Editing (Control performs Command)
+## Editing (Control Performs Command)
 
 Disabled in Terminal, iTerm, WezTerm, kitty, and Alacritty unless the Notes column says otherwise. Minimize stays in the Windows table as GNOME `Super+H`.
 
@@ -47,7 +47,7 @@ Disabled in Terminal, iTerm, WezTerm, kitty, and Alacritty unless the Notes colu
 | Switch to tab 8 | Alt+8 | Ctrl+8 | Cmd+8 | Yes | |
 | Switch to tab 9 | Alt+9 | Ctrl+9 | Cmd+9 | Yes | |
 
-### Text navigation (Linux caret keys)
+## Text Navigation (Linux Caret Keys)
 
 GTK text-field chords, which is what GNOME uses. Readline `Ctrl+A` / `Ctrl+E` / `Ctrl+K` are not used, because `Ctrl+A` is Select All. Bindings run only when the focused accessibility element is an editable text role. Outside a text field they are not consumed. Synthetic `Cmd+Up` / `Cmd+Down` from `Ctrl+Home` / `Ctrl+End` must not maximize or unmaximize.
 
@@ -74,7 +74,7 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
 | Delete previous word | Ctrl+Backspace | Ctrl+Backspace | Opt+Delete | Yes | |
 | Delete next word | Ctrl+Delete | Ctrl+Del | Opt+Fn+Delete | Yes | |
 
-### Windows
+## Windows
 
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
@@ -99,7 +99,7 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
 | Tile bottom right | none | Cmd+Right, then Cmd+Down | none | Yes | Quarter. From the right half. Arrow toward the edge restores |
 | Toggle fullscreen | unbound | — | Ctrl+Cmd+F | No | Empty in the GNOME dump. Not configured |
 
-### Focus
+## Focus
 
 `Above_Tab` is the grave key.
 
@@ -114,7 +114,7 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
 | Cycle group | Alt+F6 | Opt+F6 | Cmd+grave | Yes | Same per-app cycle as Cycle app windows |
 | Cycle group backward | Shift+Alt+F6 | Opt+Shift+F6 | Cmd+Shift+grave | Yes | Same per-app cycle as Cycle app windows |
 
-### Workspaces
+## Workspaces
 
 macOS Spaces are a horizontal list and must already exist. Previous and next space are left to macOS (Ctrl+Cmd+Left/Right). The dump lists `Super+Page_Up` for both directions; right uses `Super+Page_Down`.
 
@@ -137,7 +137,23 @@ macOS Spaces are a horizontal list and must already exist. Previous and next spa
 | Move window up or down a workspace | Ctrl+Shift+Alt+Up, Ctrl+Shift+Alt+Down | — | none | No | Spaces are not a vertical grid |
 | Switch workspace up or down | unbound in the dump | — | none | No | No vertical Spaces |
 
-### Shell
+## Applications
+
+GNOME ends an app with its last window; macOS keeps it running. Rakuen quits the app, gracefully, half a second after its last window closes, so an app with unsaved changes shows its own prompt. Minimized, fullscreen and hidden apps stay open. Finder, Hammerspoon, Music, Spotify and Podcasts are skipped. Replace the list with `bindings = { ["Quit on last window"] = { applications = { disable = { "bundle.id" } } } }`.
+
+| Action | GNOME | Configured as | macOS original | Possible | Notes |
+| --- | --- | --- | --- | --- | --- |
+| Quit on last window | none | none | none | Partial | No chord. Quits an app gracefully after its last window closes. Finder, Hammerspoon and music apps are skipped by default. Windows on other Spaces may not be seen |
+
+## Caffeine
+
+GNOME has no default for this (it is an extension), so the chord is Rakuen's own, kept from the old standalone script. It starts awake when loaded. A coffee cup in the menu bar shows the state: filled with steam means the Mac and display stay awake. Click the cup or press the chord to toggle. Reloading Hammerspoon turns it off.
+
+| Action | GNOME | Configured as | macOS original | Possible | Notes |
+| --- | --- | --- | --- | --- | --- |
+| Toggle Caffeine | none | Ctrl+Cmd+K | none | Yes | Keeps the Mac and display awake. The menu bar cup shows the state and also toggles |
+
+## Shell
 
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
@@ -151,7 +167,7 @@ macOS Spaces are a horizontal list and must already exist. Previous and next spa
 | Message tray | Super+V, Super+M | Cmd+M | none | Partial | Clicks the Notification Center status item. That target moves across macOS versions. GNOME also binds Super+V; only Cmd+M is used so one action has one shortcut. Minimize is Cmd+H |
 | Help | Super+F1 | Cmd+F1 | Cmd+Shift+/ | Partial | Sends the front app Help shortcut |
 
-### Session and accessibility
+## Session And Accessibility
 
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
@@ -164,7 +180,7 @@ macOS Spaces are a horizontal list and must already exist. Previous and next spa
 | Zoom in | Alt+Super+= | Opt+Cmd+= | Opt+Cmd+= | Yes | Native shortcut |
 | Zoom out | Alt+Super+- | Opt+Cmd+- | Opt+Cmd+- | Yes | Native shortcut |
 
-### Not configured
+## Not Configured
 
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |

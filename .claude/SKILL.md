@@ -85,3 +85,4 @@ You are an expert in Lua programming with deep knowledge of tables, metatables, 
 - Write unit tests for critical functions
 - Document function parameters and return values
 - Include usage examples for public interfaces
+- Alway use `Title Case` for titles in all documentation. Even small words in the title must start with their first later capitalized (Spike 1.7 results per app => wrong, Spike 1.7 Results Per App => good)

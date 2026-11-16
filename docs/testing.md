@@ -1,8 +1,8 @@
-# Testing a Rakuen module
+# Testing A Rakuen Module
 
 Every module can be switched on alone, so you can test it without the others.
 
-## 1. Run the automated checks
+## 1. Run The Automated Checks
 
 ```sh
 make check
