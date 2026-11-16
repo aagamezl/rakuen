@@ -147,11 +147,19 @@ GNOME ends an app with its last window; macOS keeps it running. Rakuen quits the
 
 ## Caffeine
 
-GNOME has no default for this (it is an extension), so the chord is Rakuen's own, kept from the old standalone script. It starts awake when loaded. A coffee cup in the menu bar shows the state: filled with steam means the Mac and display stay awake. Click the cup or press the chord to toggle. Reloading Hammerspoon turns it off.
+GNOME has no default for this (it is an extension), so the chord is Rakuen's own, kept from the old standalone script. It starts awake when loaded. A coffee cup in the menu bar shows the state: filled with steam means the Mac and display stay awake. The cup is the shared Rakuen menu bar item: its menu has a Caffeine entry, and the chord toggles too. Reloading Hammerspoon turns it off.
 
 | Action | GNOME | Configured as | macOS original | Possible | Notes |
 | --- | --- | --- | --- | --- | --- |
-| Toggle Caffeine | none | Ctrl+Cmd+K | none | Yes | Keeps the Mac and display awake. The menu bar cup shows the state and also toggles |
+| Toggle Caffeine | none | Ctrl+Cmd+K | none | Yes | Keeps the Mac and display awake. The menu bar cup shows the state, its menu toggles |
+
+## Clipboard
+
+GNOME has no clipboard history by default, so the chord is Rakuen's own. Rakuen records the text you copy. The chord opens a searchable list; choosing an entry puts it back on the clipboard (it does not paste). The same list is in the Rakuen menu bar item. The history stays in memory only and ends when Hammerspoon reloads.
+
+| Action | GNOME | Configured as | macOS original | Possible | Notes |
+| --- | --- | --- | --- | --- | --- |
+| Clipboard history | none | Ctrl+Alt+V | none | Yes | Lists copied text. Choose one to put it back on the clipboard. Kept in memory only |
 
 ## Shell
 

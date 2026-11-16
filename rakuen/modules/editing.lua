@@ -5,6 +5,7 @@
 -- rules are disabled there; `Ctrl+Shift+C/V` copy and paste in terminals only.
 
 local keycombo = require("rakuen.core.keycombo")
+local vscode_terminal = require("rakuen.core.vscode_terminal")
 
 local editing = {}
 
@@ -44,9 +45,17 @@ end
 local SCOPES = {
   everywhere = nil,
   no_terminals = { disable = TERMINALS },
-  terminals_only = { enable = TERMINALS },
+  terminals_only = { enable = concat_lists(TERMINALS, vscode_terminal.EDITORS) },
   finder_only = { enable = { FINDER } },
   native_tabs = { disable = concat_lists(TERMINALS, BROWSERS) },
+}
+
+-- Extra gate per scope. VS Code based editors are not terminals, but their
+-- integrated terminal is, so these scopes also look at what has focus (16.3).
+local GATES = {
+  no_terminals = vscode_terminal.when_outside_terminal,
+  terminals_only = vscode_terminal.when_in_terminal,
+  native_tabs = vscode_terminal.when_outside_terminal,
 }
 
 --- Build one rule. `action_mods` and `key` are the chord Rakuen posts.
@@ -58,6 +67,7 @@ local function make_rule(description, from, to, action_mods, key, scope, note)
     from = from,
     to = to,
     applications = SCOPES[scope],
+    when = GATES[scope],
     action = { mods = action_mods, key = key },
     feasibility = "yes",
     note = note,

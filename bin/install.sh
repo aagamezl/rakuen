@@ -99,6 +99,7 @@ readonly SETTINGS_URL="x-apple.systempreferences:com.apple.preference.security?"
 
 MODE="apply"
 DRY_RUN=0
+SKIP_EDITORS=0
 RESTART_DOCK=0
 STEP=1
 # Outcome of the last reload: none, requested, dock, skipped or failed.
@@ -108,7 +109,7 @@ PERMISSIONS_PENDING=0
 
 usage() {
   section_open "Usage" "$C_YELLOW"
-  box_row "$C_BOLD" "install.sh [--install] [--dry-run]" "$BORDER"
+  box_row "$C_BOLD" "install.sh [--install] [--dry-run] [--skip-editors]" "$BORDER"
   box_row "$C_BOLD" "install.sh --uninstall [--dry-run]" "$BORDER"
   box_row "$C_BOLD" "install.sh --restore [--dry-run]" "$BORDER"
   box_row "$C_BOLD" "install.sh --status" "$BORDER"
@@ -121,6 +122,7 @@ usage() {
   box_row "$C_DIM" "  -n, --dry-run     show the changes, write nothing" "$BORDER"
   box_row "$C_DIM" "  --restore         put the saved shortcuts back" "$BORDER"
   box_row "$C_DIM" "  -s, --status      show the shortcuts stored in the system" "$BORDER"
+  box_row "$C_DIM" "  --skip-editors    do not touch VS Code based editors' settings and keybindings" "$BORDER"
   box_row "$C_DIM" "  --restart-dock    also restart the Dock so the change is live now" "$BORDER"
   box_row "$C_DIM" "  --permissions     only request the Hammerspoon permissions" "$BORDER"
   box_row "$C_DIM" "  -h, --help      show this help" "$BORDER"
@@ -148,6 +150,9 @@ parse_args() {
         ;;
       -s | --status)
         MODE="status"
+        ;;
+      --skip-editors)
+        SKIP_EDITORS=1
         ;;
       --restart-dock)
         RESTART_DOCK=1
@@ -906,6 +911,7 @@ return {
     windows = { enabled = true },
     focus = { enabled = true },
     workspaces = { enabled = true },
+    clipboard = { enabled = true },
     shell = { enabled = true },
     session = { enabled = true },
   },
@@ -913,6 +919,81 @@ return {
 LUA
 
   box_row "$C_GREEN" "✓ Wrote ${CONFIG_FILE/#"${HOME}"/${TILDE}}" "$BORDER"
+}
+
+# VS Code based editors: name and user folder. Only editors that are installed
+# (their folder exists) are touched. Settings go to the user files, never to the
+# application's defaults (task 16.4).
+readonly EDITOR_SUPPORT_DIR="${RAKUEN_EDITOR_SUPPORT_DIR:-${HOME}/Library/Application Support}"
+readonly EDITOR_NAMES=("Code" "Code - Insiders" "VSCodium" "Cursor" "Windsurf")
+readonly EDITOR_SETTINGS_SOURCE="${REPO_DIR}/settings/vscode"
+readonly MERGE_SCRIPT="${SCRIPT_DIR}/utils/merge-vscode-json.js"
+
+# Merges one JSON file of the repo into an editor's user file.
+# $1 settings|keybindings, $2 repo file, $3 user file, $4 label.
+merge_editor_file() {
+  local kind="$1"
+  local source_file="$2"
+  local target_file="$3"
+  local label="$4"
+  local backup_file
+  local outcome
+  local status=0
+
+  backup_file="${BACKUP_DIR}/${label// /-}-${kind}.json"
+
+  if (( DRY_RUN )); then
+    box_row "$C_YELLOW" "› would merge ${kind} into ${label}" "$BORDER"
+
+    return 0
+  fi
+
+  if [[ -f "$target_file" && ! -f "$backup_file" ]]; then
+    mkdir -p "$BACKUP_DIR"
+    cp "$target_file" "$backup_file"
+  fi
+
+  outcome="$(osascript -l JavaScript "$MERGE_SCRIPT" "$kind" "$target_file" "$source_file" 2> /dev/null)" || status=$?
+
+  if (( status == 2 )); then
+    box_row "$C_YELLOW" "› ${label} ${kind}: not valid JSON, left alone. Merge settings/vscode by hand" "$BORDER"
+  elif (( status != 0 )); then
+    box_row "$C_YELLOW" "› ${label} ${kind}: merge failed, left alone" "$BORDER"
+  else
+    box_row "$C_GREEN" "✓ ${label} ${kind}: ${outcome}" "$BORDER"
+  fi
+}
+
+# Step: put the repo's VS Code settings and keybindings into the user files of
+# every installed VS Code based editor.
+install_editor_settings() {
+  local name
+  local user_dir
+  local found=0
+
+  next_step "Editor Settings"
+
+  if (( SKIP_EDITORS )); then
+    box_row "$C_DIM" "Skipped (--skip-editors)" "$BORDER"
+
+    return 0
+  fi
+
+  for name in "${EDITOR_NAMES[@]}"; do
+    user_dir="${EDITOR_SUPPORT_DIR}/${name}/User"
+
+    if [[ ! -d "$user_dir" ]]; then
+      continue
+    fi
+
+    found=1
+    merge_editor_file settings "${EDITOR_SETTINGS_SOURCE}/user-settings.json" "${user_dir}/settings.json" "$name"
+    # merge_editor_file keybindings "${EDITOR_SETTINGS_SOURCE}/keybindings.json" "${user_dir}/keybindings.json" "$name"
+  done
+
+  if (( ! found )); then
+    box_row "$C_DIM" "No VS Code based editor found" "$BORDER"
+  fi
 }
 
 # Step: start Hammerspoon, or reload it when it is running, and make it launch
@@ -956,6 +1037,7 @@ run_apply() {
   apply_shortcuts
   install_hammerspoon
   install_runtime
+  install_editor_settings
   launch_hammerspoon
   next_step "Permissions"
   request_permissions || true

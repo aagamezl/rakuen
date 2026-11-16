@@ -85,14 +85,16 @@ function caffeine_icon.elements(active)
   return elements
 end
 
---- Build a template hs.image for the state, or nil when drawing fails.
-function caffeine_icon.image(active)
+--- Build an hs.image for the state, or nil when drawing fails. With `as_template`
+--- macOS recolors it for the surface it sits on (use it in menus, where the
+--- background can be light or dark); otherwise it stays white.
+function caffeine_icon.image(active, as_template)
   local succeeded, image = pcall(function()
     local canvas = hs.canvas.new({ x = 0, y = 0, w = SIZE, h = SIZE })
     canvas:appendElements(table.unpack(caffeine_icon.elements(active)))
     local rendered = canvas:imageFromCanvas()
     canvas:delete()
-    return rendered:template(false)
+    return rendered:template(as_template == true)
   end)
 
   if not succeeded then

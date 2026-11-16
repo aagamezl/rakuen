@@ -7,6 +7,7 @@
 -- synthetic Cmd+Up/Down sent for Ctrl+Home/End.
 
 local text_gate = require("rakuen.core.text_gate")
+local vscode_terminal = require("rakuen.core.vscode_terminal")
 
 local text_navigation = {}
 
@@ -27,8 +28,12 @@ local FORCE = {
   "com.tinyspeck.slackmacgap",
 }
 
---- Gate used by every rule: true when the caret is in a text field.
+--- Gate used by every rule: true when the caret is in a text field. The VS Code
+--- integrated terminal is a terminal, so its keys stay native (16.3).
 local function in_text_field(bundle_id)
+  if not vscode_terminal.when_outside_terminal(bundle_id) then
+    return false
+  end
   return text_gate.allows(text_gate.focused_role(), bundle_id, FORCE)
 end
 

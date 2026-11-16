@@ -1,5 +1,6 @@
 local caffeine = require("rakuen.modules.caffeine")
 local caffeine_icon = require("rakuen.ui.caffeine_icon")
+local menubar = require("rakuen.ui.menubar")
 local hs_mock = require("spec.helpers.hs_mock")
 
 describe("caffeine module", function()
@@ -36,9 +37,10 @@ describe("caffeine module", function()
       setTooltip = function(_, text)
         menu.tooltip = text
       end,
-      setClickCallback = function(_, callback)
-        menu.click = callback
+      setMenu = function(_, builder)
+        menu.builder = builder
       end,
+      delete = function() end,
     }
     mock_hs.menubar = {
       new = function()
@@ -49,6 +51,7 @@ describe("caffeine module", function()
   end)
 
   after_each(function()
+    menubar.reset()
     hs_mock.uninstall()
   end)
 
@@ -66,13 +69,16 @@ describe("caffeine module", function()
     assert.same({ "Caffeine: Awake", "Caffeine: Off" }, alerts)
   end)
 
-  it("toggles from a click on the menu bar item", function()
+  it("toggles from its entry in the Rakuen menu", function()
     caffeine.on_load(nil, caffeine.rules)
-    menu.click()
+    local entry = menu.builder()[1]
+    assert.equals("Caffeine", entry.title)
+    assert.is_true(entry.checked)
+    entry.fn()
 
     -- It starts awake, so the first click lets the Mac sleep.
     assert.is_false(held)
-    assert.equals(caffeine.tooltip(false), menu.tooltip)
+    assert.equals("Rakuen. " .. caffeine.tooltip(false), menu.tooltip)
   end)
 
   it("starts awake when loaded", function()
