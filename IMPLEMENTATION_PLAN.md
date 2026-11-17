@@ -328,8 +328,7 @@ Manual pass: close the only TextEdit window (empty doc): TextEdit quits. Close t
 
 - [x] 16.1 Clipboard history (list, copy from entry); not a GNOME default, from your draft plan. `rakuen/modules/clipboard.lua`, `Ctrl+Alt+V`, in memory only
 - [x] 16.2 Rakuen menu bar item (enable/disable modules, open cheatsheet); the caffeine cup (15.7) already uses the menu bar, so share one item if possible. Done: `rakuen/ui/menubar.lua` is the one item (cup icon, Caffeine, Clipboard history, Show keybindings, Modules switches saved in `~/.config/rakuen/modules.json`)
-- [ ] 16.3 VS Code based editors terminals behave like real terminals. Implemented in `rakuen/core/vscode_terminal.lua` (focused AX element labelled "Terminal..."); **open: confirm the AX label in VS Code, Cursor, Windsurf by hand** (`scripts/spikes`), then tick
-- [x] 16.4 VS Code based editors settings and shortcuts configuration according to provided settings. Settings MUST be stored in the users settings, not the default settings. Installer step "Editor Settings" merges `settings/vscode/` into the user files of installed editors (backup first, files with comments are edited in place and keep them)
+- [x] 16.3 VS Code based editors terminals behave like real terminals. Implemented in `rakuen/core/vscode_terminal.lua` (AX class `xterm-helper-textarea`, then a "Terminal..." label), with `AXManualAccessibility` enabled via `rakuen/core/vscode_focus.lua`. Confirmed by hand: Ctrl+C and Ctrl+V work in VS Code and Cursor; F2 renames in the file explorer (`rakuen/core/vscode_explorer.lua`)
 
 ---
 

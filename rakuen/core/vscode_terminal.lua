@@ -9,6 +9,8 @@
 -- Rakuen then treats the integrated terminal like any other terminal: shell chords
 -- stay native, and Ctrl+Shift+C/V copy and paste.
 
+local vscode_focus = require("rakuen.core.vscode_focus")
+
 local vscode_terminal = {}
 
 vscode_terminal.EDITORS = {
@@ -60,36 +62,11 @@ function vscode_terminal.is_terminal_element(element)
   return vscode_terminal.is_terminal_label(label)
 end
 
--- Electron builds its accessibility tree only when asked (or when a screen reader
--- runs). Asking once per process is enough.
-local enabled_pids = {}
-
-local function enable_accessibility(app)
-  local pid = app:pid()
-  if enabled_pids[pid] then
-    return
-  end
-
-  enabled_pids[pid] = true
-  hs.axuielement.applicationElement(app):setAttributeValue("AXManualAccessibility", true)
-end
-
---- The focused accessibility element of the frontmost app, or nil.
-local function focused_element()
-  local app = hs.application.frontmostApplication()
-  if app == nil then
-    return nil
-  end
-
-  enable_accessibility(app)
-  return hs.axuielement.systemWideElement():attributeValue("AXFocusedUIElement")
-end
-
 --- Return true while the focused element of the frontmost app is the terminal input.
 --- Any accessibility failure counts as "not a terminal", so the editor keeps working.
 function vscode_terminal.is_focused()
   local succeeded, result = pcall(function()
-    return vscode_terminal.is_terminal_element(focused_element())
+    return vscode_terminal.is_terminal_element(vscode_focus.element())
   end)
 
   return succeeded and result == true

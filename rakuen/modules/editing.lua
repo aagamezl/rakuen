@@ -5,6 +5,7 @@
 -- rules are disabled there; `Ctrl+Shift+C/V` copy and paste in terminals only.
 
 local keycombo = require("rakuen.core.keycombo")
+local vscode_explorer = require("rakuen.core.vscode_explorer")
 local vscode_terminal = require("rakuen.core.vscode_terminal")
 
 local editing = {}
@@ -47,6 +48,8 @@ local SCOPES = {
   no_terminals = { disable = TERMINALS },
   terminals_only = { enable = concat_lists(TERMINALS, vscode_terminal.EDITORS) },
   finder_only = { enable = { FINDER } },
+  -- Every app; VS Code based editors only in the Files Explorer (see GATES).
+  rename = {},
   native_tabs = { disable = concat_lists(TERMINALS, BROWSERS) },
 }
 
@@ -56,6 +59,7 @@ local GATES = {
   no_terminals = vscode_terminal.when_outside_terminal,
   terminals_only = vscode_terminal.when_in_terminal,
   native_tabs = vscode_terminal.when_outside_terminal,
+  rename = vscode_explorer.when_rename_applies,
 }
 
 --- Build one rule. `action_mods` and `key` are the chord Rakuen posts.
@@ -104,8 +108,8 @@ local function make_rules()
       "F2",
       {},
       "return",
-      "finder_only",
-      "Sends Return, which renames in Finder"
+      "rename",
+      "Sends Return to rename. In VS Code based editors only in the file explorer"
     ),
     make_rule("Close window or tab", "Cmd+W", "Ctrl+W", { "cmd" }, "w", "no_terminals"),
     make_rule("Close tab", "Cmd+W", "Ctrl+F4", { "cmd" }, "w", "everywhere"),

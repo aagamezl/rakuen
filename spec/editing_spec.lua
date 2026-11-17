@@ -86,7 +86,7 @@ describe("editing module", function()
     assert.is_nil(rules:find("ctrl+shift+v", "com.apple.TextEdit"))
   end)
 
-  it("maps F2 to Return in Finder only", function()
+  it("maps F2 to Return in every app", function()
     rules:add_all("editing", editing.rules)
 
     local rule = rules:find("f2", "com.apple.finder")
@@ -94,7 +94,7 @@ describe("editing module", function()
     assert.is_not_nil(rule)
     assert.are.same({}, rule.action.mods)
     assert.are.equal("return", rule.action.key)
-    assert.is_nil(rules:find("f2", "com.apple.TextEdit"))
+    assert.are.equal("Rename", rules:find("f2", "com.apple.TextEdit").description)
   end)
 
   it("sends Redo for both Ctrl+Y and Ctrl+Shift+Z", function()

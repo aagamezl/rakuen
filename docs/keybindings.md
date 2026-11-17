@@ -25,7 +25,7 @@ Disabled in Terminal, iTerm, WezTerm, kitty, and Alacritty unless the Notes colu
 | Find next | Ctrl+G | Ctrl+G | Cmd+G | Yes | |
 | New | Ctrl+N | Ctrl+N | Cmd+N | Yes | |
 | Open | Ctrl+O | Ctrl+O | Cmd+O | Yes | |
-| Rename | F2 | F2 | Return | Yes | Sends Return, which renames in Finder |
+| Rename | F2 | F2 | Return | Yes | Sends Return to rename. In VS Code based editors only in the file explorer |
 | Close window or tab | Ctrl+W | Ctrl+W | Cmd+W | Yes | |
 | Close tab | Ctrl+F4 | Ctrl+F4 | Cmd+W | Yes | |
 | Quit | Ctrl+Q | Ctrl+Q | Cmd+Q | Yes | |
