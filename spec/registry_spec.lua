@@ -6,7 +6,6 @@ local function make_rule(overrides)
     from = "Cmd+C",
     to = "Ctrl+C",
     action = { mods = { "cmd" }, key = "c" },
-    feasibility = "yes",
   }
   for field, value in pairs(overrides or {}) do
     rule[field] = value
@@ -70,9 +69,6 @@ describe("registry", function()
     end)
     assert.has_error(function()
       rules:add("editing", make_rule({ action = "cmd+c" }))
-    end)
-    assert.has_error(function()
-      rules:add("editing", make_rule({ feasibility = "maybe" }))
     end)
   end)
 

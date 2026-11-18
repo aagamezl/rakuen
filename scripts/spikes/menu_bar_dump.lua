@@ -39,44 +39,64 @@ local function dump(element, depth, lines)
   end
 end
 
-local lines = { "macOS " .. hs.host.operatingSystemVersionString() }
-for _, bundle_id in ipairs(BUNDLE_IDS) do
+--- Dump what an attribute of `root` holds: one element, or a list of them.
+local function dump_attribute(root, name, lines)
+  local ok, value = pcall(function()
+    return root:attributeValue(name)
+  end)
+  table.insert(lines, "--- attribute " .. name .. ": " .. tostring(ok and value ~= nil))
+  if not ok or value == nil then
+    return
+  end
+
+  if value.attributeValue ~= nil then
+    dump(value, 1, lines)
+    return
+  end
+
+  for _, item in ipairs(value) do
+    dump(item, 1, lines)
+  end
+end
+
+local function dump_app(bundle_id, lines)
   table.insert(lines, "=== " .. bundle_id)
+
   local app = hs.application.get(bundle_id)
   if app == nil then
     table.insert(lines, "not running")
-  else
-    local root = hs.axuielement.applicationElement(app)
-    dump(root, 0, lines)
-    for _, name in ipairs(APP_ATTRIBUTES) do
-      local ok, value = pcall(function()
-        return root:attributeValue(name)
-      end)
-      table.insert(lines, "--- attribute " .. name .. ": " .. tostring(ok and value ~= nil))
-      if ok and value ~= nil then
-        if value.attributeValue ~= nil then
-          dump(value, 1, lines)
-        else
-          for _, item in ipairs(value) do
-            dump(item, 1, lines)
-          end
-        end
-      end
-    end
+    return
+  end
+
+  local root = hs.axuielement.applicationElement(app)
+  dump(root, 0, lines)
+
+  for _, name in ipairs(APP_ATTRIBUTES) do
+    dump_attribute(root, name, lines)
   end
 end
 
 -- Any other process may own the menu bar extras on this macOS version.
-table.insert(lines, "=== every running app that has an AXExtrasMenuBar")
-for _, app in ipairs(hs.application.runningApplications()) do
-  local ok, extras = pcall(function()
-    return hs.axuielement.applicationElement(app):attributeValue("AXExtrasMenuBar")
-  end)
-  if ok and extras ~= nil then
-    table.insert(lines, "# " .. tostring(app:bundleID()) .. " (" .. tostring(app:name()) .. ")")
-    dump(extras, 1, lines)
+local function dump_other_apps(lines)
+  table.insert(lines, "=== every running app that has an AXExtrasMenuBar")
+
+  for _, app in ipairs(hs.application.runningApplications()) do
+    local ok, extras = pcall(function()
+      return hs.axuielement.applicationElement(app):attributeValue("AXExtrasMenuBar")
+    end)
+    if ok and extras ~= nil then
+      table.insert(lines, "# " .. tostring(app:bundleID()) .. " (" .. tostring(app:name()) .. ")")
+      dump(extras, 1, lines)
+    end
   end
 end
+
+local lines = { "macOS " .. hs.host.operatingSystemVersionString() }
+for _, bundle_id in ipairs(BUNDLE_IDS) do
+  dump_app(bundle_id, lines)
+end
+
+dump_other_apps(lines)
 
 local file = assert(io.open(OUTPUT_PATH, "w"))
 file:write(table.concat(lines, "\n"), "\n")

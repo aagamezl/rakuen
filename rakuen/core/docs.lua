@@ -5,7 +5,6 @@
 
 local docs = {}
 
-local FEASIBILITY_LABEL = { yes = "Yes", partial = "Partial", no = "No" }
 local NO_VALUE = "—"
 
 --- Escape a table cell: a pipe would end the cell, and a newline the row.
@@ -40,8 +39,8 @@ end
 
 local function table_lines(rows)
   local lines = {
-    "| Action | GNOME | Configured as | macOS original | Possible | Notes |",
-    "| --- | --- | --- | --- | --- | --- |",
+    "| Action | GNOME | Configured as | macOS original | Notes |",
+    "| --- | --- | --- | --- | --- |",
   }
   for _, row in ipairs(rows) do
     table.insert(lines, table_row(row))
@@ -49,7 +48,7 @@ local function table_lines(rows)
   return lines
 end
 
---- Table rows { action, gnome, configured, original, possible, note } of one rule.
+--- Table rows { action, gnome, configured, original, note } of one rule.
 function docs.rule_row(rule, gnome_by_rule)
   local original = rule.from
   if original == nil or original == "" then
@@ -61,7 +60,6 @@ function docs.rule_row(rule, gnome_by_rule)
     docs.gnome_chord(rule, gnome_by_rule) or NO_VALUE,
     rule.to,
     original,
-    FEASIBILITY_LABEL[rule.feasibility or "yes"],
     rule.note or "",
   }
 end

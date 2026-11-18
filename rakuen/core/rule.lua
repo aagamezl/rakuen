@@ -2,14 +2,13 @@
 
 local rule = {}
 
---- Build a rule. `feasibility` defaults to "yes"; `applications` is optional.
-function rule.new(description, from, to, action, feasibility, note, applications)
+--- Build a rule. `note` and `applications` are optional.
+function rule.new(description, from, to, action, note, applications)
   return {
     description = description,
     from = from,
     to = to,
     action = action,
-    feasibility = feasibility or "yes",
     note = note,
     applications = applications,
   }

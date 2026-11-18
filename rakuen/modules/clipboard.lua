@@ -65,7 +65,6 @@ clipboard.rules = {
     from = "none",
     to = "Ctrl+Alt+V",
     action = deferred.guard(show_chooser),
-    feasibility = "yes",
     note = "Lists copied text. Choose one to put it back on the clipboard. Kept in memory only",
   },
 }

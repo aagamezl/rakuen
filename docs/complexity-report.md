@@ -42,3 +42,15 @@ Left alone: the `pcall(function() ... end)` wrapper (9 sites). Each wraps differ
 5. Move rule tables to data where possible (`from`, `to`, `note` strings), keeping handlers in code. `make_rules` bodies shrink and docs generation stays simple.
 6. Merge the VS Code helpers (`vscode_focus`, `vscode_terminal`, `vscode_explorer`) under `rakuen/core/vscode/` so the file count in core drops visually.
 7. Keep spikes out of the main review surface: `scripts/spikes/` is 635 lines of diagnostics; delete each spike once its finding is recorded in `docs/`.
+
+## Status After Mitigation
+
+| Item | Result |
+|---|---|
+| 1. Split `workspaces.lua` | Done: 366 to 113 lines; actions moved to `rakuen/core/space_actions.lua` (298 lines) |
+| 2. `app_filter.overlaps` | Done: 12 down to between 8 and 10, under the limit (candidate list moved to a helper) |
+| 3. `move_window_to`, `show_flash` | Done: split into steps (`begin_move`, `hold_window`, `release_window`; `new_flash_canvas`, `append_box`) |
+| 4. Complexity limit | `.luacheckrc` has `max_cyclomatic_complexity = 10`; `make lint` is clean |
+| 5 to 7 | Not done (rule tables as data, `core/vscode/` folder, spike cleanup) |
+
+The `menu_bar_dump` spike main chunk (12) was also split into functions to meet the limit.

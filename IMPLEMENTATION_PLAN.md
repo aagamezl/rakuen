@@ -65,7 +65,7 @@ Rule shape (every module):
   to = "Ctrl+C",           -- chord Rakuen listens for
   applications = { enable = {}, disable = { "com.apple.Terminal", "com.googlecode.iterm2" } },
   action = { mods = { "cmd" }, key = "c" },  -- or a function
-  feasibility = "yes",     -- yes | partial | no, with a limitation note for partial/no
+  note = "optional limitation note",
 }
 ```
 

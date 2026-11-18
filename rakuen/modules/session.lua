@@ -43,7 +43,6 @@ session.rules = {
     "Cmd+Ctrl+Q",
     "Cmd+L",
     deferred.guard(lock_screen),
-    "yes",
     "hs.caffeinate.lockScreen. Browsers keep Ctrl+L for the location bar"
   ),
   rule(
@@ -51,7 +50,6 @@ session.rules = {
     "Cmd+L",
     "Ctrl+L",
     { mods = { "cmd" }, key = "l" },
-    "yes",
     "Browsers only: Cmd+L is Lock, so Ctrl+L posts Cmd+L for them",
     { enable = BROWSERS }
   ),
@@ -60,7 +58,6 @@ session.rules = {
     "Cmd+Shift+Q",
     "Cmd+Opt+L",
     deferred.guard(log_out),
-    "yes",
     "macOS asks for confirmation, then logs out"
   ),
   rule(
@@ -68,7 +65,6 @@ session.rules = {
     "none",
     "Cmd+Opt+F4",
     deferred.guard(shut_down),
-    "yes",
     "Confirms first, then shuts down"
   ),
   rule(
@@ -76,7 +72,6 @@ session.rules = {
     "Cmd+F5",
     "Opt+Cmd+S",
     { mods = { "cmd" }, key = "f5" },
-    "partial",
     "Toggles VoiceOver by posting its Cmd+F5 shortcut"
   ),
 }

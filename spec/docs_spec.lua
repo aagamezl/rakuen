@@ -21,7 +21,6 @@ describe("docs", function()
         description = "Copy",
         from = "Cmd+C",
         to = "Ctrl+C",
-        feasibility = "yes",
         note = "Disabled | in terminals",
       },
     }
@@ -34,7 +33,7 @@ describe("docs", function()
   it("builds a row with the six columns", function()
     local row = docs.rule_row(rules()[1], data.gnome)
 
-    assert.same({ "Copy", "Ctrl+C", "Ctrl+C", "Cmd+C", "Yes", "Disabled | in terminals" }, row)
+    assert.same({ "Copy", "Ctrl+C", "Ctrl+C", "Cmd+C", "Disabled | in terminals" }, row)
   end)
 
   it("prefers the rule's own gnome field", function()
@@ -54,7 +53,7 @@ describe("docs", function()
     assert.is_truthy(text:find("## Editing", 1, true))
     assert.is_truthy(text:find("Intro text.", 1, true))
     assert.is_truthy(
-      text:find("| Copy | Ctrl+C | Ctrl+C | Cmd+C | Yes | Disabled \\| in terminals |", 1, true)
+      text:find("| Copy | Ctrl+C | Ctrl+C | Cmd+C | Disabled \\| in terminals |", 1, true)
     )
     assert.is_truthy(text:find("## Not Configured", 1, true))
     assert.is_truthy(text:find("| Rotate |", 1, true))

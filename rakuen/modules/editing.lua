@@ -60,7 +60,6 @@ local function make_rule(description, from, to, action_mods, key, scope, note)
     applications = SCOPES[scope],
     when = GATES[scope],
     action = { mods = action_mods, key = key },
-    feasibility = "yes",
     note = note,
   }
 end
@@ -177,7 +176,6 @@ function editing.build_block_rules(rules)
           to = chord,
           applications = { disable = TERMINALS },
           action = ignore_key,
-          feasibility = "yes",
           note = "Only registered when block_native_cmd is true",
         })
       end

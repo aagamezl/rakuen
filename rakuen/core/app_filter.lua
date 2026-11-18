@@ -34,34 +34,35 @@ function app_filter.allows(applications, bundle_id)
   return bundle_id ~= nil and to_set(filter.enable)[bundle_id] == true
 end
 
+--- Every bundle id either filter lists in `enable`; the only apps that can matter
+--- when at least one filter is not open to all.
+local function listed_apps(first, second)
+  local apps = {}
+
+  for _, filter in ipairs({ first, second }) do
+    for _, bundle_id in ipairs(filter.enable or {}) do
+      table.insert(apps, bundle_id)
+    end
+  end
+
+  return apps
+end
+
 --- Return true when some application exists where both filters allow a rule.
 --- Used by the registry to detect two rules that claim the same chord.
 function app_filter.overlaps(first, second)
   local first_filter = first or {}
   local second_filter = second or {}
 
-  local first_open = is_empty(first_filter.enable)
-  local second_open = is_empty(second_filter.enable)
-
-  if first_open and second_open then
+  if is_empty(first_filter.enable) and is_empty(second_filter.enable) then
     return true
   end
 
   -- At least one side lists apps explicitly: check each listed app against both filters.
-  local candidates = {}
-
-  for _, bundle_id in ipairs(first_filter.enable or {}) do
-    table.insert(candidates, bundle_id)
-  end
-
-  for _, bundle_id in ipairs(second_filter.enable or {}) do
-    table.insert(candidates, bundle_id)
-  end
-
-  for _, bundle_id in ipairs(candidates) do
-    if
-      app_filter.allows(first_filter, bundle_id) and app_filter.allows(second_filter, bundle_id)
-    then
+  for _, bundle_id in ipairs(listed_apps(first_filter, second_filter)) do
+    local allowed_by_first = app_filter.allows(first_filter, bundle_id)
+    local allowed_by_second = app_filter.allows(second_filter, bundle_id)
+    if allowed_by_first and allowed_by_second then
       return true
     end
   end

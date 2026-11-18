@@ -31,15 +31,15 @@ local state = {
   screen_watcher = nil,
 }
 
---- Draw one square per Space, numbered from 1: the current one filled, the
---- others outlined. Replaces a flash that is still showing.
-local function show_flash(screen, ids, current_id)
+local function clear_flash()
   if state.flash ~= nil then
     state.flash:delete()
     state.flash = nil
   end
+end
 
-  local layout = space_nav.flash_layout(#ids)
+--- A canvas centered on `screen` and sized for the layout, over every Space.
+local function new_flash_canvas(screen, layout)
   local area = screen:frame()
   local canvas = hs.canvas.new({
     x = area.x + (area.w - layout.width) / 2,
@@ -57,41 +57,48 @@ local function show_flash(screen, ids, current_id)
     roundedRectRadii = { xRadius = FLASH_RADIUS, yRadius = FLASH_RADIUS },
   })
 
-  for index, box in ipairs(layout.boxes) do
-    local is_current = ids[index] == current_id
-    local frame = { x = box.x, y = box.y, w = box.w, h = box.h }
+  return canvas
+end
 
-    if is_current then
-      canvas:appendElements({
-        type = "rectangle",
-        action = "fill",
-        fillColor = LIGHT,
-        frame = frame,
-      })
-    else
-      canvas:appendElements({
-        type = "rectangle",
-        action = "stroke",
-        strokeColor = DIM,
-        strokeWidth = 3,
-        frame = frame,
-      })
-    end
+--- Draw one square and its number: filled for the current Space, outlined for the rest.
+local function append_box(canvas, box, index, is_current)
+  local frame = { x = box.x, y = box.y, w = box.w, h = box.h }
+  local text_color = LIGHT
 
-    local text_height = FLASH_TEXT_SIZE * TEXT_HEIGHT_RATIO
-    local text_color = LIGHT
-    if is_current then
-      text_color = DARK
-    end
-
+  if is_current then
+    text_color = DARK
+    canvas:appendElements({ type = "rectangle", action = "fill", fillColor = LIGHT, frame = frame })
+  else
     canvas:appendElements({
-      type = "text",
-      text = tostring(index),
-      textSize = FLASH_TEXT_SIZE,
-      textColor = text_color,
-      textAlignment = "center",
-      frame = { x = box.x, y = box.y + (box.h - text_height) / 2, w = box.w, h = text_height },
+      type = "rectangle",
+      action = "stroke",
+      strokeColor = DIM,
+      strokeWidth = 3,
+      frame = frame,
     })
+  end
+
+  local text_height = FLASH_TEXT_SIZE * TEXT_HEIGHT_RATIO
+  canvas:appendElements({
+    type = "text",
+    text = tostring(index),
+    textSize = FLASH_TEXT_SIZE,
+    textColor = text_color,
+    textAlignment = "center",
+    frame = { x = box.x, y = box.y + (box.h - text_height) / 2, w = box.w, h = text_height },
+  })
+end
+
+--- Draw one square per Space, numbered from 1: the current one filled, the
+--- others outlined. Replaces a flash that is still showing.
+local function show_flash(screen, ids, current_id)
+  clear_flash()
+
+  local layout = space_nav.flash_layout(#ids)
+  local canvas = new_flash_canvas(screen, layout)
+
+  for index, box in ipairs(layout.boxes) do
+    append_box(canvas, box, index, ids[index] == current_id)
   end
 
   state.flash = canvas
@@ -133,14 +140,17 @@ function space_indicator.start()
   end
 
   state.menubar = hs.menubar.new()
+
   state.space_watcher = hs.spaces.watcher.new(function()
     space_indicator.render(true)
   end)
+
   state.screen_watcher = hs.screen.watcher.new(function()
     space_indicator.render(false)
   end)
 
   space_indicator.render(false)
+
   state.space_watcher:start()
   state.screen_watcher:start()
 end
@@ -150,10 +160,7 @@ function space_indicator.stop()
     return
   end
 
-  if state.flash ~= nil then
-    state.flash:delete()
-    state.flash = nil
-  end
+  clear_flash()
 
   state.space_watcher:stop()
   state.screen_watcher:stop()

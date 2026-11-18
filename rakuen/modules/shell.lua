@@ -144,7 +144,6 @@ shell.rules = {
     "Cmd+Space",
     "Opt+F2",
     key_action({ "cmd" }, "space"),
-    "yes",
     "Opens Spotlight. Cmd+Space stays Spotlight"
   ),
   rule(
@@ -152,7 +151,6 @@ shell.rules = {
     "Launchpad (F4)",
     "Cmd+A",
     deferred.guard(open_application_grid),
-    "yes",
     "Opens Apps (Launchpad before macOS 26). Select All is Ctrl+A"
   ),
   rule(
@@ -160,7 +158,6 @@ shell.rules = {
     "Cmd+Shift+5",
     "F13",
     key_action({ "cmd", "shift" }, "5"),
-    "yes",
     "Mac keyboards have no Print key. F13 is the stand-in"
   ),
   rule(
@@ -168,7 +165,6 @@ shell.rules = {
     "Cmd+Shift+4",
     "Shift+F13",
     key_action({ "cmd", "shift" }, "4"),
-    "yes",
     "Crosshair selection"
   ),
   rule(
@@ -176,7 +172,6 @@ shell.rules = {
     "Cmd+Shift+4 then Space",
     "Opt+F13",
     deferred.guard(capture_window),
-    "yes",
     "screencapture -l. Needs Screen Recording permission. Saved to the Desktop"
   ),
   rule(
@@ -184,7 +179,6 @@ shell.rules = {
     "Cmd+Shift+5",
     "Ctrl+Shift+Opt+R",
     key_action({ "cmd", "shift" }, "5"),
-    "yes",
     "Opens the screenshot panel. The recording tab is not separately addressable"
   ),
   rule(
@@ -192,7 +186,6 @@ shell.rules = {
     "none",
     "Cmd+S",
     deferred.guard(open_quick_settings),
-    "partial",
     "Opens System Settings. Control Center cannot be toggled. Save is Ctrl+S"
   ),
   rule(
@@ -200,7 +193,6 @@ shell.rules = {
     "none",
     "Cmd+M",
     deferred.guard(toggle_message_tray),
-    "partial",
     "Clicks the Notification Center status item. That target moves across macOS versions. "
       .. "GNOME also binds Super+V; only Cmd+M is used so one action has one shortcut. "
       .. "Minimize is Cmd+H"
@@ -210,7 +202,6 @@ shell.rules = {
     "Cmd+Shift+/",
     "Cmd+F1",
     key_action({ "cmd", "shift" }, "/"),
-    "partial",
     "Sends the front app Help shortcut"
   ),
 }

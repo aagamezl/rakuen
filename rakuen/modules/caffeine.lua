@@ -77,7 +77,6 @@ caffeine.rules = {
     from = "none",
     to = "Ctrl+Cmd+K",
     action = deferred.guard(toggle_with_alert),
-    feasibility = "yes",
     note = "Keeps the Mac and display awake. The menu bar cup shows the state, its menu toggles",
   },
 }

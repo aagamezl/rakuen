@@ -39,7 +39,6 @@ local function make_rule(description, from, to, action_mods, key, note)
     applications = { disable = TERMINALS },
     when = in_text_field,
     action = { mods = action_mods, key = key },
-    feasibility = "yes",
     note = note,
   }
 end
