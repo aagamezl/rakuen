@@ -10,6 +10,7 @@ local ax_tree = require("rakuen.core.ax_tree")
 local deferred = require("rakuen.core.deferred")
 local screens = require("rakuen.core.screens")
 local screenshot = require("rakuen.core.screenshot")
+local rule = require("rakuen.core.rule").new
 
 local shell = {}
 
@@ -135,17 +136,6 @@ local function capture_window()
     end
   end, arguments)
   task:start()
-end
-
-local function rule(description, from, to, action, feasibility, note)
-  return {
-    description = description,
-    from = from,
-    to = to,
-    action = action,
-    feasibility = feasibility,
-    note = note,
-  }
 end
 
 shell.rules = {

@@ -17,3 +17,5 @@ files["scripts/docs_data.lua"] = {
 -- bin/ax-watch through the Hammerspoon console.
 globals = { "RAKUEN_AX_WATCH" }
 read_globals = { "hs", "RAKUEN_AX_KEYS", "RAKUEN_AX_SECONDS" }
+
+max_cyclomatic_complexity = 10

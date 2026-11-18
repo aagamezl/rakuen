@@ -14,6 +14,8 @@
 -- element and up to ANCESTORS parents, each with role, description, title,
 -- identifier and DOM classes. It never swallows or changes a key press.
 
+local vscode_focus = require("rakuen.core.vscode_focus")
+
 local OUTPUT_PATH = "/tmp/rakuen_ax_watch.log"
 local DEFAULT_SECONDS = 120
 local ANCESTORS = 6
@@ -63,21 +65,6 @@ local function describe(element)
   return table.concat(fields, " | ")
 end
 
--- Electron builds its accessibility tree only when asked, once per process.
-local enabled_pids = {}
-
-local function enable_accessibility(app)
-  local pid = app:pid()
-  if enabled_pids[pid] then
-    return
-  end
-
-  enabled_pids[pid] = true
-  pcall(function()
-    hs.axuielement.applicationElement(app):setAttributeValue("AXManualAccessibility", true)
-  end)
-end
-
 local function wanted_keys()
   local keys = {}
   local list = RAKUEN_AX_KEYS
@@ -116,11 +103,8 @@ local function log_key(event)
 
   local app = hs.application.frontmostApplication()
   write(string.format("== %s  app=%s", table.concat(modifiers, "+"), tostring(app:bundleID())))
-  enable_accessibility(app)
 
-  local ok, element = pcall(function()
-    return hs.axuielement.systemWideElement():attributeValue("AXFocusedUIElement")
-  end)
+  local ok, element = pcall(vscode_focus.element)
   if not ok or element == nil then
     write("   no focused element")
     return

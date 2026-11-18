@@ -17,6 +17,7 @@ local shortcut_check = require("rakuen.core.shortcut_check")
 local space_indicator = require("rakuen.ui.space_indicator")
 local space_nav = require("rakuen.core.space_nav")
 local synthetic = require("rakuen.core.synthetic")
+local rule = require("rakuen.core.rule").new
 
 local workspaces = {}
 
@@ -274,17 +275,6 @@ local function guarded(handler)
       hs.alert.show("Rakuen: Spaces are not available")
     end
   end
-end
-
-local function rule(description, from, to, action, feasibility, note)
-  return {
-    description = description,
-    from = from,
-    to = to,
-    action = action,
-    feasibility = feasibility,
-    note = note,
-  }
 end
 
 local function make_rules()

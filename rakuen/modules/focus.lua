@@ -7,6 +7,7 @@
 -- window of another app instead of opening a switcher (see docs/feasibility.md).
 
 local window_cycle = require("rakuen.core.window_cycle")
+local rule = require("rakuen.core.rule")
 
 local focus = {}
 
@@ -97,19 +98,14 @@ local function switch_application(step)
 end
 
 local function make_rule(description, from, to, handler, feasibility, note)
-  return {
-    description = description,
-    from = from,
-    to = to,
-    action = function()
-      local succeeded = pcall(handler)
-      if not succeeded then
-        hs.alert.show("Rakuen: focus action failed")
-      end
-    end,
-    feasibility = feasibility or "yes",
-    note = note,
-  }
+  local function action()
+    local succeeded = pcall(handler)
+    if not succeeded then
+      hs.alert.show("Rakuen: focus action failed")
+    end
+  end
+
+  return rule.new(description, from, to, action, feasibility, note)
 end
 
 local function make_rules()

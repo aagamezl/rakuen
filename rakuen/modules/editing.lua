@@ -7,29 +7,16 @@
 local keycombo = require("rakuen.core.keycombo")
 local vscode_explorer = require("rakuen.core.vscode_explorer")
 local vscode_terminal = require("rakuen.core.vscode_terminal")
+local app_groups = require("rakuen.core.app_groups")
 
 local editing = {}
 
 local FINDER = "com.apple.finder"
 
-local TERMINALS = {
-  "com.apple.Terminal",
-  "com.googlecode.iterm2",
-  "com.github.wez.wezterm",
-  "net.kovidgoyal.kitty",
-  "org.alacritty",
-  "com.mitchellh.ghostty",
-}
+local TERMINALS = app_groups.TERMINALS
 
 -- Browsers already handle Ctrl+Tab themselves, so tab switching is left native there.
-local BROWSERS = {
-  "com.apple.Safari",
-  "com.google.Chrome",
-  "org.mozilla.firefox",
-  "com.brave.Browser",
-  "com.microsoft.edgemac",
-  "company.thebrowser.Browser",
-}
+local BROWSERS = app_groups.BROWSERS
 
 local function concat_lists(first, second)
   local result = {}

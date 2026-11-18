@@ -9,6 +9,7 @@
 local window_manager = require("rakuen.core.window_manager")
 local window_menu = require("rakuen.ui.window_menu")
 local window_modal = require("rakuen.core.window_modal")
+local rule = require("rakuen.core.rule")
 
 local windows = {}
 
@@ -49,14 +50,7 @@ local function on_focused_window(handler)
 end
 
 local function make_rule(description, from, to, handler, feasibility, note)
-  return {
-    description = description,
-    from = from,
-    to = to,
-    action = on_focused_window(handler),
-    feasibility = feasibility or "yes",
-    note = note,
-  }
+  return rule.new(description, from, to, on_focused_window(handler), feasibility, note)
 end
 
 local function display_rule(direction, note)

@@ -8,17 +8,11 @@
 
 local text_gate = require("rakuen.core.text_gate")
 local vscode_terminal = require("rakuen.core.vscode_terminal")
+local app_groups = require("rakuen.core.app_groups")
 
 local text_navigation = {}
 
-local TERMINALS = {
-  "com.apple.Terminal",
-  "com.googlecode.iterm2",
-  "com.github.wez.wezterm",
-  "net.kovidgoyal.kitty",
-  "org.alacritty",
-  "com.mitchellh.ghostty",
-}
+local TERMINALS = app_groups.TERMINALS
 
 -- Apps that expose no focused AX element (spike 1.7). The gate always passes for them.
 local FORCE = {

@@ -49,9 +49,11 @@ function app_filter.overlaps(first, second)
 
   -- At least one side lists apps explicitly: check each listed app against both filters.
   local candidates = {}
+
   for _, bundle_id in ipairs(first_filter.enable or {}) do
     table.insert(candidates, bundle_id)
   end
+
   for _, bundle_id in ipairs(second_filter.enable or {}) do
     table.insert(candidates, bundle_id)
   end

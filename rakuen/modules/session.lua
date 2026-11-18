@@ -7,19 +7,14 @@
 -- Zoom (Opt+Cmd+8, Opt+Cmd+=, Opt+Cmd+-) is native macOS, so it has no rule.
 
 local deferred = require("rakuen.core.deferred")
+local rule = require("rakuen.core.rule").new
+local app_groups = require("rakuen.core.app_groups")
 
 local session = {}
 
 -- Browsers focus the location bar with Cmd+L, which Lock now owns, so they
 -- keep GNOME's Ctrl+L through a rule that posts Cmd+L for them only.
-local BROWSERS = {
-  "com.apple.Safari",
-  "com.google.Chrome",
-  "org.mozilla.firefox",
-  "com.brave.Browser",
-  "com.microsoft.edgemac",
-  "company.thebrowser.Browser",
-}
+local BROWSERS = app_groups.BROWSERS
 
 --- Ask the user to confirm; true only when they pick the action button.
 local function confirm(message, detail, action_label)
@@ -40,18 +35,6 @@ local function shut_down()
   if confirm("Shut down?", "Unsaved work in open apps may be lost.", "Shut Down") then
     hs.caffeinate.shutdownSystem()
   end
-end
-
-local function rule(description, from, to, action, feasibility, note, applications)
-  return {
-    description = description,
-    from = from,
-    to = to,
-    action = action,
-    feasibility = feasibility,
-    note = note,
-    applications = applications,
-  }
 end
 
 session.rules = {
