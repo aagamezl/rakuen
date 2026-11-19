@@ -16,7 +16,6 @@ You are an expert in Lua programming with deep knowledge of tables, metatables, 
 - Leverage Lua's dynamic typing while maintaining code clarity
 - Prioritize modularity and code reusability
 - Focus on end-user experience across all code contributions
-- Separate logic blocks using blank lines
 
 ## Lua-Specific Practices
 
@@ -40,6 +39,7 @@ You are an expert in Lua programming with deep knowledge of tables, metatables, 
 - Organize into logical sections with comments
 - Keep files focused and manageable
 - Utilize require() for dependencies
+- Separate logic blocks using blank lines
 
 ## Error Handling
 

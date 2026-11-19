@@ -1,13 +1,15 @@
 -- Caffeine module: keep the Mac awake while the toggle is on.
 --
--- A menu bar cup shows the state (filled with steam: awake). Click it, or press
--- the chord, to toggle. It holds the display awake with `hs.caffeinate`, which
--- also stops the system from idle sleeping. Reloading Hammerspoon ends it, and
--- so does turning the toggle off. GNOME has no default for this (it ships as an
--- extension), so the chord is Rakuen's own.
+-- The shared Rakuen menu bar item shows a cup (filled with steam: awake). Its menu
+-- has a Caffeine entry, and the chord toggles too. It holds the display awake
+-- with `hs.caffeinate`, which also stops the system from idle sleeping.
+-- Reloading Hammerspoon ends it, and so does turning the toggle off.
+-- GNOME has no default for this (it ships as an extension), so the chord is
+-- Rakuen's own.
 
 local caffeine_icon = require("rakuen.ui.caffeine_icon")
 local deferred = require("rakuen.core.deferred")
+local menubar = require("rakuen.ui.menubar")
 
 local caffeine = {}
 
@@ -15,10 +17,13 @@ local RULE_NAME = "Toggle Caffeine"
 local ASSERTION = "displayIdle"
 local TITLE_ON = "Caffeine: Awake"
 local TITLE_OFF = "Caffeine: Off"
-local TOOLTIP_ON = "Caffeine is on. Click to let the Mac sleep"
-local TOOLTIP_OFF = "Caffeine is off. Click to keep the Mac awake"
+local TOOLTIP_ON = "Caffeine is on. Turn it off from the menu to let the Mac sleep"
+local TOOLTIP_OFF = "Caffeine is off. Turn it on from the menu to keep the Mac awake"
 
-local menu_item = nil
+-- The menu bar shows only the Rakuen title. Set this to true to draw the cup beside it.
+local SHOW_MENU_ICON = false
+
+local loaded = false
 
 --- Text for the state, used in the alert and when the icon cannot be drawn.
 function caffeine.title(active)
@@ -41,22 +46,16 @@ local function is_active()
 end
 
 local function refresh()
-  if menu_item == nil then
+  if not loaded then
     return
   end
 
   local active = is_active()
-  local image = caffeine_icon.image(active)
-
-  if image ~= nil then
-    menu_item:setIcon(image, false)
-    menu_item:setTitle("")
-  else
-    menu_item:setIcon(nil)
-    menu_item:setTitle(caffeine.title(active))
+  local image = nil
+  if SHOW_MENU_ICON then
+    image = caffeine_icon.image(active)
   end
-
-  menu_item:setTooltip(caffeine.tooltip(active))
+  menubar.set_appearance(image, "Rakuen. " .. caffeine.tooltip(active))
 end
 
 --- Flip the state, update the menu bar and return the new state.
@@ -78,8 +77,7 @@ caffeine.rules = {
     from = "none",
     to = "Ctrl+Cmd+K",
     action = deferred.guard(toggle_with_alert),
-    feasibility = "yes",
-    note = "Keeps the Mac and display awake. The menu bar cup shows the state and also toggles",
+    note = "Keeps the Mac and display awake. The menu bar cup shows the state, its menu toggles",
   },
 }
 
@@ -92,18 +90,27 @@ local function has_rule(rules)
   return false
 end
 
---- Add the menu bar cup. Skipped when the binding is disabled in the config.
+--- Add the cup and the menu entry. Skipped when the binding is disabled in the config.
 function caffeine.on_load(_, rules)
   if not has_rule(rules) then
     return
   end
 
-  menu_item = hs.menubar.new()
-  menu_item:setClickCallback(function()
-    local succeeded, toggle_error = pcall(caffeine.toggle)
-    if not succeeded then
-      hs.alert.show("Rakuen: " .. tostring(toggle_error))
-    end
+  loaded = true
+  menubar.add_section("caffeine", function()
+    return {
+      {
+        title = "Caffeine",
+        image = caffeine_icon.image(is_active(), true),
+        checked = is_active(),
+        fn = function()
+          local succeeded, toggle_error = pcall(caffeine.toggle)
+          if not succeeded then
+            hs.alert.show("Rakuen: " .. tostring(toggle_error))
+          end
+        end,
+      },
+    }
   end)
   -- Start awake, as the old version did, instead of keeping whatever state was left.
   hs.caffeinate.set(ASSERTION, true, true)

@@ -14,7 +14,6 @@ describe("cheatsheet", function()
         description = "Window action menu",
         from = "none",
         to = "Opt+Space",
-        feasibility = "partial",
         note = "macOS has no window menu",
       },
       { module = "editing", description = "Paste", to = "Ctrl+V", note = "Disabled in terminals" },
@@ -34,10 +33,10 @@ describe("cheatsheet", function()
     assert.equals("none", cheatsheet.rows(sample_rules())[3].original)
   end)
 
-  it("puts the feasibility prefix and the note in the description", function()
+  it("puts the note in the description", function()
     local row = cheatsheet.rows(sample_rules())[2]
 
-    assert.equals("Partial: Window action menu. macOS has no window menu", row.description)
+    assert.equals("Window action menu. macOS has no window menu", row.description)
   end)
 
   it("appends the note of a plain rule", function()

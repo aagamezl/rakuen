@@ -8,9 +8,9 @@ local docs_data = {}
 
 docs_data.header = [==[# Rakuen Keybindings
 
-Command stands in for GNOME Super, and Option stands in for Alt. Each table lists the GNOME chord, the chord Rakuen registers, the original macOS chord, and whether that configuration is possible on macOS.
+Command stands in for GNOME Super, and Option stands in for Alt. Each table lists the GNOME chord, the chord Rakuen registers, the original macOS chord, and a note on how it works.
 
-Press `Ctrl+Opt+/` in Hammerspoon to open the same list as a window: new binding, original binding, and description. Rows marked **No** are not registered.]==]
+Press `Ctrl+Opt+/` in Hammerspoon to open the same list as a window: new binding, original binding, and description.]==]
 
 -- GNOME chord of each rule, keyed by "description|configured chord".
 docs_data.gnome = {
@@ -65,6 +65,7 @@ docs_data.gnome = {
   [ [==[Shut down|Cmd+Opt+F4]==] ] = [==[Super+Alt+F4]==],
   [ [==[Quit on last window|none]==] ] = [==[none]==],
   [ [==[Toggle Caffeine|Ctrl+Cmd+K]==] ] = [==[none]==],
+  [ [==[Clipboard history|Ctrl+Alt+V]==] ] = [==[none]==],
   [ [==[Application grid|Cmd+A]==] ] = [==[Super+A]==],
   [ [==[Help|Cmd+F1]==] ] = [==[Super+F1]==],
   [ [==[Message tray|Cmd+M]==] ] = [==[Super+V, Super+M]==],
@@ -143,7 +144,6 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[none]==],
         [==[Cmd+Left, then Cmd+Up]==],
         [==[none]==],
-        [==[Yes]==],
         [==[Quarter. From the left half. Cmd+Down goes back to the half]==],
       },
       {
@@ -151,7 +151,6 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[none]==],
         [==[Cmd+Right, then Cmd+Up]==],
         [==[none]==],
-        [==[Yes]==],
         [==[Quarter. From the right half]==],
       },
       {
@@ -159,7 +158,6 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[none]==],
         [==[Cmd+Left, then Cmd+Down]==],
         [==[none]==],
-        [==[Yes]==],
         [==[Quarter. From the left half]==],
       },
       {
@@ -167,7 +165,6 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[none]==],
         [==[Cmd+Right, then Cmd+Down]==],
         [==[none]==],
-        [==[Yes]==],
         [==[Quarter. From the right half. Arrow toward the edge restores]==],
       },
       {
@@ -175,7 +172,6 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[unbound]==],
         [==[—]==],
         [==[Ctrl+Cmd+F]==],
-        [==[No]==],
         [==[Empty in the GNOME dump. Not configured]==],
       },
     },
@@ -194,7 +190,6 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[none]==],
         [==[Ctrl+Cmd+Up]==],
         [==[Ctrl+Up]==],
-        [==[Yes]==],
         [==[Native chord, moved by `bin/install.sh`. No Rakuen rule]==],
       },
       {
@@ -202,7 +197,6 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[none]==],
         [==[Ctrl+Cmd+Down]==],
         [==[Ctrl+Down]==],
-        [==[Yes]==],
         [==[Native chord, moved by `bin/install.sh`. No Rakuen rule]==],
       },
       {
@@ -210,7 +204,6 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[Ctrl+Shift+Alt+Up, Ctrl+Shift+Alt+Down]==],
         [==[—]==],
         [==[none]==],
-        [==[No]==],
         [==[Spaces are not a vertical grid]==],
       },
       {
@@ -218,7 +211,6 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[unbound in the dump]==],
         [==[—]==],
         [==[none]==],
-        [==[No]==],
         [==[No vertical Spaces]==],
       },
     },
@@ -230,7 +222,12 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
   },
   caffeine = {
     title = [==[Caffeine]==],
-    intro = [==[GNOME has no default for this (it is an extension), so the chord is Rakuen's own, kept from the old standalone script. It starts awake when loaded. A coffee cup in the menu bar shows the state: filled with steam means the Mac and display stay awake. Click the cup or press the chord to toggle. Reloading Hammerspoon turns it off.]==],
+    intro = [==[GNOME has no default for this (it is an extension), so the chord is Rakuen's own, kept from the old standalone script. It starts awake when loaded. A coffee cup in the menu bar shows the state: filled with steam means the Mac and display stay awake. The cup is the shared Rakuen menu bar item: its menu has a Caffeine entry, and the chord toggles too. Reloading Hammerspoon turns it off.]==],
+    extra_rows = {},
+  },
+  clipboard = {
+    title = [==[Clipboard]==],
+    intro = [==[GNOME has no clipboard history by default, so the chord is Rakuen's own. Rakuen records the text you copy. The chord opens a searchable list; choosing an entry puts it back on the clipboard (it does not paste). The same list is in the Rakuen menu bar item. The history stays in memory only and ends when Hammerspoon reloads.]==],
     extra_rows = {},
   },
   shell = {
@@ -247,7 +244,6 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[Alt+Super+8]==],
         [==[Opt+Cmd+8]==],
         [==[Opt+Cmd+8]==],
-        [==[Yes]==],
         [==[Native shortcut, listed in the cheatsheet]==],
       },
       {
@@ -255,7 +251,6 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[Alt+Super+=]==],
         [==[Opt+Cmd+=]==],
         [==[Opt+Cmd+=]==],
-        [==[Yes]==],
         [==[Native shortcut]==],
       },
       {
@@ -263,7 +258,6 @@ Chrome, Electron, and some cross-platform apps do not expose a focused text role
         [==[Alt+Super+-]==],
         [==[Opt+Cmd+-]==],
         [==[Opt+Cmd+-]==],
-        [==[Yes]==],
         [==[Native shortcut]==],
       },
     },
@@ -276,7 +270,6 @@ docs_data.not_configured = {
     [==[Ctrl+Alt+Escape, Ctrl+Alt+Tab, and Shift variants]==],
     [==[—]==],
     [==[none]==],
-    [==[No]==],
     [==[macOS has no GNOME panel focus]==],
   },
   {
@@ -284,7 +277,6 @@ docs_data.not_configured = {
     [==[Super+N]==],
     [==[—]==],
     [==[none]==],
-    [==[No]==],
     [==[No notification-focus API. Cmd+N is New in most apps]==],
   },
   {
@@ -292,7 +284,6 @@ docs_data.not_configured = {
     [==[Super+Shift+Escape]==],
     [==[—]==],
     [==[none]==],
-    [==[No]==],
     [==[Wayland compositor only]==],
   },
   {
@@ -300,7 +291,6 @@ docs_data.not_configured = {
     [==[XF86RotateWindows]==],
     [==[—]==],
     [==[none]==],
-    [==[No]==],
     [==[No supported display-rotation API]==],
   },
   {
@@ -308,7 +298,6 @@ docs_data.not_configured = {
     [==[Super+O, XF86RotationLockToggle]==],
     [==[—]==],
     [==[none]==],
-    [==[No]==],
     [==[No supported API]==],
   },
   {
@@ -316,7 +305,6 @@ docs_data.not_configured = {
     [==[Super+P, XF86Display]==],
     [==[—]==],
     [==[none]==],
-    [==[No]==],
     [==[Display arrangement cannot be cycled reliably]==],
   },
   {
@@ -324,7 +312,6 @@ docs_data.not_configured = {
     [==[Super+Space, Shift+Super+Space]==],
     [==[—]==],
     [==[Ctrl+Space]==],
-    [==[No]==],
     [==[Cmd+Space is Spotlight. The native switch stays Ctrl+Space and Globe]==],
   },
   {
@@ -332,7 +319,6 @@ docs_data.not_configured = {
     [==[always-on-top, corners, sides, show desktop, raise, lower]==],
     [==[—]==],
     [==[none]==],
-    [==[No]==],
     [==[Empty in the GNOME dump]==],
   },
   {
@@ -340,7 +326,6 @@ docs_data.not_configured = {
     [==[unbound]==],
     [==[—]==],
     [==[Mission Control]==],
-    [==[No]==],
     [==[Empty in the dump]==],
   },
   {
@@ -348,7 +333,6 @@ docs_data.not_configured = {
     [==[unbound]==],
     [==[—]==],
     [==[none]==],
-    [==[No]==],
     [==[Only workspace 1 and last are bound]==],
   },
   {
@@ -356,7 +340,6 @@ docs_data.not_configured = {
     [==[XF86 audio, brightness, eject, keyboard backlight]==],
     [==[—]==],
     [==[the same hardware keys]==],
-    [==[No]==],
     [==[macOS already handles them. Per-monitor brightness and quiet volume steps have no stable API]==],
   },
   {
@@ -364,7 +347,6 @@ docs_data.not_configured = {
     [==[setting, not a chord]==],
     [==[—]==],
     [==[none]==],
-    [==[No]==],
     [==[Not a keybinding]==],
   },
 }

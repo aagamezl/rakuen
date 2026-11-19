@@ -7,19 +7,14 @@
 -- Zoom (Opt+Cmd+8, Opt+Cmd+=, Opt+Cmd+-) is native macOS, so it has no rule.
 
 local deferred = require("rakuen.core.deferred")
+local rule = require("rakuen.core.rule").new
+local app_groups = require("rakuen.core.app_groups")
 
 local session = {}
 
 -- Browsers focus the location bar with Cmd+L, which Lock now owns, so they
 -- keep GNOME's Ctrl+L through a rule that posts Cmd+L for them only.
-local BROWSERS = {
-  "com.apple.Safari",
-  "com.google.Chrome",
-  "org.mozilla.firefox",
-  "com.brave.Browser",
-  "com.microsoft.edgemac",
-  "company.thebrowser.Browser",
-}
+local BROWSERS = app_groups.BROWSERS
 
 --- Ask the user to confirm; true only when they pick the action button.
 local function confirm(message, detail, action_label)
@@ -42,25 +37,12 @@ local function shut_down()
   end
 end
 
-local function rule(description, from, to, action, feasibility, note, applications)
-  return {
-    description = description,
-    from = from,
-    to = to,
-    action = action,
-    feasibility = feasibility,
-    note = note,
-    applications = applications,
-  }
-end
-
 session.rules = {
   rule(
     "Lock",
     "Cmd+Ctrl+Q",
     "Cmd+L",
     deferred.guard(lock_screen),
-    "yes",
     "hs.caffeinate.lockScreen. Browsers keep Ctrl+L for the location bar"
   ),
   rule(
@@ -68,7 +50,6 @@ session.rules = {
     "Cmd+L",
     "Ctrl+L",
     { mods = { "cmd" }, key = "l" },
-    "yes",
     "Browsers only: Cmd+L is Lock, so Ctrl+L posts Cmd+L for them",
     { enable = BROWSERS }
   ),
@@ -77,7 +58,6 @@ session.rules = {
     "Cmd+Shift+Q",
     "Cmd+Opt+L",
     deferred.guard(log_out),
-    "yes",
     "macOS asks for confirmation, then logs out"
   ),
   rule(
@@ -85,7 +65,6 @@ session.rules = {
     "none",
     "Cmd+Opt+F4",
     deferred.guard(shut_down),
-    "yes",
     "Confirms first, then shuts down"
   ),
   rule(
@@ -93,7 +72,6 @@ session.rules = {
     "Cmd+F5",
     "Opt+Cmd+S",
     { mods = { "cmd" }, key = "f5" },
-    "partial",
     "Toggles VoiceOver by posting its Cmd+F5 shortcut"
   ),
 }

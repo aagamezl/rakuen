@@ -18,9 +18,7 @@ The solution was to follow the UNIX/Linux philosophy `if you don't like somethin
 
 * **`Ctrl` Is King:** Reclaim consistency by making the Control key the primary modifier for global shortcuts, reducing finger gymnastics and cognitive load.
 
-* **Tamed Windows & Spaces:** Experience window management that just makes sense. Move, tile, and manage your workspace with the fluidity found in other modern desktop environments.
-
-* **Extended Workflow:** GNOME-inspired shortcuts that make working with macOS feel comfortable and familiar.
+* **Improved Windows & Spaces:** Experience window management that just makes sense. Move, tile, and manage your workspace with the fluidity found in other modern desktop environments.
 
 * **The Keyboard At The Center:** Anything that can be done using the keyboard should be done via the keyboard—it’s faster and simpler, and macOS does not offer this level of simplicity.
 

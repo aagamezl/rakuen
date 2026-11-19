@@ -7,6 +7,7 @@
 -- window of another app instead of opening a switcher (see docs/feasibility.md).
 
 local window_cycle = require("rakuen.core.window_cycle")
+local rule = require("rakuen.core.rule")
 
 local focus = {}
 
@@ -96,20 +97,15 @@ local function switch_application(step)
   end
 end
 
-local function make_rule(description, from, to, handler, feasibility, note)
-  return {
-    description = description,
-    from = from,
-    to = to,
-    action = function()
-      local succeeded = pcall(handler)
-      if not succeeded then
-        hs.alert.show("Rakuen: focus action failed")
-      end
-    end,
-    feasibility = feasibility or "yes",
-    note = note,
-  }
+local function make_rule(description, from, to, handler, note)
+  local function action()
+    local succeeded = pcall(handler)
+    if not succeeded then
+      hs.alert.show("Rakuen: focus action failed")
+    end
+  end
+
+  return rule.new(description, from, to, action, note)
 end
 
 local function make_rules()
@@ -119,7 +115,6 @@ local function make_rules()
       "Cmd+Tab",
       "Opt+Tab",
       switch_application(FORWARD),
-      "partial",
       "Focuses the last used app; no switcher panel. Cmd+Tab stays native"
     ),
     make_rule(
@@ -127,7 +122,6 @@ local function make_rules()
       "Cmd+Shift+Tab",
       "Opt+Shift+Tab",
       switch_application(BACKWARD),
-      "partial",
       "Focuses the least recently used app"
     ),
     make_rule(
@@ -135,7 +129,6 @@ local function make_rules()
       "Cmd+grave",
       "Opt+grave",
       cycle_windows(FORWARD, false),
-      "yes",
       "Cmd+grave is already native and passes through"
     ),
     make_rule(
@@ -143,7 +136,6 @@ local function make_rules()
       "Cmd+Shift+grave",
       "Opt+Shift+grave",
       cycle_windows(BACKWARD, false),
-      "yes",
       "Cmd+Shift+grave is already native and passes through"
     ),
     make_rule(
@@ -151,7 +143,6 @@ local function make_rules()
       "none",
       "Opt+Escape",
       cycle_windows(FORWARD, true),
-      "yes",
       "Visible windows on this Space, in a stable order"
     ),
     make_rule(
@@ -159,7 +150,6 @@ local function make_rules()
       "none",
       "Opt+Shift+Escape",
       cycle_windows(BACKWARD, true),
-      "yes",
       "Visible windows on this Space, in a stable order"
     ),
     make_rule(
@@ -167,7 +157,6 @@ local function make_rules()
       "Cmd+grave",
       "Opt+F6",
       cycle_windows(FORWARD, false),
-      "yes",
       "Same per-app cycle as Cycle app windows"
     ),
     make_rule(
@@ -175,7 +164,6 @@ local function make_rules()
       "Cmd+Shift+grave",
       "Opt+Shift+F6",
       cycle_windows(BACKWARD, false),
-      "yes",
       "Same per-app cycle as Cycle app windows"
     ),
   }

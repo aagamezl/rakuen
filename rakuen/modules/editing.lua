@@ -5,29 +5,18 @@
 -- rules are disabled there; `Ctrl+Shift+C/V` copy and paste in terminals only.
 
 local keycombo = require("rakuen.core.keycombo")
+local vscode_explorer = require("rakuen.core.vscode_explorer")
+local vscode_terminal = require("rakuen.core.vscode_terminal")
+local app_groups = require("rakuen.core.app_groups")
 
 local editing = {}
 
 local FINDER = "com.apple.finder"
 
-local TERMINALS = {
-  "com.apple.Terminal",
-  "com.googlecode.iterm2",
-  "com.github.wez.wezterm",
-  "net.kovidgoyal.kitty",
-  "org.alacritty",
-  "com.mitchellh.ghostty",
-}
+local TERMINALS = app_groups.TERMINALS
 
 -- Browsers already handle Ctrl+Tab themselves, so tab switching is left native there.
-local BROWSERS = {
-  "com.apple.Safari",
-  "com.google.Chrome",
-  "org.mozilla.firefox",
-  "com.brave.Browser",
-  "com.microsoft.edgemac",
-  "company.thebrowser.Browser",
-}
+local BROWSERS = app_groups.BROWSERS
 
 local function concat_lists(first, second)
   local result = {}
@@ -44,9 +33,20 @@ end
 local SCOPES = {
   everywhere = nil,
   no_terminals = { disable = TERMINALS },
-  terminals_only = { enable = TERMINALS },
+  terminals_only = { enable = concat_lists(TERMINALS, vscode_terminal.EDITORS) },
   finder_only = { enable = { FINDER } },
+  -- Every app; VS Code based editors only in the Files Explorer (see GATES).
+  rename = {},
   native_tabs = { disable = concat_lists(TERMINALS, BROWSERS) },
+}
+
+-- Extra gate per scope. VS Code based editors are not terminals, but their
+-- integrated terminal is, so these scopes also look at what has focus (16.3).
+local GATES = {
+  no_terminals = vscode_terminal.when_outside_terminal,
+  terminals_only = vscode_terminal.when_in_terminal,
+  native_tabs = vscode_terminal.when_outside_terminal,
+  rename = vscode_explorer.when_rename_applies,
 }
 
 --- Build one rule. `action_mods` and `key` are the chord Rakuen posts.
@@ -58,8 +58,8 @@ local function make_rule(description, from, to, action_mods, key, scope, note)
     from = from,
     to = to,
     applications = SCOPES[scope],
+    when = GATES[scope],
     action = { mods = action_mods, key = key },
-    feasibility = "yes",
     note = note,
   }
 end
@@ -94,8 +94,8 @@ local function make_rules()
       "F2",
       {},
       "return",
-      "finder_only",
-      "Sends Return, which renames in Finder"
+      "rename",
+      "Sends Return to rename. In VS Code based editors only in the file explorer"
     ),
     make_rule("Close window or tab", "Cmd+W", "Ctrl+W", { "cmd" }, "w", "no_terminals"),
     make_rule("Close tab", "Cmd+W", "Ctrl+F4", { "cmd" }, "w", "everywhere"),
@@ -176,7 +176,6 @@ function editing.build_block_rules(rules)
           to = chord,
           applications = { disable = TERMINALS },
           action = ignore_key,
-          feasibility = "yes",
           note = "Only registered when block_native_cmd is true",
         })
       end

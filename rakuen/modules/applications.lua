@@ -107,7 +107,6 @@ applications.rules = {
     description = RULE_NAME,
     from = "none",
     to = "none",
-    feasibility = "partial",
     note = "No chord. Quits an app gracefully after its last window closes. "
       .. "Finder, Hammerspoon and music apps are skipped by default. "
       .. "Windows on other Spaces may not be seen",

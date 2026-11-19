@@ -906,6 +906,7 @@ return {
     windows = { enabled = true },
     focus = { enabled = true },
     workspaces = { enabled = true },
+    clipboard = { enabled = true },
     shell = { enabled = true },
     session = { enabled = true },
   },

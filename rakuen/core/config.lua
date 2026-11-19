@@ -30,6 +30,7 @@ config.MODULE_NAMES = {
   "workspaces",
   "applications",
   "caffeine",
+  "clipboard",
   "shell",
   "session",
 }

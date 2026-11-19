@@ -3,11 +3,6 @@ std = "lua54"
 max_line_length = 100
 codes = true
 
--- Globals provided by Hammerspoon at runtime.
-read_globals = {
-  "hs",
-}
-
 -- Tests run under busted, which provides these globals.
 files["spec/**/*.lua"] = {
   std = "+busted",
@@ -17,3 +12,10 @@ files["spec/**/*.lua"] = {
 files["scripts/docs_data.lua"] = {
   max_line_length = false,
 }
+
+-- `hs` is provided by Hammerspoon at runtime. The RAKUEN_AX_* globals are shared with
+-- bin/ax-watch through the Hammerspoon console.
+globals = { "RAKUEN_AX_WATCH" }
+read_globals = { "hs", "RAKUEN_AX_KEYS", "RAKUEN_AX_SECONDS" }
+
+max_cyclomatic_complexity = 10

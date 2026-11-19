@@ -9,6 +9,7 @@
 local window_manager = require("rakuen.core.window_manager")
 local window_menu = require("rakuen.ui.window_menu")
 local window_modal = require("rakuen.core.window_modal")
+local rule = require("rakuen.core.rule")
 
 local windows = {}
 
@@ -48,40 +49,33 @@ local function on_focused_window(handler)
   end
 end
 
-local function make_rule(description, from, to, handler, feasibility, note)
-  return {
-    description = description,
-    from = from,
-    to = to,
-    action = on_focused_window(handler),
-    feasibility = feasibility or "yes",
-    note = note,
-  }
+local function make_rule(description, from, to, handler, note)
+  return rule.new(description, from, to, on_focused_window(handler), note)
 end
 
 local function display_rule(direction, note)
   local name = direction:sub(1, 1):upper() .. direction:sub(2)
   return make_rule("Move to display " .. direction, "none", "Cmd+Shift+" .. name, function(win)
     return manager:move_to_display(win, direction)
-  end, "yes", note)
+  end, note)
 end
 
 local function tile_step_rule(description, direction, note)
   local name = direction:sub(1, 1):upper() .. direction:sub(2)
   return make_rule(description, "none", "Cmd+" .. name, function(win)
     return manager:tile_step(win, direction)
-  end, "yes", note)
+  end, note)
 end
 
 local function make_rules()
   return {
     make_rule("Close", "Cmd+W", "Opt+F4", function(win)
       return manager:close(win)
-    end, "yes", "Apps that quit on the last window still quit"),
+    end, "Apps that quit on the last window still quit"),
 
     make_rule("Toggle maximize", "none", "Opt+F10", function(win)
       return manager:toggle_maximize(win)
-    end, "yes", "Fills the screen and restores the saved frame. Not a fullscreen Space"),
+    end, "Fills the screen and restores the saved frame. Not a fullscreen Space"),
 
     tile_step_rule(
       "Maximize",
@@ -95,7 +89,7 @@ local function make_rules()
     ),
     make_rule("Unmaximize (F5)", "none", "Opt+F5", function(win)
       return manager:unmaximize(win)
-    end, "yes", "Restores the frame from before Rakuen moved the window"),
+    end, "Restores the frame from before Rakuen moved the window"),
 
     tile_step_rule(
       "Tile left",
@@ -110,7 +104,7 @@ local function make_rules()
 
     make_rule("Minimize", "Cmd+M", "Cmd+H", function(win)
       return manager:minimize(win)
-    end, "yes", "Overrides Hide. Hide moves to Ctrl+H"),
+    end, "Overrides Hide. Hide moves to Ctrl+H"),
 
     display_rule("left"),
     display_rule("right"),
@@ -119,15 +113,15 @@ local function make_rules()
 
     make_rule("Begin move", "none", "Opt+F7", function(win)
       window_modal.start(win, "move")
-    end, "yes", "Arrows move; Shift for bigger steps; Return keeps; Escape cancels"),
+    end, "Arrows move; Shift for bigger steps; Return keeps; Escape cancels"),
 
     make_rule("Begin resize", "none", "Opt+F8", function(win)
       window_modal.start(win, "resize")
-    end, "yes", "Arrows resize from the bottom-right; Return keeps; Escape cancels"),
+    end, "Arrows resize from the bottom-right; Return keeps; Escape cancels"),
 
     make_rule("Window action menu", "none", "Opt+Space", function(win)
       window_menu.show(win, manager, window_modal)
-    end, "partial", "Chooser for close, minimize, maximize, tile, move, resize and displays"),
+    end, "Chooser for close, minimize, maximize, tile, move, resize and displays"),
   }
 end
 

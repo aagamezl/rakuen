@@ -7,17 +7,12 @@
 -- synthetic Cmd+Up/Down sent for Ctrl+Home/End.
 
 local text_gate = require("rakuen.core.text_gate")
+local vscode_terminal = require("rakuen.core.vscode_terminal")
+local app_groups = require("rakuen.core.app_groups")
 
 local text_navigation = {}
 
-local TERMINALS = {
-  "com.apple.Terminal",
-  "com.googlecode.iterm2",
-  "com.github.wez.wezterm",
-  "net.kovidgoyal.kitty",
-  "org.alacritty",
-  "com.mitchellh.ghostty",
-}
+local TERMINALS = app_groups.TERMINALS
 
 -- Apps that expose no focused AX element (spike 1.7). The gate always passes for them.
 local FORCE = {
@@ -27,8 +22,12 @@ local FORCE = {
   "com.tinyspeck.slackmacgap",
 }
 
---- Gate used by every rule: true when the caret is in a text field.
+--- Gate used by every rule: true when the caret is in a text field. The VS Code
+--- integrated terminal is a terminal, so its keys stay native (16.3).
 local function in_text_field(bundle_id)
+  if not vscode_terminal.when_outside_terminal(bundle_id) then
+    return false
+  end
   return text_gate.allows(text_gate.focused_role(), bundle_id, FORCE)
 end
 
@@ -40,7 +39,6 @@ local function make_rule(description, from, to, action_mods, key, note)
     applications = { disable = TERMINALS },
     when = in_text_field,
     action = { mods = action_mods, key = key },
-    feasibility = "yes",
     note = note,
   }
 end

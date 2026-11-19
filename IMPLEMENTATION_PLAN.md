@@ -65,7 +65,7 @@ Rule shape (every module):
   to = "Ctrl+C",           -- chord Rakuen listens for
   applications = { enable = {}, disable = { "com.apple.Terminal", "com.googlecode.iterm2" } },
   action = { mods = { "cmd" }, key = "c" },  -- or a function
-  feasibility = "yes",     -- yes | partial | no, with a limitation note for partial/no
+  note = "optional limitation note",
 }
 ```
 
@@ -316,7 +316,7 @@ Status: 13.1-13.6 implemented and verified with sandboxed runs (install, re-run,
 - [x] 15.4 Default `disable` list: Finder and other apps that must keep running; configurable per app through `applications = { enable, disable }` (D4)
 - [x] 15.5 Safety: never force-quit (`hs.application:kill()` only), so apps with unsaved changes can show their own prompt; log every quit
 - [x] 15.6 Catalog and cheatsheet entry (no chord; description and feasibility note), manual test with Safari, TextEdit, Finder, Terminal
-- [X] 15.7 Caffeine: `rakuen/modules/caffeine.lua` keeps the Mac and display awake (`hs.caffeinate`, `displayIdle`), starts awake, toggles with `Ctrl+Cmd+K` or a click on a white coffee-cup menu bar icon (`rakuen/ui/caffeine_icon.lua`); catalog and cheatsheet entry, manual test of the chord, the click and the icon states
+- [x] 15.7 Caffeine: `rakuen/modules/caffeine.lua` keeps the Mac and display awake (`hs.caffeinate`, `displayIdle`), starts awake, toggles with `Ctrl+Cmd+K` or a click on a white coffee-cup menu bar icon (`rakuen/ui/caffeine_icon.lua`); catalog and cheatsheet entry, manual test of the chord, the click and the icon states
 
 **Done when:** closing the last window of TextEdit or Safari quits the app, Finder and listed apps keep running, and an app with unsaved changes is not force-closed.
 
@@ -326,9 +326,9 @@ Manual pass: close the only TextEdit window (empty doc): TextEdit quits. Close t
 
 ## Phase 16 – Optional / Stretch
 
-- [ ] 16.1 Clipboard history (list, copy from entry); not a GNOME default, from your draft plan
-- [ ] 16.2 Rakuen menu bar item (enable/disable modules, open cheatsheet)
-- [ ] 16.3 Curated application list/Brewfile ("Curated Workflow" in the vision)
+- [x] 16.1 Clipboard history (list, copy from entry); not a GNOME default, from your draft plan. `rakuen/modules/clipboard.lua`, `Ctrl+Alt+V`, in memory only
+- [x] 16.2 Rakuen menu bar item (enable/disable modules, open cheatsheet); the caffeine cup (15.7) already uses the menu bar, so share one item if possible. Done: `rakuen/ui/menubar.lua` is the one item (cup icon, Caffeine, Clipboard history, Show keybindings, Modules switches saved in `~/.config/rakuen/modules.json`)
+- [x] 16.3 VS Code based editors terminals behave like real terminals. Implemented in `rakuen/core/vscode_terminal.lua` (AX class `xterm-helper-textarea`, then a "Terminal..." label), with `AXManualAccessibility` enabled via `rakuen/core/vscode_focus.lua`. Confirmed by hand: Ctrl+C and Ctrl+V work in VS Code and Cursor; F2 renames in the file explorer (`rakuen/core/vscode_explorer.lua`)
 
 ---
 

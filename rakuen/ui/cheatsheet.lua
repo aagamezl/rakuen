@@ -11,10 +11,6 @@ local WINDOW_WIDTH = 920
 local WINDOW_HEIGHT = 660
 local MESSAGE_HANDLER = "rakuen"
 local NO_ORIGINAL = "none"
-local FEASIBILITY_PREFIX = {
-  partial = "Partial: ",
-  no = "Not available: ",
-}
 
 local PAGE_STYLE = [[
 :root { color-scheme: light dark; --bg: #ffffff; --fg: #1d1d1f; --muted: #6e6e73;
@@ -90,16 +86,15 @@ function cheatsheet.module_title(module_name)
   return spaced:sub(1, 1):upper() .. spaced:sub(2)
 end
 
---- Description column: the rule's note, with partial and no rules flagged.
+--- Description column: the rule's description, then its note when it has one.
 function cheatsheet.describe(rule)
-  local prefix = FEASIBILITY_PREFIX[rule.feasibility] or ""
   local note = rule.note
 
   if note == nil or note == "" then
-    return prefix .. rule.description
+    return rule.description
   end
 
-  return prefix .. rule.description .. ". " .. note
+  return rule.description .. ". " .. note
 end
 
 --- One row per rule: { module, name, new, original, description }.

@@ -11,7 +11,6 @@
 --     applications = { enable = {}, disable = { "com.apple.Terminal" } },
 --     action = { mods = { "cmd" }, key = "c" },   -- or a function
 --     when = function(bundle_id) return true end,  -- optional extra gate, run last
---     feasibility = "yes",         -- yes | partial | no
 --     note = "optional limitation note",
 --   }
 
@@ -20,8 +19,6 @@ local keycombo = require("rakuen.core.keycombo")
 
 local registry = {}
 registry.__index = registry
-
-local VALID_FEASIBILITY = { yes = true, partial = true, no = true }
 
 -- A rule with this `to` has no chord: it documents behavior that runs without a
 -- key press (the Applications module). It needs no action and is never bound.
@@ -53,13 +50,6 @@ local function validate_rule(rule)
 
   if rule.when ~= nil then
     assert(type(rule.when) == "function", "rule '" .. description .. "': when must be a function")
-  end
-
-  if rule.feasibility ~= nil then
-    assert(
-      VALID_FEASIBILITY[rule.feasibility],
-      "rule '" .. description .. "': feasibility must be yes, partial or no"
-    )
   end
 end
 
